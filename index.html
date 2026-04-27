@@ -1,1 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MDI SYSTEM</title>
 
+<style>
+body{margin:0;font-family:Arial;background:#dbeafe;color:#0f172a;}
+header{background:#1e3a8a;color:white;padding:15px 25px;display:flex;justify-content:space-between;align-items:center;}
+.header-left{display:flex;align-items:center;gap:10px;}
+.header-left img{width:45px;}
+.layout{display:flex;min-height:calc(100vh - 70px);}
+.sidebar{width:260px;background:white;padding:20px;border-right:1px solid #cbd5e1;}
+.sidebar button{width:100%;padding:12px;margin-bottom:12px;background:#bfdbfe;border:none;border-radius:8px;cursor:pointer;}
+.content{flex:1;padding:30px;}
+.card{background:white;padding:15px;border-radius:10px;margin-bottom:15px;box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+input,select,textarea{width:100%;padding:10px;margin-bottom:15px;border:1px solid #93c5fd;border-radius:8px;}
+textarea{min-height:120px;}
+.hidden{display:none;}
+button.primary{background:#1e3a8a;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;}
+.status-open{background:#dcfce7;color:#166534;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:bold;}
+.status-closed{background:#fee2e2;color:#991b1b;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:bold;}
+.files-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:15px;max-height:500px;overflow-y:auto;}
+.file-card{background:white;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+.readonly-label{background:#fee2e2;color:#991b1b;padding:6px 12px;border-radius:20px;font-size:12px;margin-bottom:15px;display:inline-block;}
+#updatePopup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;justify-content:center;align-items:center;}
+.popup-content{background:white;padding:25px;border-radius:12px;text-align:center;width:350px;}
+.login-box{max-width:400px;margin:100px auto;background:white;padding:30px;border-radius:15px;box-shadow:0 4px 10px rgba(0,0,0,0.1);text-align:center;}
+.login-box img{width:70px;margin-bottom:15px;}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="header-left">
+<img src="https://raw.githubusercontent.com/jvxtgzg/MDI-SYSTEMS/main/BRO%20LOGO.png">
+<div>
+<strong>MDI SYSTEM</strong><br>
+<small>Mobile Data Investigation System</small>
+</div>
+</div>
+<div>BRO – Bureau of Response Operative</div>
+</header>
+
+<div id="loginScreen" class="login-box">
+<img src="https://raw.githubusercontent.com/jvxtgzg/MDI-SYSTEMS/main/BRO%20LOGO.png">
+<h2>Agent Login</h2>
+<input type="text" id="codeName" placeholder="Code Name">
+<input type="text" id="callSign" placeholder="Call Sign">
+<button class="primary" onclick="login()">Login</button>
+<p id="loginError" style="color:red;display:none;">Login Failed</p>
+</div>
+
+<div id="app" class="hidden">
+<div class="layout">
+
+<div class="sidebar">
+<div id="userInfo" style="margin-bottom:20px;font-weight:bold;"></div>
+<button onclick="showDashboard()">Dashboard</button>
+<button onclick="showNewReport()">New Report</button>
+<button onclick="showFiles()">Files</button>
+<button onclick="showContributor()">Contributor</button>
+<button onclick="logout()">Logout</button>
+</div>
+
+<div class="content">
+
+<div id="dashboard">
+<h2>Dashboard</h2>
+<div class="card">System Active</div>
+</div>
+
+<div id="newReport" class="hidden">
+<h2>Investigation Report</h2>
+<div id="readOnlyBanner" class="readonly-label hidden">READ ONLY MODE</div>
+
+<div class="card">
+<strong>Case ID:</strong>
+<span id="caseIdDisplay">Generated on Save</span>
+</div>
+
+<input type="text" id="missionName" placeholder="Mission Name">
+<input type="date" id="date">
+<textarea id="reportDetail" placeholder="Report Detail"></textarea>
+<textarea id="intelInfo" placeholder="Intelligence Info"></textarea>
+<input type="text" id="agentsInvolved" placeholder="Agents involved (comma separated)">
+
+<select id="status">
+<option value="OPEN">OPEN</option>
+<option value="CLOSED">CLOSED</option>
+<option value="LOCKED">LOCKED</option>
+</select>
+
+<input type="text" id="evidenceLink" placeholder="Paste CDN Image Link">
+<button type="button" onclick="addEvidence()">Add Evidence</button>
+<div id="evidencePreview"></div>
+
+<button id="saveBtn" class="primary" onclick="saveReport()">Save Report</button>
+</div>
+
+<div id="filesPage" class="hidden">
+<h2 style="display:flex;justify-content:space-between;">
+<span>Files</span>
+<button class="primary" onclick="refreshFiles()">🔄 Refresh</button>
+</h2>
+
+<input type="text" id="fileSearchInput"
+placeholder="Search Case ID / Mission"
+oninput="filterFiles()">
+
+<div id="filesList" class="files-container"></div>
+</div>
+
+<div id="contributorPage" class="hidden">
+<h2>Agent Contributor</h2>
+
+<input type="text"
+id="agentSearchInput"
+placeholder="Search Agent Name"
+oninput="filterAgents()">
+
+<div id="agentResult"></div>
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="updatePopup">
+<div class="popup-content">
+<h3>Report Saved</h3>
+<p>If you want to update this report, go to Files menu and search by Case ID / Mission.</p>
+<button class="primary" onclick="closePopup()">OK</button>
+</div>
+</div>
+
+<script>
+
+const MEMBER_SHEET_ID="1yVsYlFJkPeIp6p3LApsiW4Ivv_5XihznO7BJLf_VRsY";
+const DATA_SHEET_ID="1QgVdZ2Xtj2zskCG_lXPs9joVnNNZ9F19mxVVHbygtt8";
+const API_URL="https://script.google.com/macros/s/AKfycbxkFsuKuIsQl_x5dSgJECX_CRHEb2j8o3AytO4vVq2HDE72C55AdoxLrxMihiuyvlfFuw/exec";
+
+let currentUser=null;
+let allFileData=[];
+let evidenceList=[];
+let contributorData={};
+
+function disableForm(lock){
+missionName.disabled=lock;
+date.disabled=lock;
+reportDetail.disabled=lock;
+intelInfo.disabled=lock;
+agentsInvolved.disabled=lock;
+status.disabled=lock;
+evidenceLink.disabled=lock;
+saveBtn.style.display=lock?"none":"inline-block";
+readOnlyBanner.classList.toggle("hidden",!lock);
+}
+
+async function login(){
+const code=codeName.value.trim().toUpperCase();
+const call=callSign.value.trim();
+const url=`https://docs.google.com/spreadsheets/d/${MEMBER_SHEET_ID}/gviz/tq?tqx=out:json`;
+const res=await fetch(url);
+const text=await res.text();
+const json=JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}")+1));
+const rows=json.table.rows;
+for(let r of rows){
+if((r.c[1]?.v||"").toUpperCase()===code && (r.c[2]?.v||"")==call){
+currentUser={codeName:code};
+break;
+}}
+if(currentUser){
+loginScreen.classList.add("hidden");
+app.classList.remove("hidden");
+userInfo.innerHTML=currentUser.codeName;
+}else loginError.style.display="block";
+}
+
+function addEvidence(){
+const link=evidenceLink.value.trim();
+if(!link)return;
+evidenceList.push(link);
+renderEvidence();
+evidenceLink.value="";
+}
+
+function renderEvidence(){
+evidencePreview.innerHTML="";
+evidenceList.forEach(l=>{
+evidencePreview.innerHTML+=`
+<div style="margin-bottom:10px">
+<img src="${l}" style="max-width:150px;border-radius:8px;"><br>
+</div>`;
+});
+}
+
+async function saveReport(){
+const payload={
+caseId: caseIdDisplay.innerText!=="Generated on Save"?caseIdDisplay.innerText:null,
+date:date.value,
+mission:missionName.value,
+detail:reportDetail.value,
+intel:intelInfo.value,
+agents:agentsInvolved.value,
+status:status.value,
+createdBy:currentUser.codeName,
+evidence:evidenceList
+};
+const res=await fetch(API_URL,{method:"POST",body:JSON.stringify(payload)});
+const result=await res.text();
+if(!payload.caseId){caseIdDisplay.innerText=result;}
+disableForm(true);
+updatePopup.style.display="flex";
+}
+
+async function loadFiles(){
+const url=`https://docs.google.com/spreadsheets/d/${DATA_SHEET_ID}/gviz/tq?tqx=out:json`;
+const res=await fetch(url);
+const text=await res.text();
+const json=JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}")+1));
+const rows=json.table.rows;
+allFileData=[];
+for(let r of rows){
+if(!r.c[0]?.v)continue;
+allFileData.push({
+caseId:r.c[0]?.v,
+mission:r.c[2]?.v||"-",
+status:r.c[6]?.v||"OPEN"
+});
+}
+allFileData.reverse();
+renderFiles(allFileData);
+}
+
+function renderFiles(data){
+filesList.innerHTML="";
+data.forEach(f=>{
+let badgeClass=f.status==="OPEN"?"status-open":"status-closed";
+let action=f.status==="OPEN"
+? `<button class="primary" style="margin-top:10px;background:#16a34a" onclick="editCase('${f.caseId}')">Edit</button>`
+: `<button class="primary" style="margin-top:10px;background:#64748b" onclick="viewCase('${f.caseId}')">View</button>`;
+filesList.innerHTML+=`
+<div class="file-card">
+<strong>${f.caseId}</strong><br>
+${f.mission}<br>
+<span class="${badgeClass}">${f.status}</span><br>
+${action}
+</div>`;
+});
+}
+
+async function loadCase(caseId,readOnly){
+const url=`https://docs.google.com/spreadsheets/d/${DATA_SHEET_ID}/gviz/tq?tqx=out:json`;
+const res=await fetch(url);
+const text=await res.text();
+const json=JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}")+1));
+const rows=json.table.rows;
+for(let r of rows){
+if(r.c[0]?.v===caseId){
+showNewReport();
+caseIdDisplay.innerText=r.c[0]?.v;
+date.value=r.c[1]?.v||"";
+missionName.value=r.c[2]?.v||"";
+reportDetail.value=r.c[3]?.v||"";
+intelInfo.value=r.c[4]?.v||"";
+agentsInvolved.value=r.c[5]?.v||"";
+status.value=r.c[6]?.v||"OPEN";
+let ev=r.c[9]?.v||"";
+evidenceList=ev?ev.split(","):[];
+renderEvidence();
+disableForm(readOnly);
+break;
+}
+}
+}
+
+function editCase(id){loadCase(id,false);}
+function viewCase(id){loadCase(id,true);}
+function refreshFiles(){loadFiles();}
+function filterFiles(){
+const key=fileSearchInput.value.toLowerCase();
+renderFiles(allFileData.filter(f=>f.caseId.toLowerCase().includes(key)||f.mission.toLowerCase().includes(key)));
+}
+
+async function loadContributors(){
+const url=`https://docs.google.com/spreadsheets/d/${DATA_SHEET_ID}/gviz/tq?tqx=out:json`;
+const res=await fetch(url);
+const text=await res.text();
+const json=JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}")+1));
+const rows=json.table.rows;
+let map={};
+for(let r of rows){
+let mission=r.c[2]?.v||"-";
+let agents=r.c[5]?.v||"";
+if(!agents)continue;
+agents.split(",").forEach(a=>{
+let name=a.trim().toUpperCase();
+if(!map[name])map[name]={count:0,missions:[]};
+map[name].count++;
+map[name].missions.push(mission);
+});
+}
+contributorData=map;
+}
+
+function filterAgents(){
+let key=agentSearchInput.value.trim().toUpperCase();
+agentResult.innerHTML="";
+if(!key)return;
+let found=contributorData[key];
+if(found){
+agentResult.innerHTML=`
+<div class="card">
+<strong>${key}</strong><br><br>
+Total Missions: ${found.count}<br><br>
+Missions:<br>
+${found.missions.map(m=>"- "+m).join("<br>")}
+</div>`;
+}else{
+agentResult.innerHTML="<div class='card'>Agent not found</div>";
+}
+}
+
+function showSection(id){
+["dashboard","newReport","filesPage","contributorPage"]
+.forEach(sec=>document.getElementById(sec).classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+}
+function showDashboard(){showSection("dashboard");}
+function showNewReport(){showSection("newReport");disableForm(false);}
+function showFiles(){showSection("filesPage");loadFiles();}
+function showContributor(){showSection("contributorPage");loadContributors();}
+function closePopup(){updatePopup.style.display="none";}
+function logout(){location.reload();}
+
+</script>
+</body>
+</html>
