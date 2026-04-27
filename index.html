@@ -18,18 +18,11 @@ input,select,textarea{width:100%;padding:10px;margin-bottom:15px;border:1px soli
 textarea{min-height:120px;}
 .hidden{display:none;}
 button.primary{background:#1e3a8a;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;}
-.status-open{background:#dcfce7;color:#166534;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:bold;}
-.status-closed{background:#fee2e2;color:#991b1b;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:bold;}
 .files-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:15px;max-height:500px;overflow-y:auto;}
 .file-card{background:white;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.1);}
-.readonly-label{background:#fee2e2;color:#991b1b;padding:6px 12px;border-radius:20px;font-size:12px;margin-bottom:15px;display:inline-block;}
-#updatePopup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;justify-content:center;align-items:center;}
-.popup-content{background:white;padding:25px;border-radius:12px;text-align:center;width:350px;}
 .login-box{max-width:400px;margin:100px auto;background:white;padding:30px;border-radius:15px;box-shadow:0 4px 10px rgba(0,0,0,0.1);text-align:center;}
-.login-box img{width:70px;margin-bottom:15px;}
 </style>
 </head>
-
 <body>
 
 <header>
@@ -45,7 +38,6 @@ button.primary{background:#1e3a8a;color:white;border:none;padding:10px;border-ra
 
 <!-- LOGIN -->
 <div id="loginScreen" class="login-box">
-<img src="https://raw.githubusercontent.com/jvxtgzg/MDI-SYSTEMS/main/BRO%20LOGO.png">
 <h2>Agent Login</h2>
 <input type="text" id="codeName" placeholder="Code Name">
 <input type="text" id="callSign" placeholder="Call Sign">
@@ -70,7 +62,6 @@ button.primary{background:#1e3a8a;color:white;border:none;padding:10px;border-ra
 
 <!-- DASHBOARD -->
 <div id="dashboard">
-
 <h2>Dashboard</h2>
 
 <div class="card">
@@ -81,44 +72,32 @@ button.primary{background:#1e3a8a;color:white;border:none;padding:10px;border-ra
 </div>
 
 <div class="card">
-<strong>Security PIN Access</strong><br><br>
-
-<input type="password" id="pinDisplay" value="BRO-2026" readonly>
-
+<strong>Security PIN</strong><br><br>
+<input type="password" id="pinDisplay" readonly>
 <button class="primary" onclick="togglePIN()">Lihat PIN</button>
-
-<!-- UPDATE PIN HANYA UNTUK RANK TERTENTU -->
 <div id="pinUpdateSection" style="margin-top:15px;display:none;">
 <input type="text" id="newPinInput" placeholder="New PIN">
-<button class="primary" onclick="updatePIN()">Perbarui PIN</button>
+<button class="primary" onclick="updatePIN()">Update PIN</button>
 </div>
-
 </div>
-
 </div>
 
 <!-- NEW REPORT -->
 <div id="newReport" class="hidden">
-<h2>Investigation Report</h2>
-<div id="readOnlyBanner" class="readonly-label hidden">READ ONLY MODE</div>
-<div class="card">
-<strong>Case ID:</strong>
-<span id="caseIdDisplay">Generated on Save</span>
-</div>
+<h2>New Investigation Report</h2>
 <input type="text" id="missionName" placeholder="Mission Name">
 <input type="date" id="date">
 <textarea id="reportDetail" placeholder="Report Detail"></textarea>
-<textarea id="intelInfo" placeholder="Intelligence Info"></textarea>
-<input type="text" id="agentsInvolved" placeholder="Agents involved (comma separated)">
+<textarea id="intelInfo" placeholder="Intel Info"></textarea>
+<input type="text" id="agentsInvolved" placeholder="Agents (comma separated)">
 <select id="status">
 <option value="OPEN">OPEN</option>
 <option value="CLOSED">CLOSED</option>
-<option value="LOCKED">LOCKED</option>
 </select>
-<input type="text" id="evidenceLink" placeholder="Paste CDN Image Link">
-<button type="button" onclick="addEvidence()">Add Evidence</button>
+<input type="text" id="evidenceLink" placeholder="CDN Evidence Link">
+<button onclick="addEvidence()">Add Evidence</button>
 <div id="evidencePreview"></div>
-<button id="saveBtn" class="primary" onclick="saveReport()">Save Report</button>
+<button class="primary" onclick="saveReport()">Save Report</button>
 </div>
 
 <!-- FILES -->
@@ -142,14 +121,6 @@ button.primary{background:#1e3a8a;color:white;border:none;padding:10px;border-ra
 </div>
 </div>
 
-<div id="updatePopup">
-<div class="popup-content">
-<h3>Report Saved</h3>
-<p>If you want to update this report, go to Files menu and search by Case ID / Mission.</p>
-<button class="primary" onclick="closePopup()">OK</button>
-</div>
-</div>
-
 <script>
 
 const MEMBER_SHEET_ID="1yVsYlFJkPeIp6p3LApsiW4Ivv_5XihznO7BJLf_VRsY";
@@ -159,67 +130,125 @@ const API_URL="https://script.google.com/macros/s/AKfycbxkFsuKuIsQl_x5dSgJECX_CR
 let currentUser=null;
 let currentPIN="BRO-2026";
 let pinVisible=false;
+let evidenceArray=[];
+let allFiles=[];
 
-/* LOGIN + RANK INTEGRATION */
+/* LOGIN */
 async function login(){
 const code=codeName.value.trim().toUpperCase();
 const call=callSign.value.trim();
-const url=`https://docs.google.com/spreadsheets/d/${MEMBER_SHEET_ID}/gviz/tq?tqx=out:json`;
-const res=await fetch(url);
+const res=await fetch(`https://docs.google.com/spreadsheets/d/${MEMBER_SHEET_ID}/gviz/tq?tqx=out:json`);
 const text=await res.text();
 const json=JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}")+1));
 for(let r of json.table.rows){
 if((r.c[1]?.v||"").toUpperCase()===code && (r.c[2]?.v||"")==call){
-currentUser={
-codeName:code,
-rank:(r.c[3]?.v||"").toUpperCase() // KOLOM RANK
-};
+currentUser={codeName:code,rank:(r.c[3]?.v||"").toUpperCase()};
 break;
 }}
 if(currentUser){
 loginScreen.classList.add("hidden");
 app.classList.remove("hidden");
 userInfo.innerHTML=currentUser.codeName+" ("+currentUser.rank+")";
-
-/* CEK RANK UNTUK TAMPILKAN UPDATE PIN */
+pinDisplay.value=currentPIN;
 if(["CHIEF","DIRECTOR","DEPUTY DIRECTOR"].includes(currentUser.rank)){
-document.getElementById("pinUpdateSection").style.display="block";
+pinUpdateSection.style.display="block";
+}
+}else loginError.style.display="block";
 }
 
-}else{
-loginError.style.display="block";
-}
-}
-
-/* PIN FUNCTIONS */
+/* PIN */
 function togglePIN(){
 pinDisplay.type=pinVisible?"password":"text";
 pinVisible=!pinVisible;
 }
 function updatePIN(){
-if(!["CHIEF","DIRECTOR","DEPUTY DIRECTOR"].includes(currentUser.rank)){
-alert("Access Denied");return;}
+if(!["CHIEF","DIRECTOR","DEPUTY DIRECTOR"].includes(currentUser.rank)) return alert("Access Denied");
 let newPin=newPinInput.value.trim();
-if(!newPin)return;
+if(!newPin) return;
 currentPIN=newPin;
 pinDisplay.value=currentPIN;
-newPinInput.value="";
-alert("PIN Updated Successfully");
+alert("PIN Updated");
 }
 
+/* NAV */
 function showSection(id){
 ["dashboard","newReport","filesPage","contributorPage"]
-.forEach(sec=>document.getElementById(sec).classList.add("hidden"));
+.forEach(x=>document.getElementById(x).classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 }
 function showDashboard(){showSection("dashboard");}
 function showNewReport(){showSection("newReport");}
-function showFiles(){showSection("filesPage");}
+function showFiles(){showSection("filesPage"); loadFiles();}
 function showContributor(){showSection("contributorPage");}
 function logout(){location.reload();}
-function closePopup(){updatePopup.style.display="none";}
+
+/* EVIDENCE */
+function addEvidence(){
+let link=evidenceLink.value.trim();
+if(!link) return;
+evidenceArray.push(link);
+evidencePreview.innerHTML+=`<div>${link}</div>`;
+evidenceLink.value="";
+}
+
+/* SAVE REPORT */
+async function saveReport(){
+let data={
+mission:missionName.value,
+date:date.value,
+detail:reportDetail.value,
+intel:intelInfo.value,
+agents:agentsInvolved.value,
+status:status.value,
+evidence:evidenceArray.join(" | "),
+author:currentUser.codeName
+};
+await fetch(API_URL,{method:"POST",body:JSON.stringify(data)});
+alert("Report Saved");
+}
+
+/* LOAD FILES */
+async function loadFiles(){
+const res=await fetch(`https://docs.google.com/spreadsheets/d/${DATA_SHEET_ID}/gviz/tq?tqx=out:json`);
+const text=await res.text();
+const json=JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}")+1));
+allFiles=json.table.rows;
+renderFiles(allFiles);
+}
+
+function renderFiles(rows){
+filesList.innerHTML="";
+rows.forEach(r=>{
+let mission=r.c[0]?.v||"";
+let status=r.c[4]?.v||"";
+filesList.innerHTML+=`
+<div class="file-card">
+<b>${mission}</b><br>
+Status: ${status}<br><br>
+<button onclick="alert('Open View Mode')">View</button>
+</div>`;
+});
+}
+
+function filterFiles(){
+let val=fileSearchInput.value.toLowerCase();
+let filtered=allFiles.filter(r=>(r.c[0]?.v||"").toLowerCase().includes(val));
+renderFiles(filtered);
+}
+
+/* CONTRIBUTOR */
+function filterAgents(){
+let name=agentSearchInput.value.toLowerCase();
+let missions=[];
+allFiles.forEach(r=>{
+let agents=r.c[3]?.v||"";
+if(agents.toLowerCase().includes(name)){
+missions.push(r.c[0]?.v);
+}});
+agentResult.innerHTML=`<b>Total Missions:</b> ${missions.length}<br>`+
+missions.map(m=>`- ${m}`).join("<br>");
+}
 
 </script>
-
 </body>
 </html>
