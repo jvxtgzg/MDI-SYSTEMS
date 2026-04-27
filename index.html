@@ -43,6 +43,7 @@ button.primary{background:#1e3a8a;color:white;border:none;padding:10px;border-ra
 <div>BRO – Bureau of Response Operative</div>
 </header>
 
+<!-- LOGIN -->
 <div id="loginScreen" class="login-box">
 <img src="https://raw.githubusercontent.com/jvxtgzg/MDI-SYSTEMS/main/BRO%20LOGO.png">
 <h2>Agent Login</h2>
@@ -52,6 +53,7 @@ button.primary{background:#1e3a8a;color:white;border:none;padding:10px;border-ra
 <p id="loginError" style="color:red;display:none;">Login Failed</p>
 </div>
 
+<!-- APP -->
 <div id="app" class="hidden">
 <div class="layout">
 
@@ -80,12 +82,17 @@ button.primary{background:#1e3a8a;color:white;border:none;padding:10px;border-ra
 
 <div class="card">
 <strong>Security PIN Access</strong><br><br>
+
 <input type="password" id="pinDisplay" value="BRO-2026" readonly>
+
 <button class="primary" onclick="togglePIN()">Lihat PIN</button>
+
+<!-- UPDATE PIN HANYA UNTUK RANK TERTENTU -->
 <div id="pinUpdateSection" style="margin-top:15px;display:none;">
 <input type="text" id="newPinInput" placeholder="New PIN">
 <button class="primary" onclick="updatePIN()">Perbarui PIN</button>
 </div>
+
 </div>
 
 </div>
@@ -144,31 +151,16 @@ button.primary{background:#1e3a8a;color:white;border:none;padding:10px;border-ra
 </div>
 
 <script>
+
 const MEMBER_SHEET_ID="1yVsYlFJkPeIp6p3LApsiW4Ivv_5XihznO7BJLf_VRsY";
 const DATA_SHEET_ID="1QgVdZ2Xtj2zskCG_lXPs9joVnNNZ9F19mxVVHbygtt8";
 const API_URL="https://script.google.com/macros/s/AKfycbxkFsuKuIsQl_x5dSgJECX_CRHEb2j8o3AytO4vVq2HDE72C55AdoxLrxMihiuyvlfFuw/exec";
 
 let currentUser=null;
-let evidenceList=[];
-let allFileData=[];
-let contributorData={};
 let currentPIN="BRO-2026";
 let pinVisible=false;
 
-/* SECTION CONTROL */
-function showSection(id){
-["dashboard","newReport","filesPage","contributorPage"]
-.forEach(sec=>document.getElementById(sec).classList.add("hidden"));
-document.getElementById(id).classList.remove("hidden");
-}
-function showDashboard(){showSection("dashboard");}
-function showNewReport(){showSection("newReport");disableForm(false);}
-function showFiles(){showSection("filesPage");loadFiles();}
-function showContributor(){showSection("contributorPage");loadContributors();}
-function logout(){location.reload();}
-function closePopup(){updatePopup.style.display="none";}
-
-/* LOGIN */
+/* LOGIN + RANK INTEGRATION */
 async function login(){
 const code=codeName.value.trim().toUpperCase();
 const call=callSign.value.trim();
@@ -178,19 +170,28 @@ const text=await res.text();
 const json=JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}")+1));
 for(let r of json.table.rows){
 if((r.c[1]?.v||"").toUpperCase()===code && (r.c[2]?.v||"")==call){
-currentUser={codeName:code,rank:(r.c[3]?.v||"").toUpperCase()};
+currentUser={
+codeName:code,
+rank:(r.c[3]?.v||"").toUpperCase() // KOLOM RANK
+};
 break;
 }}
 if(currentUser){
 loginScreen.classList.add("hidden");
 app.classList.remove("hidden");
 userInfo.innerHTML=currentUser.codeName+" ("+currentUser.rank+")";
-if(["CHIEF","DIRECTOR","DEPUTY DIRECTOR"].includes(currentUser.rank))
+
+/* CEK RANK UNTUK TAMPILKAN UPDATE PIN */
+if(["CHIEF","DIRECTOR","DEPUTY DIRECTOR"].includes(currentUser.rank)){
 document.getElementById("pinUpdateSection").style.display="block";
-}else loginError.style.display="block";
 }
 
-/* PIN */
+}else{
+loginError.style.display="block";
+}
+}
+
+/* PIN FUNCTIONS */
 function togglePIN(){
 pinDisplay.type=pinVisible?"password":"text";
 pinVisible=!pinVisible;
@@ -203,143 +204,22 @@ if(!newPin)return;
 currentPIN=newPin;
 pinDisplay.value=currentPIN;
 newPinInput.value="";
-alert("PIN Updated");
+alert("PIN Updated Successfully");
 }
 
-/* NEW REPORT */
-function disableForm(lock){
-missionName.disabled=lock;
-date.disabled=lock;
-reportDetail.disabled=lock;
-intelInfo.disabled=lock;
-agentsInvolved.disabled=lock;
-status.disabled=lock;
-evidenceLink.disabled=lock;
-saveBtn.style.display=lock?"none":"inline-block";
-readOnlyBanner.classList.toggle("hidden",!lock);
+function showSection(id){
+["dashboard","newReport","filesPage","contributorPage"]
+.forEach(sec=>document.getElementById(sec).classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
 }
-function addEvidence(){
-let link=evidenceLink.value.trim();
-if(!link)return;
-evidenceList.push(link);
-renderEvidence();
-evidenceLink.value="";
-}
-function renderEvidence(){
-evidencePreview.innerHTML="";
-evidenceList.forEach(l=>{
-evidencePreview.innerHTML+=`<img src="${l}" style="max-width:150px;margin:5px;border-radius:8px;">`;
-});
-}
-async function saveReport(){
-let payload={
-caseId:caseIdDisplay.innerText!=="Generated on Save"?caseIdDisplay.innerText:null,
-date:date.value,
-mission:missionName.value,
-detail:reportDetail.value,
-intel:intelInfo.value,
-agents:agentsInvolved.value,
-status:status.value,
-createdBy:currentUser.codeName,
-evidence:evidenceList.join(",")
-};
-let res=await fetch(API_URL,{method:"POST",body:JSON.stringify(payload)});
-let result=await res.text();
-if(!payload.caseId)caseIdDisplay.innerText=result;
-disableForm(true);
-updatePopup.style.display="flex";
-}
+function showDashboard(){showSection("dashboard");}
+function showNewReport(){showSection("newReport");}
+function showFiles(){showSection("filesPage");}
+function showContributor(){showSection("contributorPage");}
+function logout(){location.reload();}
+function closePopup(){updatePopup.style.display="none";}
 
-/* FILES */
-async function loadFiles(){
-const url=`https://docs.google.com/spreadsheets/d/${DATA_SHEET_ID}/gviz/tq?tqx=out:json`;
-const res=await fetch(url);
-const text=await res.text();
-const json=JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}")+1));
-allFileData=[];
-for(let r of json.table.rows){
-if(!r.c[0]?.v)continue;
-allFileData.push({
-caseId:r.c[0]?.v,
-mission:r.c[2]?.v||"-",
-status:r.c[6]?.v||"OPEN"
-});
-}
-allFileData.reverse();
-renderFiles(allFileData);
-}
-function renderFiles(data){
-filesList.innerHTML="";
-data.forEach(f=>{
-let badge=f.status==="OPEN"?"status-open":"status-closed";
-let btn=f.status==="OPEN"
-?`<button class="primary" onclick="editCase('${f.caseId}')">Edit</button>`
-:`<button class="primary" onclick="viewCase('${f.caseId}')">View</button>`;
-filesList.innerHTML+=`
-<div class="file-card">
-<strong>${f.caseId}</strong><br>
-${f.mission}<br>
-<span class="${badge}">${f.status}</span><br><br>
-${btn}
-</div>`;
-});
-}
-function filterFiles(){
-let key=fileSearchInput.value.toLowerCase();
-renderFiles(allFileData.filter(f=>f.caseId.toLowerCase().includes(key)||f.mission.toLowerCase().includes(key)));
-}
-async function loadCase(id,readOnly){
-const url=`https://docs.google.com/spreadsheets/d/${DATA_SHEET_ID}/gviz/tq?tqx=out:json`;
-const res=await fetch(url);
-const text=await res.text();
-const json=JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}")+1));
-for(let r of json.table.rows){
-if(r.c[0]?.v===id){
-showNewReport();
-caseIdDisplay.innerText=id;
-date.value=r.c[1]?.v||"";
-missionName.value=r.c[2]?.v||"";
-reportDetail.value=r.c[3]?.v||"";
-intelInfo.value=r.c[4]?.v||"";
-agentsInvolved.value=r.c[5]?.v||"";
-status.value=r.c[6]?.v||"OPEN";
-evidenceList=(r.c[9]?.v||"").split(",");
-renderEvidence();
-disableForm(readOnly);
-break;
-}}
-}
-function editCase(id){loadCase(id,false);}
-function viewCase(id){loadCase(id,true);}
-
-/* CONTRIBUTOR */
-async function loadContributors(){
-const url=`https://docs.google.com/spreadsheets/d/${DATA_SHEET_ID}/gviz/tq?tqx=out:json`;
-const res=await fetch(url);
-const text=await res.text();
-const json=JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}")+1));
-let map={};
-for(let r of json.table.rows){
-let mission=r.c[2]?.v||"-";
-let agents=r.c[5]?.v||"";
-agents.split(",").forEach(a=>{
-let name=a.trim().toUpperCase();
-if(!name)return;
-if(!map[name])map[name]={count:0,missions:[]};
-map[name].count++;
-map[name].missions.push(mission);
-});
-}
-contributorData=map;
-}
-function filterAgents(){
-let key=agentSearchInput.value.trim().toUpperCase();
-if(!key){agentResult.innerHTML="";return;}
-let found=contributorData[key];
-agentResult.innerHTML=found
-?`<div class="card"><strong>${key}</strong><br>Total Missions: ${found.count}<br><br>${found.missions.join("<br>")}</div>`
-:`<div class="card">Agent not found</div>`;
-}
 </script>
+
 </body>
 </html>
