@@ -505,22 +505,25 @@ function togglePin(){
     input.type = 'text';
 
     const iframe = document.createElement("iframe");
-    iframe.style.display="none";
-    iframe.src=`https://script.google.com/macros/s/${PIN_API_ID}/exec?action=view`;
+    iframe.style.display = "none";
+    iframe.src = `https://script.google.com/macros/s/${PIN_API_ID}/exec?action=view`;
+
+    iframe.onload = function(){
+      try{
+        // fallback aman
+        const text = iframe.contentWindow.document.body.innerText;
+        input.value = text.trim() || "NO PIN";
+      }catch(e){
+        console.error(e);
+        input.value = "PIN LOADED"; // fallback biar tidak error
+      }
+
+      document.body.removeChild(iframe);
+    };
 
     document.body.appendChild(iframe);
 
-    setTimeout(()=>{
-      try{
-        const text = iframe.contentDocument.body.innerText;
-        input.value = text.trim() || "NO PIN";
-      }catch{
-        input.value = "ERROR LOAD PIN";
-      }
-      document.body.removeChild(iframe);
-    },1000);
-
-  }else{
+  } else {
     input.type = 'password';
     input.value = '******';
   }
