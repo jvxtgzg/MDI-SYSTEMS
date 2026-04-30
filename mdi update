@@ -388,16 +388,16 @@ showPopup("Data Tidak Cocok");
 }
 
 async function loadPIN(){
-try{
-const res = await fetch("https://script.google.com/macros/s/AKfycbyR8Src2UFkUnUpoyf7Xa0xsTs1_16QsShvslPF_dBRVClTQnK7LBQv3ArpoPpzsOqQ/exec?action=view");
-const pin = await res.text();
+  try{
+    const url = "https://script.google.com/macros/s/AKfycbyR8Src2UFkUnUpoyf7Xa0xsTs1_16QsShvslPF_dBRVClTQnK7LBQv3ArpoPpzsOqQ/exec?action=view";
+    const res = await fetch(url);
+    const pin = await res.text();
 
-pinField.value = pin.trim() || "NO PIN";
-
-}catch(err){
-console.error(err);
-pinField.value = "ERROR";
-}
+    pinField.value = pin ? pin.trim() : "NO PIN";
+  }catch(err){
+    console.error(err);
+    pinField.value = "ERROR LOAD PIN";
+  }
 }
 
 function openCommandPanel(){
