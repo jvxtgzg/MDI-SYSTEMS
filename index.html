@@ -138,21 +138,7 @@
 <div class="header">
   <div class="header-left">
     <div class="header-logo">
-      <svg width="56" height="56" viewBox="0 0 56 56">
-        <circle cx="28" cy="28" r="27" fill="#0d2060" stroke="#c8a800" stroke-width="2.5"/>
-        <text x="28" y="13" text-anchor="middle" font-size="5.5" fill="#c8a800" font-weight="bold">BUREAU OF RESPONSE</text>
-        <text x="28" y="20" text-anchor="middle" font-size="5.5" fill="#c8a800" font-weight="bold">OPERATIVE</text>
-
-        <polygon points="28,23 22,30 28,28 34,30" fill="#c8a800"/>
-        <polygon points="20,25 28,23 22,30" fill="#c8a800"/>
-        <polygon points="36,25 28,23 34,30" fill="#c8a800"/>
-        <circle cx="28" cy="22" r="3" fill="#c8a800"/>
-        <polygon points="28,22 30,20 28,21 26,20" fill="#e0a000"/>
-
-        <text x="28" y="48" text-anchor="middle" font-size="7" fill="#c8a800">★ ★ ★</text>
-
-        <text x="28" y="40" text-anchor="middle" font-size="5" fill="#c8a800">DEPT OF JUSTICE</text>
-      </svg>
+      <img src="BRO LOGO.png" alt="BRO Logo" width="56" height="56" />
     </div>
     <div class="header-brand">
       <div class="brand-title">MDI</div>
@@ -221,8 +207,8 @@
             </div>
           </div>
           <div class="pin-row">
-            <button class="btn-teal" onclick="showToast('Command Panel dibuka')">Command Panel</button>
-            <div style="display:flex; gap:8px; align-items:center;">
+            <button class="btn-teal" onclick="openCommandPanel()">Command Panel</button>
+            <div id="pin-update-section" style="display:none; gap:8px; align-items:center;">
               <input type="text" class="pin-input" id="pin-new" placeholder="PIN baru" style="width:150px;" />
               <button class="btn-primary sm" onclick="updatePin()">Update PIN</button>
             </div>
@@ -489,31 +475,52 @@ function doAgentsBRO() {
 	window.open('http://bro-membedata-imerp.my.id/', '_blank');
 }
 
+function openCommandPanel() {
+  const rank = (localStorage.getItem('agentRank') || "").toUpperCase();
+  const section = document.getElementById('pin-update-section');
+
+  if (!rank.includes("DIRECTOR")) {
+    showToast("Akses ditolak! Hanya Director");
+    return;
+  }
+
+  if (section.style.display === "none") {
+    section.style.display = "flex";
+    showToast("Command Panel dibuka");
+  } else {
+    section.style.display = "none";
+  }
+}
+
 let pinVisible = false;
 let realPin = "";
 
 async function togglePin() {
-	const input = document.getElementById('pin-display');
+  const input = document.getElementById('pin-display');
 
-	pinVisible = !pinVisible;
+  pinVisible = !pinVisible;
 
-	if (pinVisible) {
-		input.type = 'text';
+  if (pinVisible) {
+    input.type = 'text';
 
-		if (!realPin) {
-		const res = await fetch(`https://docs.google.com/spreadsheets/d/${PIN_SHEET_ID}/gviz/tq?tqx=out:json`);
-		const text = await res.text();
-		const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+    try {
+      const res = await fetch(`https://docs.google.com/spreadsheets/d/${PIN_SHEET_ID}/gviz/tq?tqx=out:json`);
+      const text = await res.text();
+      const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
 
-		realPin = (json.table.rows?.[0]?.c?.[4]?.v || "").toString().trim();
-		}
+      realPin = (json.table.rows?.[0]?.c?.[4]?.v || "").toString().trim();
 
-		input.value = realPin || "PIN NOT FOUND";
+      input.value = realPin || "PIN NOT FOUND";
 
-	} else {
-		input.type = 'password';
-		input.value = '*****';
-	}
+    } catch (err) {
+      console.error(err);
+      input.value = "ERROR LOAD PIN";
+    }
+
+  } else {
+    input.type = 'password';
+    input.value = '******';
+  }
 }
 
 function updatePin() {
