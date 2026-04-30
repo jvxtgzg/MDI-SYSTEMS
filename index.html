@@ -360,7 +360,6 @@ function openImageModal(url) {
   modal.style.display = "flex";
 }
 
-// klik background = tutup
 document.getElementById('image-modal').addEventListener('click', function () {
   this.style.display = "none";
 });
@@ -374,13 +373,11 @@ function previewFromLink() {
     return;
   }
 
-  // validasi sederhana
   if (!url.startsWith("http")) {
     preview.innerHTML = "Link tidak valid!";
     return;
   }
 
-  // tampilkan gambar
   preview.innerHTML = `
     <img src="${url}" 
         style="max-width:100%; max-height:120px; border-radius:6px; cursor:pointer;" 
@@ -392,7 +389,6 @@ function previewFromLink() {
 
 function doRefresh() {
   if (document.getElementById('view-dashboard').style.display === 'block') {
-    // refresh dashboard (optional)
     showToast("Dashboard refreshed");
   }
 
@@ -552,7 +548,7 @@ async function saveReport() {
   const intel = document.querySelectorAll('.report-area')[1].value;
   const agents = document.getElementById('input-agents').value;
 
-  const createdBy = localStorage.getItem('agentNama') || "UNKNOWN"; // FIX
+  const createdBy = localStorage.getItem('agentNama') || "UNKNOWN"; 
   const closedBy = status === "CLOSED" ? createdBy : "";
 
   if (!mission || !status || !date) {
@@ -587,7 +583,6 @@ async function saveReport() {
         : "Laporan berhasil disimpan!"
     );
 
-    // reset form
     document.querySelectorAll('.report-input')[0].value = "";
     document.getElementById('mission-status').value = "";
     document.querySelector('input[type="date"]').value = "";
@@ -634,12 +629,10 @@ async function loadFiles() {
       let actionButtons = "";
 
       if (status === "OPEN") {
-        // 🔥 OPEN = EDIT
         actionButtons = `
           <button class="btn-edit" onclick="editReport(${JSON.stringify(r.c).replace(/"/g, '&quot;')})">Edit</button>
         `;
       } else {
-        // 🔥 CLOSED = VIEW (+ unlock kalau director)
         actionButtons = `
           <button class="btn-view" onclick="viewReport(${JSON.stringify(r.c).replace(/"/g, '&quot;')})">View</button>
           ${isDirector ? `<button class="btn-unlock" onclick="unlockCase('${caseId}')">Unlock</button>` : ""}
@@ -699,7 +692,6 @@ function viewReport(row) {
       `<img src="${evidence}" style="max-width:100%; max-height:120px; border-radius:6px;" />`;
   }
 
-  // 🔥 FIX: hide tombol save yang benar
   document.getElementById('btn-save').style.display = "none";
 }
 
@@ -715,7 +707,7 @@ async function unlockCase(caseId) {
 
     showToast("Case berhasil di-unlock!");
 
-    loadFiles(); // refresh list
+    loadFiles(); 
 
   } catch (err) {
     console.error(err);
@@ -726,10 +718,8 @@ async function unlockCase(caseId) {
 let currentCaseId = null;
 
 function editReport(row) {
-  // pindah ke halaman report
   navigate('report');
 
-  // ambil data dari sheet
   const caseId = row?.[0]?.v || "";
   const rawDate = row?.[1]?.f || row?.[1]?.v || "";
   const mission = row?.[2]?.v || "";
@@ -739,9 +729,8 @@ function editReport(row) {
   const agents = row?.[6]?.v || "";
   const status = row?.[7]?.v || "";
 
-  currentCaseId = caseId; // 🔥 penting
+  currentCaseId = caseId; 
 
-  // set ke form
   document.getElementById('case-id-title').innerText = "CASE ID : " + caseId;
 
   document.querySelectorAll('.report-input')[0].value = mission;
@@ -754,7 +743,6 @@ function editReport(row) {
   document.getElementById('input-agents').value = agents;
   document.getElementById('evidence-link').value = evidence;
 
-  // tampilkan preview gambar
   if (evidence) {
     document.getElementById('evidence-preview').innerHTML =
       `<img src="${evidence}" style="max-width:100%; max-height:120px; border-radius:6px;" />`;
@@ -793,7 +781,7 @@ async function loadContribution() {
 
     json.table.rows.forEach(r => {
       const mission = r.c?.[2]?.v || "-";
-      const agents = r.c?.[6]?.v || ""; // ← FIX DI SINI
+      const agents = r.c?.[6]?.v || ""; 
 
       agents.split(",").forEach(a => {
         const name = a.trim().toUpperCase();
