@@ -248,10 +248,11 @@
 
             <input type="text" id="input-agents" class="report-input" placeholder="Agents Terlibat (contoh : REX, ADRIEN, DAGU, JACK)" />
 
-          <div class="cdn-row">
-            <input type="text" id="evidence-link" class="report-input" placeholder="Paste link gambar (Discord / CDN)" />
-            <button class="btn-primary sm" onclick="previewFromLink()">Preview</button>
-          </div>
+            <div id="evidence-container"></div>
+
+            <button id="btn-add-evidence" class="btn-primary sm" onclick="addEvidence()">
+              + Add Evidence
+            </button>
 
             <div class="status-evidence-row">
               <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
@@ -324,6 +325,10 @@ function navigate(view) {
   document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
   const btn = document.getElementById('btn-nav-' + view);
   if (btn) btn.classList.add('active');
+
+  if (view === 'report') {
+    resetReportForm();
+  }
 
   if (view === 'files') {
     loadFiles();
@@ -539,8 +544,50 @@ function updatePin() {
   showToast('PIN berhasil diperbarui!');
 }
 
+function addEvidence(value = "") {
+  const container = document.getElementById("evidence-container");
+
+  const div = document.createElement("div");
+  div.className = "cdn-row";
+
+  div.innerHTML = `
+    <input type="text" class="report-input evidence-input" placeholder="Paste link gambar" value="${value}" />
+    <button class="btn-primary sm" onclick="previewSingle(this)">Preview</button>
+    <button class="btn-unlock" onclick="this.parentElement.remove()">X</button>
+  `;
+
+  container.appendChild(div);
+}
+
+function previewSingle(btn) {
+  const input = btn.parentElement.querySelector("input");
+  const url = input.value.trim();
+
+  const preview = document.getElementById("evidence-preview");
+
+  if (!url || !url.startsWith("http")) {
+    preview.innerHTML = "Link tidak valid!";
+    return;
+  }
+
+  preview.innerHTML = `
+    <img src="${url}" 
+    style="max-width:100%; max-height:120px; border-radius:6px;"
+    onclick="openImageModal('${url}')"
+    />
+  `;
+}
+
 async function saveReport() {
-  const evidence = document.getElementById('evidence-link').value.trim();
+  const evidenceInputs = document.querySelectorAll(".evidence-input");
+
+  const evidenceArray = [];
+  evidenceInputs.forEach(input => {
+    const val = input.value.trim();
+    if (val) evidenceArray.push(val);
+  });
+
+  const evidence = JSON.stringify(evidenceArray);
   const mission = document.querySelectorAll('.report-input')[0].value;
   const status = document.getElementById('mission-status').value;
   const date = document.querySelector('input[type="date"]').value;
@@ -583,18 +630,7 @@ async function saveReport() {
         : "Laporan berhasil disimpan!"
     );
 
-    document.querySelectorAll('.report-input')[0].value = "";
-    document.getElementById('mission-status').value = "";
-    document.querySelector('input[type="date"]').value = "";
-
-    document.querySelectorAll('.report-area')[0].value = "";
-    document.querySelectorAll('.report-area')[1].value = "";
-
-    document.getElementById('input-agents').value = "";
-    document.getElementById('evidence-link').value = "";
-    document.getElementById('evidence-preview').innerHTML = "Evidence Image Preview";
-
-    currentCaseId = null;
+    resetReportForm();
 
   } catch (err) {
     console.error(err);
@@ -661,6 +697,30 @@ async function loadFiles() {
   }
 }
 
+function resetReportForm() {
+  document.querySelectorAll('.report-input')[0].value = "";
+  document.getElementById('mission-status').value = "";
+  document.querySelector('input[type="date"]').value = "";
+
+  document.querySelectorAll('.report-area')[0].value = "";
+  document.querySelectorAll('.report-area')[1].value = "";
+
+  document.getElementById('input-agents').value = "";
+
+  const container = document.getElementById("evidence-container");
+  container.innerHTML = "";
+
+  addEvidence();
+
+  document.getElementById('evidence-preview').innerHTML = "Evidence Image Preview";
+
+  currentCaseId = null;
+
+  document.getElementById('btn-save').style.display = "block";
+  document.getElementById('btn-add-evidence').style.display = "inline-block";
+  document.getElementById('case-id-title').innerText = "CASE ID : AUTO GENERATE";
+}
+
 function viewReport(row) {
   navigate('report');
 
@@ -685,14 +745,42 @@ function viewReport(row) {
   document.querySelectorAll('.report-area')[1].value = intel;
 
   document.getElementById('input-agents').value = agents;
-  document.getElementById('evidence-link').value = evidence;
 
-  if (evidence) {
-    document.getElementById('evidence-preview').innerHTML =
-      `<img src="${evidence}" style="max-width:100%; max-height:120px; border-radius:6px;" />`;
+  const container = document.getElementById("evidence-container");
+  container.innerHTML = "";
+
+  let evidenceArray = [];
+
+  try {
+    evidenceArray = JSON.parse(evidence);
+    if (!Array.isArray(evidenceArray)) evidenceArray = [];
+  } catch {
+    if (evidence) evidenceArray = [evidence];
+  }
+
+  evidenceArray.forEach(link => {
+    addEvidence(link);
+  });
+
+  if (evidenceArray.length === 0) {
+    addEvidence();
+  }
+
+  const preview = document.getElementById('evidence-preview');
+
+  if (evidenceArray.length > 0) {
+    preview.innerHTML = evidenceArray.map(url => `
+      <img src="${url}" 
+        style="max-width:70px; max-height:70px; margin:4px; border-radius:6px; cursor:pointer;"
+        onclick="openImageModal('${url}')"
+      />
+    `).join("");
+  } else {
+    preview.innerHTML = "No Evidence";
   }
 
   document.getElementById('btn-save').style.display = "none";
+  document.getElementById('btn-add-evidence').style.display = "none";
 }
 
 async function unlockCase(caseId) {
@@ -741,14 +829,42 @@ function editReport(row) {
   document.querySelectorAll('.report-area')[1].value = intel;
 
   document.getElementById('input-agents').value = agents;
-  document.getElementById('evidence-link').value = evidence;
 
-  if (evidence) {
-    document.getElementById('evidence-preview').innerHTML =
-      `<img src="${evidence}" style="max-width:100%; max-height:120px; border-radius:6px;" />`;
+  const container = document.getElementById("evidence-container");
+  container.innerHTML = "";
+
+  let evidenceArray = [];
+
+  try {
+    evidenceArray = JSON.parse(evidence);
+    if (!Array.isArray(evidenceArray)) evidenceArray = [];
+  } catch {
+    if (evidence) evidenceArray = [evidence];
   }
 
-  document.querySelector('#view-report .btn-primary').style.display = "block";
+  evidenceArray.forEach(link => {
+    addEvidence(link);
+  });
+
+  if (evidenceArray.length === 0) {
+    addEvidence();
+  }
+
+  const preview = document.getElementById('evidence-preview');
+
+  if (evidenceArray.length > 0) {
+    preview.innerHTML = evidenceArray.map(url => `
+      <img src="${url}" 
+        style="max-width:70px; max-height:70px; margin:4px; border-radius:6px; cursor:pointer;"
+        onclick="openImageModal('${url}')"
+      />
+    `).join("");
+  } else {
+    preview.innerHTML = "No Evidence";
+  }
+
+  document.getElementById('btn-save').style.display = "block";
+  document.getElementById('btn-add-evidence').style.display = "inline-block";
 }
 
 function filterFiles(q) {
