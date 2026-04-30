@@ -80,7 +80,6 @@
   .btn-primary:hover { background: var(--navy-hover); transform: translateY(-1px); }
   .btn-primary:active { transform: translateY(0); }
   .btn-primary.sm { padding: 9px 18px; font-size: 13px; }
-  .btn-unlock { background: orange; color: #fff; }
 
   .btn-teal { background: var(--teal); color: var(--white); border: none; border-radius: 7px; padding: 13px 26px; font-family: 'Exo 2', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; transition: background 0.15s; }
   .btn-teal:hover { background: var(--teal-dark); }
@@ -100,6 +99,7 @@
   .file-card-info p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
   .btn-edit { background: var(--navy); color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Exo 2', sans-serif; }
   .btn-view { background: var(--teal); color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Exo 2', sans-serif; }
+  .btn-unlock { background: var(--gold); color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Exo 2', sans-serif; }
 
   /* CONTRIBUTION */
   .contrib-card { background: var(--teal); border-radius: 12px; padding: 18px 22px; width: 320px; box-shadow: 0 4px 14px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
@@ -255,7 +255,7 @@
 
             <div class="status-evidence-row">
               <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
-                <button class="btn-primary" onclick="saveReport()">Save</button>
+                <button id="btn-save" class="btn-primary" onclick="saveReport()">Save</button>
               </div>
               <div class="evidence-preview" id="evidence-preview" style="flex:1;">
                 Evidance Image Preview
@@ -623,29 +623,40 @@ async function loadFiles() {
 
     list.innerHTML = "";
 
+    const rank = (localStorage.getItem('agentRank') || "").toUpperCase();
+    const isDirector = rank.includes("DIRECTOR");
+
     json.table.rows.forEach(r => {
       const caseId = r.c?.[0]?.v || "-";
-      const date = r.c?.[1]?.v || "-";
       const mission = r.c?.[2]?.v || "-";
-      const status = r.c?.[7]?.v || "-";
+      const status = (r.c?.[7]?.v || "").toUpperCase();
+
+      let actionButtons = "";
+
+      if (status === "OPEN") {
+        // 🔥 OPEN = EDIT
+        actionButtons = `
+          <button class="btn-edit" onclick="editReport(${JSON.stringify(r.c).replace(/"/g, '&quot;')})">Edit</button>
+        `;
+      } else {
+        // 🔥 CLOSED = VIEW (+ unlock kalau director)
+        actionButtons = `
+          <button class="btn-view" onclick="viewReport(${JSON.stringify(r.c).replace(/"/g, '&quot;')})">View</button>
+          ${isDirector ? `<button class="btn-unlock" onclick="unlockCase('${caseId}')">Unlock</button>` : ""}
+        `;
+      }
 
       const div = document.createElement("div");
       div.className = "file-card";
-      div.setAttribute("data-mission", (mission || "").toLowerCase());
-      div.setAttribute("data-case", (caseId || "").toLowerCase());
 
       div.innerHTML = `
         <div class="file-card-info">
           <h4>${mission} / ${caseId}</h4>
           <p>Status : ${status}</p>
         </div>
-        ${
-          status === "OPEN"
-            ? `<button class="btn-edit" onclick="editReport(${JSON.stringify(r.c).replace(/"/g, '&quot;')})">Edit</button>`
-            : isPrivilegedRank()
-              ? `<button class="btn-view sm" onclick="unlockCase('${caseId}')">Unlock</button>`
-              : ``
-        }
+        <div style="display:flex; gap:6px;">
+          ${actionButtons}
+        </div>
       `;
 
       list.appendChild(div);
@@ -655,6 +666,41 @@ async function loadFiles() {
     console.error(err);
     list.innerHTML = "Gagal load data";
   }
+}
+
+function viewReport(row) {
+  navigate('report');
+
+  const caseId = row?.[0]?.v || "";
+  const rawDate = row?.[1]?.f || row?.[1]?.v || "";
+  const mission = row?.[2]?.v || "";
+  const detail = row?.[3]?.v || "";
+  const intel = row?.[4]?.v || "";
+  const evidence = row?.[5]?.v || "";
+  const agents = row?.[6]?.v || "";
+  const status = row?.[7]?.v || "";
+
+  currentCaseId = null;
+
+  document.getElementById('case-id-title').innerText = "CASE ID : " + caseId;
+
+  document.querySelectorAll('.report-input')[0].value = mission;
+  document.getElementById('mission-status').value = status;
+  document.querySelector('input[type="date"]').value = rawDate;
+
+  document.querySelectorAll('.report-area')[0].value = detail;
+  document.querySelectorAll('.report-area')[1].value = intel;
+
+  document.getElementById('input-agents').value = agents;
+  document.getElementById('evidence-link').value = evidence;
+
+  if (evidence) {
+    document.getElementById('evidence-preview').innerHTML =
+      `<img src="${evidence}" style="max-width:100%; max-height:120px; border-radius:6px;" />`;
+  }
+
+  // 🔥 FIX: hide tombol save yang benar
+  document.getElementById('btn-save').style.display = "none";
 }
 
 async function unlockCase(caseId) {
@@ -713,6 +759,8 @@ function editReport(row) {
     document.getElementById('evidence-preview').innerHTML =
       `<img src="${evidence}" style="max-width:100%; max-height:120px; border-radius:6px;" />`;
   }
+
+  document.querySelector('#view-report .btn-primary').style.display = "block";
 }
 
 function filterFiles(q) {
