@@ -426,11 +426,19 @@ window.open("http://bro-membedata-imerp.my.id/","_blank");
 }
 
 let pinVisible=false;
-function togglePIN(){
-pinField.type = pinVisible ? "password" : "text";
-pinVisible=!pinVisible;
+async function togglePIN(){
+
+pinVisible = !pinVisible;
+
+if(pinVisible){
+pinField.type = "text";
+await loadPIN(); // 🔥 ambil PIN dari Apps Script
+}else{
+pinField.type = "password";
+pinField.value = "******";
 }
 
+}
 /* === NEW REPORT SAVE === */
 let currentCaseId = "";
 
