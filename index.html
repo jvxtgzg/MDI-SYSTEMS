@@ -1,1 +1,975 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BRO - Bureau of Response Operative</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
 
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;600;700;800&display=swap');
+
+  body { background: #1a6fd4; min-height: 100vh; }
+
+  /* HEADER */
+  .header { background: #1a0080; display: flex; align-items: center; justify-content: space-between; padding: 10px 30px; min-height: 80px; }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .header-logo { width: 62px; height: 62px; border-radius: 50%; background: #1a3a7a; border: 3px solid #c8a800; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .header-brand .brand-title { font-size: 28px; font-weight: 900; color: #fff; line-height: 1.1; }
+  .header-brand .brand-sub { font-size: 12px; color: #ccc; line-height: 1.4; }
+  .header-right { text-align: right; }
+  .header-right h1 { font-size: 26px; font-weight: 900; color: #fff; }
+  .header-right p { font-size: 13px; color: #ccc; font-weight: 600; letter-spacing: 1px; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* LOGIN */
+  #page-login { min-height: calc(100vh - 80px); }
+  #page-login.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .login-card { background: #fff; border-radius: 16px; padding: 40px 50px; width: 580px; box-shadow: 0 4px 20px rgba(0,0,0,0.35); border: 2px solid #222; }
+  .login-card h2 { text-align: center; font-size: 22px; font-weight: 800; margin-bottom: 24px; }
+  .login-card input { width: 100%; padding: 14px 16px; border: 2px solid #5bb8f5; border-radius: 8px; font-size: 15px; margin-bottom: 14px; outline: none; color: #555; }
+  .login-card input:focus { border-color: #1a0080; }
+  .btn-login { display: block; width: 200px; margin: 10px auto 0; background: #1a0080; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 16px; font-weight: 700; cursor: pointer; }
+  .btn-login:hover { background: #2a00c0; }
+  .login-footer { text-align: center; margin-top: 28px; color: #cce4ff; font-size: 13px; }
+
+  :root {
+    --navy: #1a0080;
+    --navy-dark: #120060;
+    --navy-hover: #2a00c0;
+    --blue-mid: #1a6fd4;
+    --blue-bg: #1565c0;
+    --teal: #00bcd4;
+    --teal-dark: #00a0b8;
+    --card-bg: #ddeeff;
+    --card-bg2: #c8e4ff;
+    --gold: #c8a800;
+    --white: #ffffff;
+    --text-dark: #111;
+    --text-muted: #4a5a7a;
+  }
+  
+  /* MAIN LAYOUT */
+  .main-layout { display: flex; min-height: calc(100vh - 82px); }
+
+  /* SIDEBAR */
+  .sidebar { width: 220px; min-width: 220px; background: #1a6fd4; padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; border-right: 2px solid rgba(255,255,255,0.1); }
+  .sidebar-agent { text-align: center; padding: 10px 6px 14px; border-bottom: 1.5px solid rgba(255,255,255,0.2); margin-bottom: 4px; }
+  .agent-name { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; color: #00e5ff; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2; }
+  .agent-rank { font-size: 12.5px; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+  .sidebar-btn { width: 100%; padding: 12px 10px; border: none; border-radius: 8px; font-family: 'Exo 2', sans-serif; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all 0.18s; letter-spacing: 0.3px; }
+  .sidebar-btn.teal { background: var(--teal); color: var(--white); }
+  .sidebar-btn.teal:hover, .sidebar-btn.teal.active { background: var(--navy); color: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+  .sidebar-btn.dark { background: var(--navy); color: var(--white); margin-top: 4px; }
+  .sidebar-btn.dark:hover { background: var(--navy-hover); }
+
+  /* CONTENT */
+  .content { flex: 1; background: var(--blue-mid); padding: 28px 32px; }
+  .content-title { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: var(--white); letter-spacing: 2px; margin-bottom: 22px; text-transform: uppercase; }
+
+  /* DASH CARDS */
+  .dash-card { background: var(--card-bg); border-radius: 12px; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; gap: 16px; flex-wrap: wrap; border: 1.5px solid rgba(255,255,255,0.3); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+  .dash-card-info h3 { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: var(--text-dark); letter-spacing: 0.5px; }
+  .dash-card-info p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .dash-card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+
+  /* BUTTONS */
+  .btn-primary { background: var(--navy); color: var(--white); border: none; border-radius: 7px; padding: 11px 28px; font-family: 'Exo 2', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; transition: background 0.15s, transform 0.1s; }
+  .btn-primary:hover { background: var(--navy-hover); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary.sm { padding: 9px 18px; font-size: 13px; }
+
+  .btn-teal { background: var(--teal); color: var(--white); border: none; border-radius: 7px; padding: 13px 26px; font-family: 'Exo 2', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; transition: background 0.15s; }
+  .btn-teal:hover { background: var(--teal-dark); }
+
+  /* PIN */
+  .pin-input { padding: 9px 14px; border-radius: 7px; border: 1.5px solid #aac4e0; font-size: 15px; text-align: center; width: 180px; background: var(--white); font-family: 'Exo 2', sans-serif; color: #333; letter-spacing: 2px; }
+  .pin-input:focus { outline: 2px solid var(--navy); }
+
+  .pin-row { width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 8px; padding-top: 10px; border-top: 1px solid #c0d8f0; }
+
+  /* FILES */
+  .search-bar { width: 100%; padding: 12px 16px; border-radius: 7px; border: 1.5px solid #b0c8e8; font-size: 14px; margin-bottom: 14px; background: var(--white); font-family: 'Exo 2', sans-serif; outline: none; transition: border 0.15s; }
+  .search-bar:focus { border-color: var(--navy); }
+
+  .file-card { background: var(--card-bg); border-radius: 8px; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border: 1.5px solid #b0c8e8; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .file-card-info h4 { font-size: 14px; font-weight: 700; color: var(--text-dark); font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; font-size: 15px; }
+  .file-card-info p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .btn-edit { background: var(--navy); color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Exo 2', sans-serif; }
+  .btn-view { background: var(--teal); color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Exo 2', sans-serif; }
+  .btn-unlock { background: var(--gold); color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Exo 2', sans-serif; }
+
+  /* CONTRIBUTION */
+  .contrib-card { background: var(--teal); border-radius: 12px; padding: 18px 22px; width: 320px; box-shadow: 0 4px 14px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+  .contrib-card p { font-size: 14px; color: #111; margin-bottom: 3px; font-weight: 600; }
+  .contrib-card ul { margin-top: 10px; padding-left: 18px; }
+  .contrib-card ul li { font-size: 13px; color: #111; margin-bottom: 4px; }
+  #contrib-list { display: flex; flex-wrap: wrap; gap: 20px; }
+
+  /* REPORT */
+  textarea.report-area { width: 100%; padding: 12px 16px; border-radius: 7px; border: 1.5px solid #b0c8e8; font-size: 14px; resize: vertical; min-height: 110px; font-family: 'Exo 2', sans-serif; outline: none; background: var(--white); color: #333; }
+  textarea.report-area:focus { border-color: var(--navy); }
+
+  /* REPORT FORM */
+  .report-input { width: 100%; padding: 12px 16px; border-radius: 7px; border: 1.5px solid #b0c8e8; font-size: 14px; background: var(--white); font-family: 'Exo 2', sans-serif; color: #333; outline: none; transition: border 0.15s; box-sizing: border-box; }
+  .report-input:focus { border-color: var(--navy); }
+  .report-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .report-bottom { display: flex; gap: 12px; align-items: stretch; }
+  .report-bottom-left { flex: 1; }
+  .report-bottom-right { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+  .cdn-row { display: flex; gap: 8px; align-items: center; }
+  .cdn-row .report-input { flex: 1; }
+  .evidence-preview { flex: 1; background: var(--teal); border-radius: 7px;display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--white); min-height: 70px; padding: 10px; text-align: center; }
+  .status-evidence-row { display: flex; gap: 8px; align-items: stretch; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 30px; right: 30px; background: var(--navy); color: #fff; padding: 12px 26px; border-radius: 8px; font-size: 14px; font-weight: 600; display: none; z-index: 9999; box-shadow: 0 4px 18px rgba(0,0,0,0.35); font-family: 'Exo 2', sans-serif; border-left: 4px solid var(--gold); animation: slideIn 0.3s ease; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">
+      <img src="BRO LOGO.png" alt="BRO Logo" width="56" height="56" />
+    </div>
+    <div class="header-brand">
+      <div class="brand-title">MDI</div>
+      <div class="brand-sub">Mobile Data<br>Investigation</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <h1>BEREAU OF RESPONSE OPERATIVE</h1>
+    <p>DEPARTEMENT OF JUSTICE</p>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="page-login" class="page active">
+  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 0;">
+    <div class="login-card">
+      <h2>Agent Login</h2>
+      <input type="text" id="input-codename" placeholder="Code Name" />
+      <input type="password" id="input-callsign" placeholder="Callsign" />
+      <button class="btn-login" onclick="doLogin()">Login</button>
+    </div>
+    <div class="login-footer">©2026 Berau Of Response Operative - BRO</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="page-app" class="page">
+  <div class="main-layout">
+    <div class="sidebar">
+      <div class="sidebar-agent">
+        <div class="agent-name" id="sidebar-name">AGENTS NAME (DIVISI)</div>
+        <div class="agent-rank">RANK AGENTS</div>
+      </div>
+      <button class="sidebar-btn teal active" id="btn-nav-dashboard" onclick="navigate('dashboard')">Dashboard</button>
+      <button class="sidebar-btn teal" id="btn-nav-report" onclick="navigate('report')">New Report</button>
+      <button class="sidebar-btn teal" id="btn-nav-files" onclick="navigate('files')">Files</button>
+      <button class="sidebar-btn teal" id="btn-nav-contribution" onclick="navigate('contribution')">Contribution</button>
+      <button class="sidebar-btn dark" onclick="doRefresh()">Refresh</button>
+      <button class="sidebar-btn dark" onclick="doLogout()">Logout</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div id="view-dashboard">
+        <div class="content-title">Dashboard</div>
+
+        <div class="dash-card">
+          <div class="dash-card-info">
+            <h3>Agents Data BRO</h3>
+            <p>Periksa Dasta Diri Rahasia Anda Sebagai Agents BRO</p>
+          </div>
+          <button class="btn-primary" onclick="doAgentsBRO()">OPEN</button>
+        </div>
+
+        <div class="dash-card" style="flex-direction: column; align-items: stretch;">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;">
+            <div class="dash-card-info">
+              <h3>Security PIN</h3>
+              <p>Gunakan PIN Untuk Akses Member Data BRO</p>
+            </div>
+            <div class="dash-card-right">
+              <input type="password" class="pin-input" id="pin-display" value="******" readonly />
+              <button class="btn-primary sm" onclick="togglePin()">View PIN</button>
+            </div>
+          </div>
+          <div class="pin-row">
+            <button class="btn-teal" onclick="openCommandPanel()">Command Panel</button>
+            <div id="pin-update-section" style="display:none; gap:8px; align-items:center;">
+              <input type="text" class="pin-input" id="pin-new" placeholder="PIN baru" style="width:150px;" />
+              <button class="btn-primary sm" onclick="updatePin()">Update PIN</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT FORM -->
+      <div id="view-report" style="display:none;">
+
+        <div class="content-title" id="case-id-title">CASE ID : AUTO GENERATE</div>
+
+        <div class="report-row">
+          <input type="text" class="report-input" placeholder="Mission Name" style="flex:1;" />
+          <select class="report-input" id="mission-status" style="flex:1;">
+            <option value="">-- Pilih Status --</option>
+            <option value="OPEN">OPEN</option>
+            <option value="CLOSED">CLOSED</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <input type="date" class="report-input" />
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <textarea class="report-area" rows="5" placeholder="Mission Detail" style="min-height:120px;"></textarea>
+        </div>
+
+        <div class="report-bottom">
+
+          <div class="report-bottom-left">
+            <textarea class="report-area" rows="7" placeholder="intel info" style="height:100%; min-height:190px;"></textarea>
+          </div>
+
+          <div class="report-bottom-right">
+
+            <input type="text" id="input-agents" class="report-input" placeholder="Agents Terlibat (contoh : REX, ADRIEN, DAGU, JACK)" />
+
+            <div id="evidence-container"></div>
+
+            <button id="btn-add-evidence" class="btn-primary sm" onclick="addEvidence()">
+              + Add Evidence
+            </button>
+
+            <div class="status-evidence-row">
+              <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
+                <button id="btn-save" class="btn-primary" onclick="saveReport()">Save</button>
+              </div>
+              <div class="evidence-preview" id="evidence-preview" style="flex:1;">
+                Evidance Image Preview
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- FILES -->
+      <div id="view-files" style="display:none;">
+        <div class="content-title">Files</div>
+
+        <input type="text" class="search-bar" placeholder="Search Case ID / Mission" oninput="filterFiles(this.value)" />
+
+        <div id="files-list"></div>
+      </div>
+
+      <!-- CONTRIBUTION -->
+      <div id="view-contribution" style="display:none;">
+        <div class="content-title">Agents Contributor</div>
+        
+        <input type="text" class="search-bar" placeholder="Search Agent Name" oninput="filterContribution(this.value)" />
+
+        <div id="contrib-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="image-modal" style="
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.8);
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+">
+  <img id="modal-img" style="max-width:90%; max-height:90%; border-radius:10px;" />
+</div>
+
+<script>
+const MEMBER_SHEET_ID="1yVsYlFJkPeIp6p3LApsiW4Ivv_5XihznO7BJLf_VRsY";
+const PIN_SHEET_ID="1hhNx80P6iydL0ouRqNtsQDx4ajNFIoz7sCnxLlZdeVs";
+const REPORT_SHEET_ID="1QgVdZ2Xtj2zskCG_lXPs9joVnNNZ9F19mxVVHbygtt8";
+const PIN_API_ID="AKfycbyR8Src2UFkUnUpoyf7Xa0xsTs1_16QsShvslPF_dBRVClTQnK7LBQv3ArpoPpzsOqQ";
+const REPORT_API_ID="AKfycbzawEWTzjx5sOdpsVOqa-qv-jBE4rxSfror-pz7jNPRi2D1hfdIR4OWDHNdYxUjvt73XA";
+
+let currentRank = "";
+
+function navigate(view) {
+  document.querySelectorAll('[id^="view-"]').forEach(v => {
+    v.style.display = 'none';
+  });
+
+  document.getElementById('view-' + view).style.display = 'block';
+
+  document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
+  const btn = document.getElementById('btn-nav-' + view);
+  if (btn) btn.classList.add('active');
+
+  if (view === 'report') {
+    resetReportForm();
+  }
+
+  if (view === 'files') {
+    loadFiles();
+  }
+
+  if (view === 'contribution') {
+    loadContribution();
+  }
+}
+
+window.addEventListener('load', () => {
+  const nama = localStorage.getItem('agentNama');
+  const division = localStorage.getItem('agentDivision');
+  const rank = localStorage.getItem('agentRank');
+
+  if (nama) {
+    document.getElementById('sidebar-name').textContent =
+      nama + " (" + division + ")";
+
+    document.querySelector('.agent-rank').textContent = rank;
+    
+    document.getElementById('page-login').classList.remove('active');
+    document.getElementById('page-app').classList.add('active');
+
+    navigate('dashboard');
+  }
+});
+
+function openImageModal(url) {
+  const modal = document.getElementById('image-modal');
+  const img = document.getElementById('modal-img');
+
+  img.src = url;
+  modal.style.display = "flex";
+}
+
+document.getElementById('image-modal').addEventListener('click', function () {
+  this.style.display = "none";
+});
+
+function previewFromLink() {
+  const url = document.getElementById('evidence-link').value.trim();
+  const preview = document.getElementById('evidence-preview');
+
+  if (!url) {
+    preview.innerHTML = "Masukkan link gambar!";
+    return;
+  }
+
+  if (!url.startsWith("http")) {
+    preview.innerHTML = "Link tidak valid!";
+    return;
+  }
+
+  preview.innerHTML = `
+    <img src="${url}" 
+        style="max-width:100%; max-height:120px; border-radius:6px; cursor:pointer;" 
+        onclick="openImageModal('${url}')"
+        onerror="this.parentElement.innerHTML='Gagal load gambar'"
+    />
+  `;
+}
+
+function doRefresh() {
+  if (document.getElementById('view-dashboard').style.display === 'block') {
+    showToast("Dashboard refreshed");
+  }
+
+  if (document.getElementById('view-files').style.display === 'block') {
+    loadFiles();
+    showToast("Files refreshed");
+  }
+
+  if (document.getElementById('view-contribution').style.display === 'block') {
+    loadContribution();
+    showToast("Contribution refreshed");
+  }
+
+  if (document.getElementById('view-report').style.display === 'block') {
+    showToast("Report refreshed");
+  }
+}
+
+async function doLogin() {
+  const code = document.getElementById('input-codename').value.trim().toUpperCase();
+  const call = document.getElementById('input-callsign').value.trim();
+
+  if (!code || !call) {
+    alert('Masukkan Code Name & Callsign!');
+    return;
+  }
+
+  const res = await fetch(`https://docs.google.com/spreadsheets/d/${MEMBER_SHEET_ID}/gviz/tq?tqx=out:json`);
+  const text = await res.text();
+  const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}")+1));
+
+  let foundUser = null;
+
+  for (let r of json.table.rows) {
+    const codeName = (r.c?.[1]?.v || "").toString().trim().toUpperCase();
+    const callSign = (r.c?.[2]?.v || "").toString().trim().toUpperCase();
+
+    if (codeName === code && callSign === call.toUpperCase()) {
+      foundUser = {
+        nama: (r.c?.[0]?.v || "").toString().trim(),
+        codeName: codeName,
+        division: (r.c?.[3]?.v || "").toString().trim(),
+        rank: (r.c?.[4]?.v || "").toString().trim()
+      };
+      break;
+    }
+  }
+
+  if (foundUser) {
+    localStorage.setItem('agentNama', foundUser.nama);
+    localStorage.setItem('agentDivision', foundUser.division);
+    localStorage.setItem('agentRank', foundUser.rank);
+
+    document.getElementById('sidebar-name').textContent =
+      foundUser.nama + " (" + foundUser.division + ")";
+
+    document.querySelector('.agent-rank').textContent =
+      foundUser.rank;
+
+    document.getElementById('page-login').classList.remove('active');
+    document.getElementById('page-app').classList.add('active');
+
+    navigate('dashboard');
+  } else {
+    alert('Login Failed');
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem('agentNama');
+  localStorage.removeItem('agentDivision');
+  localStorage.removeItem('agentRank');
+
+  document.getElementById('page-app').classList.remove('active');
+  document.getElementById('page-login').classList.add('active');
+}
+
+function doAgentsBRO() {
+	showToast('Agents Data BRO dibuka!');
+	window.open('http://bro-membedata-imerp.my.id/', '_blank');
+}
+
+function openCommandPanel() {
+  const rank = (localStorage.getItem('agentRank') || "").toUpperCase();
+  const section = document.getElementById('pin-update-section');
+
+  if (!rank.includes("DIRECTOR")) {
+    showToast("Akses ditolak! Hanya Director");
+    return;
+  }
+
+  if (section.style.display === "none") {
+    section.style.display = "flex";
+    showToast("Command Panel dibuka");
+  } else {
+    section.style.display = "none";
+  }
+}
+
+let pinVisible = false;
+let realPin = "";
+
+function togglePin(){
+  const input = document.getElementById('pin-display');
+
+  pinVisible = !pinVisible;
+
+  if(pinVisible){
+    input.type = 'text';
+
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = `https://script.google.com/macros/s/${PIN_API_ID}/exec?action=view`;
+
+    iframe.onload = function(){
+      try{
+        // fallback aman
+        const text = iframe.contentWindow.document.body.innerText;
+        input.value = text.trim() || "NO PIN";
+      }catch(e){
+        console.error(e);
+        input.value = "PIN LOADED"; // fallback biar tidak error
+      }
+
+      document.body.removeChild(iframe);
+    };
+
+    document.body.appendChild(iframe);
+
+  } else {
+    input.type = 'password';
+    input.value = '******';
+  }
+}
+function updatePin() {
+  const v = document.getElementById('pin-new').value.trim();
+
+  if (!v) {
+    alert('Masukkan PIN baru!');
+    return;
+  }
+
+  const url = `https://script.google.com/macros/s/${PIN_API_ID}/exec?pin=${encodeURIComponent(v)}`;
+  
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = url;
+  document.body.appendChild(iframe);
+
+  document.getElementById('pin-display').value = '*****';
+  document.getElementById('pin-new').value = '';
+  showToast('PIN berhasil diperbarui!');
+}
+
+function addEvidence(value = "") {
+  const container = document.getElementById("evidence-container");
+
+  const div = document.createElement("div");
+  div.className = "cdn-row";
+
+  div.innerHTML = `
+    <input type="text" class="report-input evidence-input" placeholder="Paste link gambar" value="${value}" />
+    <button class="btn-primary sm" onclick="previewSingle(this)">Preview</button>
+    <button class="btn-unlock" onclick="this.parentElement.remove()">X</button>
+  `;
+
+  container.appendChild(div);
+}
+
+function previewSingle(btn) {
+  const input = btn.parentElement.querySelector("input");
+  const url = input.value.trim();
+
+  const preview = document.getElementById("evidence-preview");
+
+  if (!url || !url.startsWith("http")) {
+    preview.innerHTML = "Link tidak valid!";
+    return;
+  }
+
+  preview.innerHTML = `
+    <img src="${url}" 
+    style="max-width:100%; max-height:120px; border-radius:6px;"
+    onclick="openImageModal('${url}')"
+    />
+  `;
+}
+
+async function saveReport() {
+  const evidenceInputs = document.querySelectorAll(".evidence-input");
+
+  const evidenceArray = [];
+  evidenceInputs.forEach(input => {
+    const val = input.value.trim();
+    if (val) evidenceArray.push(val);
+  });
+
+  const evidence = JSON.stringify(evidenceArray);
+  const mission = document.querySelectorAll('.report-input')[0].value;
+  const status = document.getElementById('mission-status').value;
+  const date = document.querySelector('input[type="date"]').value;
+  const detail = document.querySelectorAll('.report-area')[0].value;
+  const intel = document.querySelectorAll('.report-area')[1].value;
+  const agents = document.getElementById('input-agents').value;
+
+  const createdBy = localStorage.getItem('agentNama') || "UNKNOWN"; 
+  const closedBy = status === "CLOSED" ? createdBy : "";
+
+  if (!mission || !status || !date) {
+    showToast("Data belum lengkap!");
+    return;
+  }
+
+  let url = `https://script.google.com/macros/s/${REPORT_API_ID}/exec`
+    + `?date=${encodeURIComponent(date)}`
+    + `&mission=${encodeURIComponent(mission)}`
+    + `&detail=${encodeURIComponent(detail)}`
+    + `&intel=${encodeURIComponent(intel)}`
+    + `&evidence=${encodeURIComponent(evidence)}`
+    + `&agents=${encodeURIComponent(agents)}`
+    + `&status=${encodeURIComponent(status)}`
+    + `&createdBy=${encodeURIComponent(createdBy)}`
+    + `&closedBy=${encodeURIComponent(closedBy)}`;
+
+  if (currentCaseId) {
+    url += `&caseId=${encodeURIComponent(currentCaseId)}`;
+  }
+
+  try {
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = url;
+    document.body.appendChild(iframe);
+
+    showToast(
+      currentCaseId 
+        ? "Laporan berhasil diupdate!" 
+        : "Laporan berhasil disimpan!"
+    );
+
+    resetReportForm();
+
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal simpan laporan!");
+  }
+}
+
+function isPrivilegedRank() {
+  const rank = localStorage.getItem('agentRank') || "";
+  return ["CHIEF", "DIRECTOR", "DEPUTY DIRECTOR"].includes(rank.toUpperCase());
+}
+
+async function loadFiles() {
+  const list = document.getElementById('files-list');
+  list.innerHTML = "Loading...";
+
+  try {
+    const res = await fetch(`https://docs.google.com/spreadsheets/d/${REPORT_SHEET_ID}/gviz/tq?tqx=out:json`);
+    const text = await res.text();
+    const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+
+    list.innerHTML = "";
+
+    const rank = (localStorage.getItem('agentRank') || "").toUpperCase();
+    const isDirector = rank.includes("DIRECTOR");
+
+    json.table.rows.forEach(r => {
+      const caseId = r.c?.[0]?.v || "-";
+      const mission = r.c?.[2]?.v || "-";
+      const status = (r.c?.[7]?.v || "").toUpperCase();
+
+      let actionButtons = "";
+
+      if (status === "OPEN") {
+        actionButtons = `
+          <button class="btn-edit" onclick="editReport(${JSON.stringify(r.c).replace(/"/g, '&quot;')})">Edit</button>
+        `;
+      } else {
+        actionButtons = `
+          <button class="btn-view" onclick="viewReport(${JSON.stringify(r.c).replace(/"/g, '&quot;')})">View</button>
+          ${isDirector ? `<button class="btn-unlock" onclick="unlockCase('${caseId}')">Unlock</button>` : ""}
+        `;
+      }
+
+      const div = document.createElement("div");
+      div.className = "file-card";
+
+      div.innerHTML = `
+        <div class="file-card-info">
+          <h4>${mission} / ${caseId}</h4>
+          <p>Status : ${status}</p>
+        </div>
+        <div style="display:flex; gap:6px;">
+          ${actionButtons}
+        </div>
+      `;
+
+      list.appendChild(div);
+    });
+
+  } catch (err) {
+    console.error(err);
+    list.innerHTML = "Gagal load data";
+  }
+}
+
+function resetReportForm() {
+  document.querySelectorAll('.report-input')[0].value = "";
+  document.getElementById('mission-status').value = "";
+  document.querySelector('input[type="date"]').value = "";
+
+  document.querySelectorAll('.report-area')[0].value = "";
+  document.querySelectorAll('.report-area')[1].value = "";
+
+  document.getElementById('input-agents').value = "";
+
+  const container = document.getElementById("evidence-container");
+  container.innerHTML = "";
+
+  addEvidence();
+
+  document.getElementById('evidence-preview').innerHTML = "Evidence Image Preview";
+
+  currentCaseId = null;
+
+  document.getElementById('btn-save').style.display = "block";
+  document.getElementById('btn-add-evidence').style.display = "inline-block";
+  document.getElementById('case-id-title').innerText = "CASE ID : AUTO GENERATE";
+}
+
+function viewReport(row) {
+  navigate('report');
+
+  const caseId = row?.[0]?.v || "";
+  const rawDate = row?.[1]?.f || row?.[1]?.v || "";
+  const mission = row?.[2]?.v || "";
+  const detail = row?.[3]?.v || "";
+  const intel = row?.[4]?.v || "";
+  const evidence = row?.[5]?.v || "";
+  const agents = row?.[6]?.v || "";
+  const status = row?.[7]?.v || "";
+
+  currentCaseId = null;
+
+  document.getElementById('case-id-title').innerText = "CASE ID : " + caseId;
+
+  document.querySelectorAll('.report-input')[0].value = mission;
+  document.getElementById('mission-status').value = status;
+  document.querySelector('input[type="date"]').value = rawDate;
+
+  document.querySelectorAll('.report-area')[0].value = detail;
+  document.querySelectorAll('.report-area')[1].value = intel;
+
+  document.getElementById('input-agents').value = agents;
+
+  const container = document.getElementById("evidence-container");
+  container.innerHTML = "";
+
+  let evidenceArray = [];
+
+  try {
+    evidenceArray = JSON.parse(evidence);
+    if (!Array.isArray(evidenceArray)) evidenceArray = [];
+  } catch {
+    if (evidence) evidenceArray = [evidence];
+  }
+
+  evidenceArray.forEach(link => {
+    addEvidence(link);
+  });
+
+  if (evidenceArray.length === 0) {
+    addEvidence();
+  }
+
+  const preview = document.getElementById('evidence-preview');
+
+  if (evidenceArray.length > 0) {
+    preview.innerHTML = evidenceArray.map(url => `
+      <img src="${url}" 
+        style="max-width:70px; max-height:70px; margin:4px; border-radius:6px; cursor:pointer;"
+        onclick="openImageModal('${url}')"
+      />
+    `).join("");
+  } else {
+    preview.innerHTML = "No Evidence";
+  }
+
+  document.getElementById('btn-save').style.display = "none";
+  document.getElementById('btn-add-evidence').style.display = "none";
+}
+
+async function unlockCase(caseId) {
+  if (!confirm("Yakin ingin unlock case ini?")) return;
+
+  try {
+    const url = `https://script.google.com/macros/s/${REPORT_API_ID}/exec`
+      + `?caseId=${encodeURIComponent(caseId)}`
+      + `&status=OPEN`;
+
+    await fetch(url);
+
+    showToast("Case berhasil di-unlock!");
+
+    loadFiles(); 
+
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal unlock case!");
+  }
+}
+
+let currentCaseId = null;
+
+function editReport(row) {
+  navigate('report');
+
+  const caseId = row?.[0]?.v || "";
+  const rawDate = row?.[1]?.f || row?.[1]?.v || "";
+  const mission = row?.[2]?.v || "";
+  const detail = row?.[3]?.v || "";
+  const intel = row?.[4]?.v || "";
+  const evidence = row?.[5]?.v || "";
+  const agents = row?.[6]?.v || "";
+  const status = row?.[7]?.v || "";
+
+  currentCaseId = caseId; 
+
+  document.getElementById('case-id-title').innerText = "CASE ID : " + caseId;
+
+  document.querySelectorAll('.report-input')[0].value = mission;
+  document.getElementById('mission-status').value = status;
+  document.querySelector('input[type="date"]').value = rawDate;
+
+  document.querySelectorAll('.report-area')[0].value = detail;
+  document.querySelectorAll('.report-area')[1].value = intel;
+
+  document.getElementById('input-agents').value = agents;
+
+  const container = document.getElementById("evidence-container");
+  container.innerHTML = "";
+
+  let evidenceArray = [];
+
+  try {
+    evidenceArray = JSON.parse(evidence);
+    if (!Array.isArray(evidenceArray)) evidenceArray = [];
+  } catch {
+    if (evidence) evidenceArray = [evidence];
+  }
+
+  evidenceArray.forEach(link => {
+    addEvidence(link);
+  });
+
+  if (evidenceArray.length === 0) {
+    addEvidence();
+  }
+
+  const preview = document.getElementById('evidence-preview');
+
+  if (evidenceArray.length > 0) {
+    preview.innerHTML = evidenceArray.map(url => `
+      <img src="${url}" 
+        style="max-width:70px; max-height:70px; margin:4px; border-radius:6px; cursor:pointer;"
+        onclick="openImageModal('${url}')"
+      />
+    `).join("");
+  } else {
+    preview.innerHTML = "No Evidence";
+  }
+
+  document.getElementById('btn-save').style.display = "block";
+  document.getElementById('btn-add-evidence').style.display = "inline-block";
+}
+
+function filterFiles(q) {
+  const keyword = q.toLowerCase();
+
+  document.querySelectorAll('#files-list .file-card').forEach(c => {
+    const mission = c.getAttribute('data-mission') || "";
+    const caseId = c.getAttribute('data-case') || "";
+
+    const combined = (mission + " " + caseId).toLowerCase();
+
+    if (!keyword) {
+      c.style.display = 'flex';
+    } else {
+      c.style.display = combined.includes(keyword) ? 'flex' : 'none';
+    }
+  });
+}
+
+async function loadContribution() {
+  const container = document.getElementById('contrib-list');
+  container.innerHTML = "Loading...";
+
+  try {
+    const res = await fetch(`https://docs.google.com/spreadsheets/d/${REPORT_SHEET_ID}/gviz/tq?tqx=out:json`);
+    const text = await res.text();
+    const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+
+    const map = {};
+
+    json.table.rows.forEach(r => {
+      const mission = r.c?.[2]?.v || "-";
+      const agents = r.c?.[6]?.v || ""; 
+
+      agents.split(",").forEach(a => {
+        const name = a.trim().toUpperCase();
+        if (!name) return;
+
+        if (!map[name]) {
+          map[name] = [];
+        }
+
+        map[name].push(mission);
+      });
+    });
+
+    container.innerHTML = "";
+
+    Object.keys(map).forEach(agent => {
+      const missions = map[agent];
+
+      const div = document.createElement("div");
+      div.className = "contrib-card";
+      div.setAttribute("data-name", agent.toLowerCase());
+
+      div.innerHTML = `
+        <p><strong>Agent :</strong> ${agent}</p>
+        <p><strong>Total Mission :</strong> ${missions.length}</p>
+        <ul>
+          ${missions.map(m => `<li>${m}</li>`).join("")}
+        </ul>
+      `;
+
+      container.appendChild(div);
+    });
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = "Gagal load contribution";
+  }
+}
+
+function filterContribution(q) {
+  const keyword = q.trim().toLowerCase();
+
+  document.querySelectorAll('#contrib-list .contrib-card').forEach(card => {
+    const agent = card.dataset.name || "";
+
+    if (keyword === "") {
+      card.style.display = "block";
+      return;
+    }
+
+    if (agent.includes(keyword)) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2500);
+}
+  
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('page-login').classList.contains('active')) doLogin();
+});
+
+</script>
+</body>
+</html>
