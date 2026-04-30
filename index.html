@@ -505,13 +505,10 @@ async function togglePin() {
     input.type = 'text';
 
     try {
-      const res = await fetch(`https://docs.google.com/spreadsheets/d/${PIN_SHEET_ID}/gviz/tq?tqx=out:json`);
-      const text = await res.text();
-      const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+      const res = await fetch(`https://script.google.com/macros/s/${PIN_API_ID}/exec?action=view`);
+      const pin = await res.text();
 
-      realPin = (json.table.rows?.[0]?.c?.[4]?.v || "").toString().trim();
-
-      input.value = realPin || "PIN NOT FOUND";
+      input.value = pin.trim() || "PIN NOT FOUND";
 
     } catch (err) {
       console.error(err);
@@ -523,7 +520,6 @@ async function togglePin() {
     input.value = '******';
   }
 }
-
 function updatePin() {
   const v = document.getElementById('pin-new').value.trim();
 
