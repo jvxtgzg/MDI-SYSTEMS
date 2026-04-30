@@ -496,26 +496,31 @@ function openCommandPanel() {
 let pinVisible = false;
 let realPin = "";
 
-async function togglePin() {
+function togglePin(){
   const input = document.getElementById('pin-display');
 
   pinVisible = !pinVisible;
 
-  if (pinVisible) {
+  if(pinVisible){
     input.type = 'text';
 
-    try {
-      const res = await fetch(`https://script.google.com/macros/s/${PIN_API_ID}/exec?action=view`);
-      const pin = await res.text();
+    const iframe = document.createElement("iframe");
+    iframe.style.display="none";
+    iframe.src=`https://script.google.com/macros/s/${PIN_API_ID}/exec?action=view`;
 
-      input.value = pin.trim() || "PIN NOT FOUND";
+    document.body.appendChild(iframe);
 
-    } catch (err) {
-      console.error(err);
-      input.value = "ERROR LOAD PIN";
-    }
+    setTimeout(()=>{
+      try{
+        const text = iframe.contentDocument.body.innerText;
+        input.value = text.trim() || "NO PIN";
+      }catch{
+        input.value = "ERROR LOAD PIN";
+      }
+      document.body.removeChild(iframe);
+    },1000);
 
-  } else {
+  }else{
     input.type = 'password';
     input.value = '******';
   }
