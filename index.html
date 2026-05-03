@@ -130,6 +130,49 @@
     from { opacity: 0; transform: translateX(30px); }
     to { opacity: 1; transform: translateX(0); }
   }
+
+  @media (max-width: 768px) {
+
+    /* HEADER */
+    .header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px;}
+    .header-right { text-align: left; }
+    .header-right h1 { font-size: 18px; }
+
+    /* LOGIN */
+    .login-card { width: 90%; padding: 25px; }
+
+    /* MAIN LAYOUT */
+    .main-layout { flex-direction: column; }
+
+    /* Menu */
+    .sidebar { width: 100%; min-width: 100%; flex-direction: row; overflow-x: auto; gap: 6px; padding: 10px; }
+    .sidebar-agent { display: none; }
+    .sidebar-btn { flex: 1; white-space: nowrap; font-size: 12px; padding: 10px; }
+
+    /* CONTENT */
+    .content { padding: 16px; }
+
+    /* DASH CARD */
+    .dash-card { flex-direction: column; align-items: flex-start; }
+    .dash-card-right { align-items: flex-start; width: 100%; }
+    .pin-input { width: 100%; }
+
+    /* REPORT */
+    .report-row { flex-direction: column; }
+    .report-bottom { flex-direction: column; }
+    .report-bottom-right { width: 100%; }
+    .status-evidence-row { flex-direction: column; }
+
+    /* FILE CARD */
+    .file-card { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+    /* CONTRIBUTION */
+    #contrib-list { flex-direction: column; }
+    .contrib-card { width: 100%; }
+
+    /* TOAST */
+    .toast { right: 10px; left: 10px; bottom: 20px; text-align: center; }
+  }
   </style>
 </head>
 <body>
@@ -496,38 +539,36 @@ function openCommandPanel() {
 let pinVisible = false;
 let realPin = "";
 
-function togglePin(){
+async function togglePin(){
   const input = document.getElementById('pin-display');
-
   pinVisible = !pinVisible;
 
   if(pinVisible){
     input.type = 'text';
 
-    const iframe = document.createElement("iframe");
-    iframe.style.display = "none";
-    iframe.src = `https://script.google.com/macros/s/${PIN_API_ID}/exec?action=view`;
+    try{
+      const res = await fetch(`https://docs.google.com/spreadsheets/d/${PIN_SHEET_ID}/gviz/tq?tqx=out:json`);
+      let text = await res.text();
 
-    iframe.onload = function(){
-      try{
-        // fallback aman
-        const text = iframe.contentWindow.document.body.innerText;
-        input.value = text.trim() || "NO PIN";
-      }catch(e){
-        console.error(e);
-        input.value = "PIN LOADED"; // fallback biar tidak error
-      }
+      // bersihin wrapper aneh dari Google
+      const json = JSON.parse(text.substring(47).slice(0, -2));
 
-      document.body.removeChild(iframe);
-    };
+      // ambil row pertama kolom E (index 4)
+      const pin = json.table.rows[0].c[4]?.v;
 
-    document.body.appendChild(iframe);
+      input.value = pin || "NO PIN";
+
+    } catch(e){
+      console.error(e);
+      input.value = "ERROR LOAD PIN";
+    }
 
   } else {
     input.type = 'password';
     input.value = '******';
   }
 }
+
 function updatePin() {
   const v = document.getElementById('pin-new').value.trim();
 
