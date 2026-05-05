@@ -123,6 +123,29 @@
   .cdn-row .report-input { flex: 1; }
   .evidence-preview { flex: 1; background: var(--teal); border-radius: 7px;display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--white); min-height: 70px; padding: 10px; text-align: center; }
   .status-evidence-row { display: flex; gap: 8px; align-items: stretch; }
+  .mission-detail-box { width: 100%; padding: 12px 16px; border-radius: 7px; border: 1.5px solid #b0c8e8; font-size: 14px; font-family: 'Exo 2', sans-serif; outline: none; background: var(--white); color: #333; cursor: pointer; min-height: 120px; max-height: 120px; overflow: auto; }
+  .mission-detail-box:focus { border-color: var(--navy); }
+  .mission-detail-placeholder { color: #6d7f9a; }
+  .mission-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.72); justify-content:center; align-items:center; z-index:10000; padding:20px; }
+  .mission-modal-card { width:min(900px, 100%); background:var(--card-bg); border:2px solid #b0c8e8; border-radius:10px; box-shadow:0 10px 35px rgba(0,0,0,0.45); padding:18px; }
+  .mission-modal-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+  .mission-modal-title { font-family:'Rajdhani', sans-serif; font-size:22px; font-weight:800; color:var(--text-dark); letter-spacing:1px; text-transform:uppercase; }
+  .mission-modal-close { background:var(--navy); color:#fff; border:none; border-radius:7px; width:38px; height:38px; font-size:20px; font-weight:800; cursor:pointer; }
+  .mission-modal-close:hover { background:var(--navy-hover); }
+  .mission-toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:10px; padding:10px; background:#fff; border:1.5px solid #b0c8e8; border-radius:8px; }
+  .mission-tool-btn { min-width:38px; height:36px; padding:0 10px; border:1px solid #9eb9da; border-radius:6px; background:#eef7ff; color:#111; font-family:'Exo 2', sans-serif; font-size:14px; font-weight:800; cursor:pointer; }
+  .mission-tool-btn:hover { background:#d9edff; }
+  .mission-tool-btn.active { background:var(--navy); border-color:var(--navy); color:#fff; box-shadow:0 2px 8px rgba(26,0,128,0.28); }
+  .mission-tool-select { height:36px; border:1px solid #9eb9da; border-radius:6px; padding:0 8px; background:#fff; color:#111; font-family:'Exo 2', sans-serif; font-size:13px; }
+  .mission-tool-select.active { background:var(--navy); border-color:var(--navy); color:#fff; }
+  .mission-color-palette { display:flex; gap:6px; align-items:center; padding:4px 6px; border:1px solid #9eb9da; border-radius:6px; background:#eef7ff; }
+  .mission-color-btn { width:28px; height:28px; border:2px solid #fff; border-radius:50%; box-shadow:0 0 0 1px #9eb9da; cursor:pointer; }
+  .mission-color-btn.active { box-shadow:0 0 0 3px var(--navy); }
+  #mission-detail-editor { width:100%; min-height:420px; padding:16px; border-radius:8px; border:1.5px solid #b0c8e8; font-family:'Exo 2', sans-serif; font-size:15px; line-height:1.55; resize:vertical; outline:none; color:#222; background:#fff; overflow:auto; }
+  #mission-detail-editor:focus { border-color:var(--navy); }
+  #mission-detail-editor ul, #mission-detail-editor ol, #mission-detail-preview ul, #mission-detail-preview ol { padding-left:24px; margin:6px 0; }
+  #mission-detail-editor li, #mission-detail-preview li { margin:4px 0; }
+  .mission-modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:12px; }
 
   /* TOAST */
   .toast { position: fixed; bottom: 30px; right: 30px; background: var(--navy); color: #fff; padding: 12px 26px; border-radius: 8px; font-size: 14px; font-weight: 600; display: none; z-index: 9999; box-shadow: 0 4px 18px rgba(0,0,0,0.35); font-family: 'Exo 2', sans-serif; border-left: 4px solid var(--gold); animation: slideIn 0.3s ease; }
@@ -162,6 +185,9 @@
     .report-bottom { flex-direction: column; }
     .report-bottom-right { width: 100%; }
     .status-evidence-row { flex-direction: column; }
+    .mission-modal { align-items:flex-start; overflow:auto; }
+    .mission-modal-card { margin-top:20px; padding:14px; }
+    #mission-detail-editor { min-height:60vh; }
 
     /* FILE CARD */
     .file-card { flex-direction: column; align-items: flex-start; gap: 10px; }
@@ -181,7 +207,7 @@
 <div class="header">
   <div class="header-left">
     <div class="header-logo">
-      <img src="BRO LOGO.png" alt="BRO Logo" width="56" height="56" />
+      <img src="https://raw.githubusercontent.com/jvxtgzg/MDI-SYSTEMS/main/BRO%20LOGO.png" alt="BRO Logo" width="56" height="56" />
     </div>
     <div class="header-brand">
       <div class="brand-title">MDI</div>
@@ -219,6 +245,7 @@
       <button class="sidebar-btn teal" id="btn-nav-report" onclick="navigate('report')">New Report</button>
       <button class="sidebar-btn teal" id="btn-nav-files" onclick="navigate('files')">Files</button>
       <button class="sidebar-btn teal" id="btn-nav-contribution" onclick="navigate('contribution')">Contribution</button>
+      <button class="sidebar-btn teal" id="btn-nav-more" onclick="navigate('more')">More</button>
       <button class="sidebar-btn dark" onclick="doRefresh()">Refresh</button>
       <button class="sidebar-btn dark" onclick="doLogout()">Logout</button>
     </div>
@@ -278,13 +305,16 @@
         </div>
 
         <div style="margin-bottom:10px;">
-          <textarea class="report-area" rows="5" placeholder="Mission Detail" style="min-height:120px;"></textarea>
+          <input type="hidden" id="mission-detail" />
+          <div id="mission-detail-preview" class="report-area mission-detail-box mission-detail-placeholder" tabindex="0" onclick="openMissionDetailModal()" onfocus="openMissionDetailModal()">
+            Mission Detail - klik untuk menulis lebih luas
+          </div>
         </div>
 
         <div class="report-bottom">
 
           <div class="report-bottom-left">
-            <textarea class="report-area" rows="7" placeholder="intel info" style="height:100%; min-height:190px;"></textarea>
+            <textarea id="intel-info" class="report-area" rows="7" placeholder="intel info" style="height:100%; min-height:190px;"></textarea>
           </div>
 
           <div class="report-bottom-right">
@@ -328,11 +358,61 @@
 
         <div id="contrib-list"></div>
       </div>
+
+      <!-- MORE -->
+      <div id="view-more" style="display:none;">
+        <div class="content-title">More</div>
+
+        <div class="dash-card">
+          <div class="dash-card-info">
+            <h3>Additional Features</h3>
+            <p>Menu tambahan BRO akan ditambahkan di bagian ini.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
+
+<div id="mission-detail-modal" class="mission-modal">
+  <div class="mission-modal-card">
+    <div class="mission-modal-head">
+      <div class="mission-modal-title">Mission Detail</div>
+      <button class="mission-modal-close" type="button" onclick="closeMissionDetailModal()">X</button>
+    </div>
+    <div class="mission-toolbar">
+      <button id="tool-bold" class="mission-tool-btn" type="button" onclick="formatMissionDetail('bold')" title="Tebal">B</button>
+      <button id="tool-italic" class="mission-tool-btn" type="button" onclick="formatMissionDetail('italic')" title="Miring"><em>I</em></button>
+      <select id="tool-font-size" class="mission-tool-select" onchange="formatMissionDetail('fontSize', this.value)" title="Ukuran font">
+        <option value="">Ukuran</option>
+        <option value="2">Kecil</option>
+        <option value="3">Normal</option>
+        <option value="5">Besar</option>
+        <option value="7">Sangat Besar</option>
+      </select>
+      <div class="mission-color-palette" title="Warna font">
+        <button class="mission-color-btn" type="button" style="background:#111111;" onclick="setMissionColor('#111111')" title="Hitam"></button>
+        <button class="mission-color-btn" type="button" style="background:#d32f2f;" onclick="setMissionColor('#d32f2f')" title="Merah"></button>
+        <button class="mission-color-btn" type="button" style="background:#1565c0;" onclick="setMissionColor('#1565c0')" title="Biru"></button>
+        <button class="mission-color-btn" type="button" style="background:#2e7d32;" onclick="setMissionColor('#2e7d32')" title="Hijau"></button>
+        <button class="mission-color-btn" type="button" style="background:#f9a825;" onclick="setMissionColor('#f9a825')" title="Kuning"></button>
+        <button class="mission-color-btn" type="button" style="background:#ffffff;" onclick="setMissionColor('#ffffff')" title="Putih"></button>
+      </div>
+      <button id="tool-left" class="mission-tool-btn" type="button" onclick="formatMissionDetail('justifyLeft')" title="Rata kiri">Kiri</button>
+      <button id="tool-center" class="mission-tool-btn" type="button" onclick="formatMissionDetail('justifyCenter')" title="Rata tengah">Tengah</button>
+      <button id="tool-right" class="mission-tool-btn" type="button" onclick="formatMissionDetail('justifyRight')" title="Rata kanan">Kanan</button>
+      <button id="tool-ordered" class="mission-tool-btn" type="button" onclick="formatMissionDetail('insertOrderedList')" title="Nomor 1, 2, 3">1 2 3</button>
+      <button id="tool-unordered" class="mission-tool-btn" type="button" onclick="formatMissionDetail('insertUnorderedList')" title="Bullet bulat">&bull; List</button>
+    </div>
+    <div id="mission-detail-editor" contenteditable="true" onkeyup="updateMissionToolbarState()" onmouseup="updateMissionToolbarState()" oninput="updateMissionToolbarState()" onfocus="updateMissionToolbarState()"></div>
+    <div class="mission-modal-actions">
+      <button class="btn-teal" type="button" onclick="closeMissionDetailModal()">Cancel</button>
+      <button class="btn-primary" type="button" onclick="saveMissionDetailModal()">Save Detail</button>
+    </div>
+  </div>
+</div>
 
 <div id="image-modal" style="
   display:none;
@@ -411,6 +491,100 @@ function openImageModal(url) {
 document.getElementById('image-modal').addEventListener('click', function () {
   this.style.display = "none";
 });
+
+function openMissionDetailModal() {
+  const modal = document.getElementById('mission-detail-modal');
+  const detail = document.getElementById('mission-detail');
+  const editor = document.getElementById('mission-detail-editor');
+
+  editor.innerHTML = detail.value;
+  modal.style.display = "flex";
+  setTimeout(() => {
+    editor.focus();
+    updateMissionToolbarState();
+  }, 0);
+}
+
+function closeMissionDetailModal() {
+  document.getElementById('mission-detail-modal').style.display = "none";
+}
+
+function saveMissionDetailModal() {
+  const detail = document.getElementById('mission-detail');
+  const editor = document.getElementById('mission-detail-editor');
+
+  detail.value = editor.innerHTML.trim();
+  renderMissionDetailPreview();
+  closeMissionDetailModal();
+}
+
+document.getElementById('mission-detail-modal').addEventListener('click', function (e) {
+  if (e.target === this) closeMissionDetailModal();
+});
+
+function formatMissionDetail(command, value = null) {
+  const editor = document.getElementById('mission-detail-editor');
+  editor.focus();
+  document.execCommand(command, false, value);
+  updateMissionToolbarState();
+}
+
+function setMissionColor(color) {
+  formatMissionDetail('foreColor', color);
+  document.querySelectorAll('.mission-color-btn').forEach(btn => {
+    btn.classList.toggle('active', normalizeColor(btn.style.backgroundColor) === normalizeColor(color));
+  });
+}
+
+function setToolActive(id, active) {
+  const tool = document.getElementById(id);
+  if (tool) tool.classList.toggle('active', active);
+}
+
+function normalizeColor(color) {
+  const probe = document.createElement('span');
+  probe.style.color = color;
+  document.body.appendChild(probe);
+  const normalized = getComputedStyle(probe).color;
+  probe.remove();
+  return normalized;
+}
+
+function updateMissionToolbarState() {
+  setToolActive('tool-bold', document.queryCommandState('bold'));
+  setToolActive('tool-italic', document.queryCommandState('italic'));
+  setToolActive('tool-left', document.queryCommandState('justifyLeft'));
+  setToolActive('tool-center', document.queryCommandState('justifyCenter'));
+  setToolActive('tool-right', document.queryCommandState('justifyRight'));
+  setToolActive('tool-ordered', document.queryCommandState('insertOrderedList'));
+  setToolActive('tool-unordered', document.queryCommandState('insertUnorderedList'));
+
+  const fontSize = document.queryCommandValue('fontSize');
+  const fontSizeSelect = document.getElementById('tool-font-size');
+  if (fontSizeSelect) {
+    fontSizeSelect.value = ["2", "3", "5", "7"].includes(fontSize) ? fontSize : "";
+    fontSizeSelect.classList.toggle('active', !!fontSizeSelect.value);
+  }
+
+  const activeColor = normalizeColor(document.queryCommandValue('foreColor') || '#111111');
+  document.querySelectorAll('.mission-color-btn').forEach(btn => {
+    btn.classList.toggle('active', normalizeColor(btn.style.backgroundColor) === activeColor);
+  });
+}
+
+function renderMissionDetailPreview() {
+  const detail = document.getElementById('mission-detail');
+  const preview = document.getElementById('mission-detail-preview');
+
+  if (!detail.value.trim()) {
+    preview.classList.add('mission-detail-placeholder');
+    preview.innerHTML = "Mission Detail - klik untuk menulis lebih luas";
+    return;
+  }
+
+  preview.classList.remove('mission-detail-placeholder');
+  preview.innerHTML = detail.value;
+}
 
 function previewFromLink() {
   const url = document.getElementById('evidence-link').value.trim();
@@ -636,8 +810,8 @@ async function saveReport() {
   const mission = document.querySelectorAll('.report-input')[0].value;
   const status = document.getElementById('mission-status').value;
   const date = document.querySelector('input[type="date"]').value;
-  const detail = document.querySelectorAll('.report-area')[0].value;
-  const intel = document.querySelectorAll('.report-area')[1].value;
+  const detail = document.getElementById('mission-detail').value;
+  const intel = document.getElementById('intel-info').value;
   const agents = document.getElementById('input-agents').value;
 
   const createdBy = localStorage.getItem('agentNama') || "UNKNOWN"; 
@@ -747,8 +921,10 @@ function resetReportForm() {
   document.getElementById('mission-status').value = "";
   document.querySelector('input[type="date"]').value = "";
 
-  document.querySelectorAll('.report-area')[0].value = "";
-  document.querySelectorAll('.report-area')[1].value = "";
+  document.getElementById('mission-detail').value = "";
+  document.getElementById('mission-detail-editor').innerHTML = "";
+  renderMissionDetailPreview();
+  document.getElementById('intel-info').value = "";
 
   document.getElementById('input-agents').value = "";
 
@@ -786,8 +962,9 @@ function viewReport(row) {
   document.getElementById('mission-status').value = status;
   document.querySelector('input[type="date"]').value = rawDate;
 
-  document.querySelectorAll('.report-area')[0].value = detail;
-  document.querySelectorAll('.report-area')[1].value = intel;
+  document.getElementById('mission-detail').value = detail;
+  renderMissionDetailPreview();
+  document.getElementById('intel-info').value = intel;
 
   document.getElementById('input-agents').value = agents;
 
@@ -870,8 +1047,9 @@ function editReport(row) {
   document.getElementById('mission-status').value = status;
   document.querySelector('input[type="date"]').value = rawDate;
 
-  document.querySelectorAll('.report-area')[0].value = detail;
-  document.querySelectorAll('.report-area')[1].value = intel;
+  document.getElementById('mission-detail').value = detail;
+  renderMissionDetailPreview();
+  document.getElementById('intel-info').value = intel;
 
   document.getElementById('input-agents').value = agents;
 
@@ -1008,6 +1186,16 @@ function showToast(msg) {
 }
   
 document.addEventListener('keydown', e => {
+  const missionModal = document.getElementById('mission-detail-modal');
+
+  if (e.key === 'Escape' && missionModal.style.display === 'flex') {
+    closeMissionDetailModal();
+  }
+
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && missionModal.style.display === 'flex') {
+    saveMissionDetailModal();
+  }
+
   if (e.key === 'Enter' && document.getElementById('page-login').classList.contains('active')) doLogin();
 });
 
