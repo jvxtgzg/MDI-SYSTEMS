@@ -1017,7 +1017,7 @@ function resetReimbursementForm() {
   hydrateFinanceDefaults('rbs');
 }
 
-function saveReimbursement() {
+async function saveReimbursement() {
   const date = document.getElementById('rbs-date').value;
   const requester = document.getElementById('rbs-requester').value.trim();
   const division = document.getElementById('rbs-division').value.trim();
@@ -1032,27 +1032,31 @@ function saveReimbursement() {
     return;
   }
 
-  const iframe = document.createElement('iframe');
-  iframe.style.display = "none";
-  iframe.src = buildMoreApiUrl({
-    module: "REIMBURSEMENT",
-    action: "create",
-    date,
-    requester,
-    division,
-    category,
-    amount,
-    description,
-    receiptCdnLinks: JSON.stringify(receiptCdnLinks),
-    status: getFinanceInitialStatus(),
-    createdBy,
-    approvedBy: ""
-  });
-  document.body.appendChild(iframe);
+  try {
+    const json = await loadMoreApi({
+      module: "REIMBURSEMENT",
+      action: "create",
+      date,
+      requester,
+      division,
+      category,
+      amount,
+      description,
+      receiptCdnLinks: JSON.stringify(receiptCdnLinks),
+      status: getFinanceInitialStatus(),
+      createdBy,
+      approvedBy: ""
+    });
 
-  showToast("Reimbursement submitted. Status: " + getFinanceInitialStatus() + ".");
-  resetReimbursementForm();
-  setTimeout(loadReimbursementFiles, 1400);
+    if (!json.ok) throw new Error(json.error || "Gagal simpan reimbursement");
+
+    showToast("Reimbursement submitted. Status: " + getFinanceInitialStatus() + ".");
+    resetReimbursementForm();
+    loadReimbursementFiles();
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal simpan reimbursement: " + err.message);
+  }
 }
 
 function resetOperationalFundForm() {
@@ -1066,7 +1070,7 @@ function resetOperationalFundForm() {
   hydrateFinanceDefaults('ofr');
 }
 
-function saveOperationalFundRequest() {
+async function saveOperationalFundRequest() {
   if (!canCreateOperationalFundRequest()) {
     showToast("Operational Fund Request hanya untuk rank DIRECTOR.");
     return;
@@ -1086,27 +1090,31 @@ function saveOperationalFundRequest() {
     return;
   }
 
-  const iframe = document.createElement('iframe');
-  iframe.style.display = "none";
-  iframe.src = buildMoreApiUrl({
-    module: "OPERATIONAL_FUND_REQUEST",
-    action: "create",
-    date,
-    requester,
-    division,
-    purpose,
-    amount,
-    description,
-    cdnLinks: JSON.stringify(cdnLinks),
-    status: getFinanceInitialStatus(),
-    createdBy,
-    approvedBy: ""
-  });
-  document.body.appendChild(iframe);
+  try {
+    const json = await loadMoreApi({
+      module: "OPERATIONAL_FUND_REQUEST",
+      action: "create",
+      date,
+      requester,
+      division,
+      purpose,
+      amount,
+      description,
+      cdnLinks: JSON.stringify(cdnLinks),
+      status: getFinanceInitialStatus(),
+      createdBy,
+      approvedBy: ""
+    });
 
-  showToast("Operational fund request submitted. Status: " + getFinanceInitialStatus() + ".");
-  resetOperationalFundForm();
-  setTimeout(loadOperationalFundFiles, 1400);
+    if (!json.ok) throw new Error(json.error || "Gagal simpan operational fund request");
+
+    showToast("Operational fund request submitted. Status: " + getFinanceInitialStatus() + ".");
+    resetOperationalFundForm();
+    loadOperationalFundFiles();
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal simpan fund request: " + err.message);
+  }
 }
 
 function buildMoreApiUrl(params) {
@@ -1164,7 +1172,7 @@ function resetDojLetterForm() {
   document.getElementById('doj-cdn-links').value = "";
 }
 
-function saveDojLetter() {
+async function saveDojLetter() {
   const title = document.getElementById('doj-letter-title').value.trim();
   const letterNumber = document.getElementById('doj-letter-number').value.trim();
   const dateIssued = document.getElementById('doj-date-issued').value;
@@ -1182,32 +1190,34 @@ function saveDojLetter() {
     return;
   }
 
-  const url = buildMoreApiUrl({
-    module: "LETTER",
-    action: "create",
-    category: "DOJ_TO_BRO",
-    title,
-    letterNumber,
-    dateIssued,
-    dateReceived,
-    from,
-    to,
-    relatedCaseId,
-    classification,
-    description,
-    cdnLinks: JSON.stringify(cdnLinks),
-    uploadedBy,
-    status: "ACTIVE"
-  });
+  try {
+    const json = await loadMoreApi({
+      module: "LETTER",
+      action: "create",
+      category: "DOJ_TO_BRO",
+      title,
+      letterNumber,
+      dateIssued,
+      dateReceived,
+      from,
+      to,
+      relatedCaseId,
+      classification,
+      description,
+      cdnLinks: JSON.stringify(cdnLinks),
+      uploadedBy,
+      status: "ACTIVE"
+    });
 
-  const iframe = document.createElement('iframe');
-  iframe.style.display = "none";
-  iframe.src = url;
-  document.body.appendChild(iframe);
+    if (!json.ok) throw new Error(json.error || "Gagal simpan letter");
 
-  showToast("DOJ letter disimpan.");
-  resetDojLetterForm();
-  setTimeout(() => loadLetterFiles('DOJ_TO_BRO'), 1400);
+    showToast("DOJ letter disimpan.");
+    resetDojLetterForm();
+    loadLetterFiles('DOJ_TO_BRO');
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal simpan letter: " + err.message);
+  }
 }
 
 async function loadLetterFiles(category) {
@@ -1296,7 +1306,7 @@ function filterDojLetterFiles(q) {
   });
 }
 
-function archiveLetter(letterId, category) {
+async function archiveLetter(letterId, category) {
   if (!letterId) {
     showToast("Letter ID tidak ditemukan.");
     return;
@@ -1304,23 +1314,25 @@ function archiveLetter(letterId, category) {
 
   if (!confirm("Archive letter ini?")) return;
 
-  const iframe = document.createElement('iframe');
-  iframe.style.display = "none";
-  iframe.src = buildMoreApiUrl({
-    module: "LETTER",
-    action: "archive",
-    id: letterId
-  });
-  document.body.appendChild(iframe);
+  try {
+    const json = await loadMoreApi({
+      module: "LETTER",
+      action: "archive",
+      id: letterId
+    });
 
-  showToast("Letter di-archive.");
-  setTimeout(() => {
+    if (!json.ok) throw new Error(json.error || "Gagal archive letter");
+
+    showToast("Letter di-archive.");
     if (category === "BRO_ISSUED") {
       loadBroLetterFiles();
     } else {
       loadLetterFiles(category);
     }
-  }, 1400);
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal archive letter: " + err.message);
+  }
 }
 
 function resetBroLetterForm() {
@@ -1336,7 +1348,7 @@ function resetBroLetterForm() {
   document.getElementById('bro-cdn-links').value = "";
 }
 
-function saveBroLetter() {
+async function saveBroLetter() {
   const title = document.getElementById('bro-letter-title').value.trim();
   const letterType = document.getElementById('bro-letter-type').value;
   const letterNumber = document.getElementById('bro-letter-number').value.trim();
@@ -1354,32 +1366,34 @@ function saveBroLetter() {
     return;
   }
 
-  const url = buildMoreApiUrl({
-    module: "LETTER",
-    action: "create",
-    category: "BRO_ISSUED",
-    title,
-    letterNumber,
-    dateIssued,
-    dateReceived: "",
-    from,
-    to,
-    relatedCaseId,
-    classification,
-    description: `[${letterType}] ${description}`,
-    cdnLinks: JSON.stringify(cdnLinks),
-    uploadedBy,
-    status: "ACTIVE"
-  });
+  try {
+    const json = await loadMoreApi({
+      module: "LETTER",
+      action: "create",
+      category: "BRO_ISSUED",
+      title,
+      letterNumber,
+      dateIssued,
+      dateReceived: "",
+      from,
+      to,
+      relatedCaseId,
+      classification,
+      description: `[${letterType}] ${description}`,
+      cdnLinks: JSON.stringify(cdnLinks),
+      uploadedBy,
+      status: "ACTIVE"
+    });
 
-  const iframe = document.createElement('iframe');
-  iframe.style.display = "none";
-  iframe.src = url;
-  document.body.appendChild(iframe);
+    if (!json.ok) throw new Error(json.error || "Gagal simpan letter");
 
-  showToast("BRO issued letter disimpan.");
-  resetBroLetterForm();
-  setTimeout(() => loadBroLetterFiles(), 1400);
+    showToast("BRO issued letter disimpan.");
+    resetBroLetterForm();
+    loadBroLetterFiles();
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal simpan letter: " + err.message);
+  }
 }
 
 function loadBroLetterFiles() {
@@ -1596,7 +1610,7 @@ function filterFinanceCards(q, selector) {
   filterLetterFiles(q, selector);
 }
 
-function updateFinanceStatus(module, id, selectId) {
+async function updateFinanceStatus(module, id, selectId) {
   const status = document.getElementById(selectId).value;
 
   if (!canChangeFinanceStatusTo(status) && status !== FINANCE_DEFAULT_STATUS) {
@@ -1604,22 +1618,24 @@ function updateFinanceStatus(module, id, selectId) {
     return;
   }
 
-  const iframe = document.createElement('iframe');
-  iframe.style.display = "none";
-  iframe.src = buildMoreApiUrl({
-    module,
-    action: "update",
-    id,
-    status,
-    approvedBy: localStorage.getItem('agentNama') || "UNKNOWN"
-  });
-  document.body.appendChild(iframe);
+  try {
+    const json = await loadMoreApi({
+      module,
+      action: "update",
+      id,
+      status,
+      approvedBy: localStorage.getItem('agentNama') || "UNKNOWN"
+    });
 
-  showToast("Status updated to " + status + ".");
-  setTimeout(() => {
+    if (!json.ok) throw new Error(json.error || "Gagal update status");
+
+    showToast("Status updated to " + status + ".");
     if (module === "REIMBURSEMENT") loadReimbursementFiles();
     if (module === "OPERATIONAL_FUND_REQUEST") loadOperationalFundFiles();
-  }, 1400);
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal update status: " + err.message);
+  }
 }
 
 function openHandbookInNewTab() {
