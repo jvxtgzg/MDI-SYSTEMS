@@ -64,6 +64,7 @@
   .sidebar-btn.teal:hover, .sidebar-btn.teal.active { background: var(--navy); color: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
   .sidebar-btn.dark { background: var(--navy); color: var(--white); margin-top: 4px; }
   .sidebar-btn.dark:hover { background: var(--navy-hover); }
+  .access-hidden { display:none !important; }
 
   /* CONTENT */
   .content { flex: 1; background: var(--blue-mid); padding: 28px 32px; }
@@ -146,6 +147,45 @@
   #mission-detail-editor ul, #mission-detail-editor ol, #mission-detail-preview ul, #mission-detail-preview ol { padding-left:24px; margin:6px 0; }
   #mission-detail-editor li, #mission-detail-preview li { margin:4px 0; }
   .mission-modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:12px; }
+  .more-menu-grid { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:14px; }
+  .more-subview { display:none; background:var(--card-bg); border:1.5px solid rgba(255,255,255,0.3); border-radius:8px; padding:14px; box-shadow:0 4px 16px rgba(0,0,0,0.15); }
+  .letter-menu-grid { display:flex; flex-wrap:wrap; gap:12px; margin-top:12px; }
+  .letter-category-card { background:#fff; border:1.5px solid #b0c8e8; border-radius:8px; padding:16px; width:260px; color:#111; }
+  .letter-category-card h4 { font-family:'Rajdhani', sans-serif; font-size:17px; font-weight:800; margin-bottom:6px; }
+  .letter-category-card p { font-size:13px; color:var(--text-muted); margin-bottom:12px; line-height:1.35; }
+  .letter-workspace { display:none; }
+  .letter-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+  .letter-toolbar h3 { font-family:'Rajdhani', sans-serif; font-size:18px; font-weight:800; color:var(--text-dark); letter-spacing:0.5px; }
+  .letter-grid { display:grid; grid-template-columns:minmax(280px, 420px) 1fr; gap:14px; align-items:start; }
+  .letter-panel { background:#fff; border:1.5px solid #b0c8e8; border-radius:8px; padding:14px; color:#111; }
+  .letter-panel h4 { font-family:'Rajdhani', sans-serif; font-size:17px; font-weight:800; margin-bottom:10px; color:#111; }
+  .letter-field { margin-bottom:10px; }
+  .letter-field label { display:block; font-size:12px; font-weight:800; color:var(--text-muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.4px; }
+  .letter-field textarea.report-input { min-height:90px; resize:vertical; }
+  .letter-actions { display:flex; gap:8px; flex-wrap:wrap; }
+  .letter-list { display:flex; flex-direction:column; gap:10px; }
+  .letter-file-card { border:1.5px solid #d3e5f8; border-radius:8px; padding:12px; background:#f7fbff; display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .letter-file-card h4 { font-size:15px; margin-bottom:3px; color:#111; }
+  .letter-file-card p { font-size:12px; color:var(--text-muted); margin-bottom:2px; }
+  .letter-file-buttons { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+  .letter-preview-strip { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .letter-preview-strip img { width:76px; height:76px; object-fit:cover; border-radius:6px; border:1px solid #b0c8e8; cursor:pointer; background:#fff; }
+  .finance-status { display:inline-flex; align-items:center; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:900; letter-spacing:0.4px; text-transform:uppercase; background:#e8f1ff; color:#1a0080; }
+  .finance-status.pending { background:#fff4d6; color:#8a5b00; }
+  .finance-status.success { background:#dcf8e8; color:#0c6b35; }
+  .finance-status-control { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-top:8px; }
+  .finance-status-control .report-input { min-width:145px; padding:8px 10px; font-size:12px; }
+  .handbook-preview-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
+  .handbook-preview-head h3 { font-family:'Rajdhani', sans-serif; font-size:18px; font-weight:800; color:var(--text-dark); letter-spacing:0.5px; }
+  .handbook-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .handbook-search { display:flex; gap:8px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+  .handbook-search .report-input { flex:1; min-width:230px; }
+  .handbook-results { display:none; background:#fff; border:1.5px solid #b0c8e8; border-radius:8px; padding:12px 14px; margin-bottom:12px; max-height:260px; overflow:auto; color:#111; font-family:'Exo 2', sans-serif; }
+  .handbook-results h4 { font-family:'Rajdhani', sans-serif; font-size:16px; margin-bottom:8px; }
+  .handbook-result-item { padding:8px 0; border-top:1px solid #d8e8f8; font-size:13px; line-height:1.45; }
+  .handbook-result-item:first-of-type { border-top:none; }
+  .handbook-result-item mark { background:#ffeb3b; color:#111; font-weight:800; padding:0 2px; }
+  .handbook-frame { width:100%; height:72vh; min-height:520px; border:1.5px solid #b0c8e8; border-radius:8px; background:#fff; }
 
   /* TOAST */
   .toast { position: fixed; bottom: 30px; right: 30px; background: var(--navy); color: #fff; padding: 12px 26px; border-radius: 8px; font-size: 14px; font-weight: 600; display: none; z-index: 9999; box-shadow: 0 4px 18px rgba(0,0,0,0.35); font-family: 'Exo 2', sans-serif; border-left: 4px solid var(--gold); animation: slideIn 0.3s ease; }
@@ -188,6 +228,8 @@
     .mission-modal { align-items:flex-start; overflow:auto; }
     .mission-modal-card { margin-top:20px; padding:14px; }
     #mission-detail-editor { min-height:60vh; }
+    .handbook-frame { height:68vh; min-height:420px; }
+    .letter-grid { grid-template-columns:1fr; }
 
     /* FILE CARD */
     .file-card { flex-direction: column; align-items: flex-start; gap: 10px; }
@@ -241,10 +283,10 @@
         <div class="agent-name" id="sidebar-name">AGENTS NAME (DIVISI)</div>
         <div class="agent-rank">RANK AGENTS</div>
       </div>
-      <button class="sidebar-btn teal active" id="btn-nav-dashboard" onclick="navigate('dashboard')">Dashboard</button>
-      <button class="sidebar-btn teal" id="btn-nav-report" onclick="navigate('report')">New Report</button>
-      <button class="sidebar-btn teal" id="btn-nav-files" onclick="navigate('files')">Files</button>
-      <button class="sidebar-btn teal" id="btn-nav-contribution" onclick="navigate('contribution')">Contribution</button>
+      <button class="sidebar-btn teal active sensitive-menu" id="btn-nav-dashboard" onclick="navigate('dashboard')">Dashboard</button>
+      <button class="sidebar-btn teal sensitive-menu" id="btn-nav-report" onclick="navigate('report')">New Report</button>
+      <button class="sidebar-btn teal sensitive-menu" id="btn-nav-files" onclick="navigate('files')">Files</button>
+      <button class="sidebar-btn teal sensitive-menu" id="btn-nav-contribution" onclick="navigate('contribution')">Contribution</button>
       <button class="sidebar-btn teal" id="btn-nav-more" onclick="navigate('more')">More</button>
       <button class="sidebar-btn dark" onclick="doRefresh()">Refresh</button>
       <button class="sidebar-btn dark" onclick="doLogout()">Logout</button>
@@ -363,11 +405,369 @@
       <div id="view-more" style="display:none;">
         <div class="content-title">More</div>
 
-        <div class="dash-card">
-          <div class="dash-card-info">
-            <h3>Additional Features</h3>
-            <p>Menu tambahan BRO akan ditambahkan di bagian ini.</p>
+        <div class="more-menu-grid">
+          <button class="btn-primary sensitive-menu" onclick="openHandbook()">Handbook</button>
+          <button class="btn-primary sensitive-menu" onclick="openLetterMenu()">Letter</button>
+          <button class="btn-primary reimbursement-menu" onclick="openReimbursementMenu()">Reimbursement</button>
+          <button class="btn-primary operational-fund-menu" onclick="openOperationalFundMenu()">Operational Fund Request</button>
+        </div>
+
+        <div id="letter-menu" class="more-subview">
+          <div class="handbook-preview-head">
+            <h3>Letter</h3>
+            <button class="btn-teal" onclick="backToMoreMenu()">Kembali</button>
           </div>
+
+          <div class="letter-menu-grid">
+            <div class="letter-category-card">
+              <h4>DOJ to BRO</h4>
+              <p>Arsip surat masuk dari Department of Justice untuk BRO.</p>
+              <button class="btn-primary sm" onclick="openLetterCategory('DOJ_TO_BRO')">Open</button>
+            </div>
+
+            <div class="letter-category-card">
+              <h4>BRO Issued</h4>
+              <p>Arsip surat yang diterbitkan atau dikeluarkan oleh BRO.</p>
+              <button class="btn-primary sm" onclick="openLetterCategory('BRO_ISSUED')">Open</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="letter-doj-workspace" class="more-subview letter-workspace">
+          <div class="letter-toolbar">
+            <h3>DOJ to BRO</h3>
+            <div class="letter-actions">
+              <button class="btn-teal" onclick="openLetterMenu()">Kembali</button>
+              <button class="btn-primary sm" onclick="loadLetterFiles('DOJ_TO_BRO')">Refresh</button>
+            </div>
+          </div>
+
+          <div class="letter-grid">
+            <div class="letter-panel">
+              <h4>Upload Letter</h4>
+
+              <div class="letter-field">
+                <label>Letter Title</label>
+                <input id="doj-letter-title" class="report-input" type="text" placeholder="Judul surat" />
+              </div>
+
+              <div class="letter-field">
+                <label>Letter Number</label>
+                <input id="doj-letter-number" class="report-input" type="text" placeholder="Nomor surat DOJ" />
+              </div>
+
+              <div class="report-row">
+                <div class="letter-field" style="flex:1;">
+                  <label>Date Issued</label>
+                  <input id="doj-date-issued" class="report-input" type="date" />
+                </div>
+                <div class="letter-field" style="flex:1;">
+                  <label>Date Received</label>
+                  <input id="doj-date-received" class="report-input" type="date" />
+                </div>
+              </div>
+
+              <div class="report-row">
+                <div class="letter-field" style="flex:1;">
+                  <label>From</label>
+                  <input id="doj-from" class="report-input" type="text" value="Department of Justice" />
+                </div>
+                <div class="letter-field" style="flex:1;">
+                  <label>To</label>
+                  <input id="doj-to" class="report-input" type="text" value="BRO" />
+                </div>
+              </div>
+
+              <div class="letter-field">
+                <label>Related Case ID</label>
+                <input id="doj-related-case" class="report-input" type="text" placeholder="Opsional" />
+              </div>
+
+              <div class="letter-field">
+                <label>Classification</label>
+                <select id="doj-classification" class="report-input">
+                  <option value="Internal">Internal</option>
+                  <option value="Restricted">Restricted</option>
+                  <option value="Confidential">Confidential</option>
+                </select>
+              </div>
+
+              <div class="letter-field">
+                <label>Description</label>
+                <textarea id="doj-description" class="report-input" placeholder="Catatan singkat isi surat"></textarea>
+              </div>
+
+              <div class="letter-field">
+                <label>Letter Image CDN</label>
+                <textarea id="doj-cdn-links" class="report-input" placeholder="Paste link gambar surat. Jika lebih dari satu halaman, pisahkan per baris."></textarea>
+              </div>
+
+              <div class="letter-actions">
+                <button class="btn-primary" onclick="saveDojLetter()">Save Letter</button>
+                <button class="btn-teal" onclick="resetDojLetterForm()">Clear</button>
+              </div>
+            </div>
+
+            <div class="letter-panel">
+              <div class="letter-toolbar" style="margin-bottom:10px;">
+                <h4>Letter Files</h4>
+                <input id="doj-letter-search" class="report-input" type="text" placeholder="Search DOJ letter" style="max-width:260px;" oninput="filterDojLetterFiles(this.value)" />
+              </div>
+              <div id="doj-letter-list" class="letter-list">Klik Refresh untuk load data.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="letter-bro-workspace" class="more-subview letter-workspace">
+          <div class="letter-toolbar">
+            <h3>BRO Issued</h3>
+            <div class="letter-actions">
+              <button class="btn-teal" onclick="openLetterMenu()">Kembali</button>
+              <button class="btn-primary sm" onclick="loadBroLetterFiles()">Refresh</button>
+            </div>
+          </div>
+
+          <div class="letter-grid">
+            <div class="letter-panel">
+              <h4>Upload Letter</h4>
+
+              <div class="letter-field">
+                <label>Letter Title</label>
+                <input id="bro-letter-title" class="report-input" type="text" placeholder="Judul surat" />
+              </div>
+
+              <div class="report-row">
+                <div class="letter-field" style="flex:1;">
+                  <label>Letter Type</label>
+                  <select id="bro-letter-type" class="report-input">
+                    <option value="Surat Perintah">Surat Perintah</option>
+                    <option value="Surat Investigasi">Surat Investigasi</option>
+                    <option value="Surat Tugas">Surat Tugas</option>
+                    <option value="Surat Panggilan">Surat Panggilan</option>
+                    <option value="Memo Internal">Memo Internal</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="letter-field" style="flex:1;">
+                  <label>Letter Number</label>
+                  <input id="bro-letter-number" class="report-input" type="text" placeholder="Nomor surat BRO" />
+                </div>
+              </div>
+
+              <div class="letter-field">
+                <label>Date Issued</label>
+                <input id="bro-date-issued" class="report-input" type="date" />
+              </div>
+
+              <div class="report-row">
+                <div class="letter-field" style="flex:1;">
+                  <label>Issued By</label>
+                  <input id="bro-from" class="report-input" type="text" value="BRO" />
+                </div>
+                <div class="letter-field" style="flex:1;">
+                  <label>Recipient</label>
+                  <input id="bro-to" class="report-input" type="text" placeholder="Agent / Division / External" />
+                </div>
+              </div>
+
+              <div class="letter-field">
+                <label>Related Case ID</label>
+                <input id="bro-related-case" class="report-input" type="text" placeholder="Opsional" />
+              </div>
+
+              <div class="letter-field">
+                <label>Classification</label>
+                <select id="bro-classification" class="report-input">
+                  <option value="Internal">Internal</option>
+                  <option value="Restricted">Restricted</option>
+                  <option value="Confidential">Confidential</option>
+                </select>
+              </div>
+
+              <div class="letter-field">
+                <label>Description</label>
+                <textarea id="bro-description" class="report-input" placeholder="Catatan singkat isi surat"></textarea>
+              </div>
+
+              <div class="letter-field">
+                <label>Letter Image CDN</label>
+                <textarea id="bro-cdn-links" class="report-input" placeholder="Paste link gambar surat. Jika lebih dari satu halaman, pisahkan per baris."></textarea>
+              </div>
+
+              <div class="letter-actions">
+                <button class="btn-primary" onclick="saveBroLetter()">Save Letter</button>
+                <button class="btn-teal" onclick="resetBroLetterForm()">Clear</button>
+              </div>
+            </div>
+
+            <div class="letter-panel">
+              <div class="letter-toolbar" style="margin-bottom:10px;">
+                <h4>Letter Files</h4>
+                <input id="bro-letter-search" class="report-input" type="text" placeholder="Search BRO letter" style="max-width:260px;" oninput="filterBroLetterFiles(this.value)" />
+              </div>
+              <div id="bro-letter-list" class="letter-list">Klik Refresh untuk load data.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="reimbursement-workspace" class="more-subview letter-workspace">
+          <div class="letter-toolbar">
+            <h3>Reimbursement</h3>
+            <div class="letter-actions">
+              <button class="btn-teal" onclick="backToMoreMenu()">Kembali</button>
+              <button class="btn-primary sm" onclick="loadReimbursementFiles()">Refresh</button>
+            </div>
+          </div>
+
+          <div class="letter-grid">
+            <div id="rbs-form-panel" class="letter-panel">
+              <h4>New Reimbursement</h4>
+
+              <div class="report-row">
+                <div class="letter-field" style="flex:1;">
+                  <label>Date</label>
+                  <input id="rbs-date" class="report-input" type="date" />
+                </div>
+                <div class="letter-field" style="flex:1;">
+                  <label>Category</label>
+                  <select id="rbs-category" class="report-input">
+                    <option value="Transport">Transport</option>
+                    <option value="Food">Food</option>
+                    <option value="Medical">Medical</option>
+                    <option value="Equipment">Equipment</option>
+                    <option value="Communication">Communication</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="report-row">
+                <div class="letter-field" style="flex:1;">
+                  <label>Requester</label>
+                  <input id="rbs-requester" class="report-input" type="text" placeholder="Auto dari login" />
+                </div>
+                <div class="letter-field" style="flex:1;">
+                  <label>Division</label>
+                  <input id="rbs-division" class="report-input" type="text" placeholder="Auto dari login" />
+                </div>
+              </div>
+
+              <div class="letter-field">
+                <label>Amount</label>
+                <input id="rbs-amount" class="report-input" type="number" min="0" placeholder="Nominal reimbursement" />
+              </div>
+
+              <div class="letter-field">
+                <label>Description</label>
+                <textarea id="rbs-description" class="report-input" placeholder="Jelaskan pengeluaran yang ingin diganti"></textarea>
+              </div>
+
+              <div class="letter-field">
+                <label>Receipt CDN Links</label>
+                <textarea id="rbs-cdn-links" class="report-input" placeholder="Paste link nota/bukti. Jika lebih dari satu, pisahkan per baris."></textarea>
+              </div>
+
+              <div class="letter-actions">
+                <button class="btn-primary" onclick="saveReimbursement()">Submit</button>
+                <button class="btn-teal" onclick="resetReimbursementForm()">Clear</button>
+              </div>
+            </div>
+
+            <div class="letter-panel">
+              <div class="letter-toolbar" style="margin-bottom:10px;">
+                <h4>Reimbursement Files</h4>
+                <input id="rbs-search" class="report-input" type="text" placeholder="Search reimbursement" style="max-width:260px;" oninput="filterFinanceCards(this.value, '#rbs-list .letter-file-card')" />
+              </div>
+              <div id="rbs-list" class="letter-list">Klik Refresh untuk load data.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="operational-fund-workspace" class="more-subview letter-workspace">
+          <div class="letter-toolbar">
+            <h3>Operational Fund Request</h3>
+            <div class="letter-actions">
+              <button class="btn-teal" onclick="backToMoreMenu()">Kembali</button>
+              <button class="btn-primary sm" onclick="loadOperationalFundFiles()">Refresh</button>
+            </div>
+          </div>
+
+          <div class="letter-grid">
+            <div id="ofr-form-panel" class="letter-panel">
+              <h4>New Fund Request</h4>
+
+              <div class="report-row">
+                <div class="letter-field" style="flex:1;">
+                  <label>Date</label>
+                  <input id="ofr-date" class="report-input" type="date" />
+                </div>
+                <div class="letter-field" style="flex:1;">
+                  <label>Requester</label>
+                  <input id="ofr-requester" class="report-input" type="text" placeholder="Auto dari login" />
+                </div>
+              </div>
+
+              <div class="letter-field">
+                <label>Division</label>
+                <input id="ofr-division" class="report-input" type="text" placeholder="Auto dari login" />
+              </div>
+
+              <div class="letter-field">
+                <label>Purpose</label>
+                <input id="ofr-purpose" class="report-input" type="text" placeholder="Tujuan penggunaan dana operasi" />
+              </div>
+
+              <div class="letter-field">
+                <label>Amount</label>
+                <input id="ofr-amount" class="report-input" type="number" min="0" placeholder="Nominal dana operasi" />
+              </div>
+
+              <div class="letter-field">
+                <label>Description</label>
+                <textarea id="ofr-description" class="report-input" placeholder="Detail kebutuhan dana operasi"></textarea>
+              </div>
+
+              <div class="letter-field">
+                <label>Supporting CDN Links</label>
+                <textarea id="ofr-cdn-links" class="report-input" placeholder="Paste link bukti/pendukung. Jika lebih dari satu, pisahkan per baris."></textarea>
+              </div>
+
+              <div class="letter-actions">
+                <button class="btn-primary" onclick="saveOperationalFundRequest()">Submit</button>
+                <button class="btn-teal" onclick="resetOperationalFundForm()">Clear</button>
+              </div>
+            </div>
+
+            <div class="letter-panel">
+              <div class="letter-toolbar" style="margin-bottom:10px;">
+                <h4>Fund Request Files</h4>
+                <input id="ofr-search" class="report-input" type="text" placeholder="Search fund request" style="max-width:260px;" oninput="filterFinanceCards(this.value, '#ofr-list .letter-file-card')" />
+              </div>
+              <div id="ofr-list" class="letter-list">Klik Refresh untuk load data.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="handbook-preview" class="more-subview">
+          <div class="handbook-preview-head">
+            <h3>BRO Handbook</h3>
+            <div class="handbook-actions">
+              <button class="btn-teal" onclick="backToMoreMenu()">Kembali</button>
+              <button class="btn-teal" onclick="openHandbookInNewTab()">Open Docs</button>
+            </div>
+          </div>
+          <div class="handbook-search">
+            <input type="text" id="handbook-search-input" class="report-input" placeholder="Cari kata di Handbook" onkeydown="handleHandbookSearchKey(event)" />
+            <button class="btn-primary sm" onclick="searchHandbook()">Search</button>
+            <button class="btn-teal" onclick="clearHandbookSearch()">Clear</button>
+          </div>
+          <div id="handbook-results" class="handbook-results"></div>
+          <iframe
+            id="handbook-frame"
+            class="handbook-frame"
+            src=""
+            title="BRO Handbook Preview">
+          </iframe>
         </div>
       </div>
     </div>
@@ -435,14 +835,71 @@ const PIN_SHEET_ID="1hhNx80P6iydL0ouRqNtsQDx4ajNFIoz7sCnxLlZdeVs";
 const REPORT_SHEET_ID="1QgVdZ2Xtj2zskCG_lXPs9joVnNNZ9F19mxVVHbygtt8";
 const PIN_API_ID="AKfycbwNVQYSaIE-b_tiM5U0OW79iuEYfaYYcvghKgs4tzrFoDirw7FswDQUG_629WUgDlD2";
 const REPORT_API_ID="AKfycbzawEWTzjx5sOdpsVOqa-qv-jBE4rxSfror-pz7jNPRi2D1hfdIR4OWDHNdYxUjvt73XA";
+const MORE_API_URL="https://script.google.com/macros/s/AKfycbzddS3qt-cmzBFwGOpJDwC8bpb5avyRh0cXRC8nRe3E9q-9A6LN1BCr9OFPwhyq3syV/exec";
+const HANDBOOK_DOC_URL="https://docs.google.com/document/d/14HKwvnSNPQjWFAF-IN2rmaethHXnGOI7/edit?usp=sharing&ouid=106847982978182926598&rtpof=true&sd=true";
+const HANDBOOK_PREVIEW_URL="https://docs.google.com/document/d/14HKwvnSNPQjWFAF-IN2rmaethHXnGOI7/preview";
+const HANDBOOK_TEXT_URL="https://docs.google.com/document/d/14HKwvnSNPQjWFAF-IN2rmaethHXnGOI7/export?format=txt";
+const FINANCE_DEFAULT_STATUS = "IN PROCESS";
+const FINANCE_STATUS_OPTIONS = ["IN PROCESS", "PENDING", "SUCCESS"];
 
 let currentRank = "";
+let handbookTextCache = "";
+
+function getAgentDivision() {
+  return (localStorage.getItem('agentDivision') || "").trim().toUpperCase();
+}
+
+function getAgentRank() {
+  return (localStorage.getItem('agentRank') || "").trim().toUpperCase();
+}
+
+function isDojFundUser() {
+  return getAgentDivision() === "DOJ-FUND";
+}
+
+function isDirectorRank() {
+  return getAgentRank().includes("DIRECTOR");
+}
+
+function canManageFinanceStatus() {
+  return isDirectorRank() || isDojFundUser();
+}
+
+function canCreateOperationalFundRequest() {
+  return isDirectorRank();
+}
+
+function isSensitiveView(view) {
+  return ["dashboard", "report", "files", "contribution"].includes(view);
+}
+
+function applyAccessControl() {
+  const financeOnly = isDojFundUser();
+
+  document.querySelectorAll('.sensitive-menu').forEach(el => {
+    el.classList.toggle('access-hidden', financeOnly);
+  });
+
+  document.querySelectorAll('.reimbursement-menu').forEach(el => {
+    el.classList.remove('access-hidden');
+  });
+
+  document.querySelectorAll('.operational-fund-menu').forEach(el => {
+    el.classList.toggle('access-hidden', !(isDirectorRank() || financeOnly));
+  });
+}
 
 function navigate(view) {
+  if (isDojFundUser() && isSensitiveView(view)) {
+    showToast("Akses DOJ-FUND dibatasi ke menu finance.");
+    view = "more";
+  }
+
   document.querySelectorAll('[id^="view-"]').forEach(v => {
     v.style.display = 'none';
   });
 
+  applyAccessControl();
   document.getElementById('view-' + view).style.display = 'block';
 
   document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
@@ -460,6 +917,797 @@ function navigate(view) {
   if (view === 'contribution') {
     loadContribution();
   }
+
+  if (view === 'more') {
+    backToMoreMenu();
+  }
+}
+
+function openHandbook() {
+  openMoreSubview('handbook-preview');
+
+  const preview = document.getElementById('handbook-preview');
+  const frame = document.getElementById('handbook-frame');
+
+  if (!frame.getAttribute('src')) {
+    frame.src = HANDBOOK_PREVIEW_URL;
+  }
+
+  preview.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function openLetterMenu() {
+  openMoreSubview('letter-menu');
+}
+
+function openMoreSubview(id) {
+  const menu = document.querySelector('#view-more .more-menu-grid');
+  const subview = document.getElementById(id);
+
+  document.querySelectorAll('#view-more .more-subview').forEach(view => {
+    view.style.display = "none";
+  });
+
+  if (menu) menu.style.display = "none";
+  subview.style.display = "block";
+}
+
+function openLetterCategory(category) {
+  if (category === "DOJ_TO_BRO") {
+    openMoreSubview('letter-doj-workspace');
+    loadLetterFiles('DOJ_TO_BRO');
+    return;
+  }
+
+  if (category === "BRO_ISSUED") {
+    openMoreSubview('letter-bro-workspace');
+    loadBroLetterFiles();
+  }
+}
+
+function openReimbursementMenu() {
+  openMoreSubview('reimbursement-workspace');
+  hydrateFinanceDefaults('rbs');
+  document.getElementById('rbs-form-panel').classList.toggle('access-hidden', isDojFundUser());
+  loadReimbursementFiles();
+}
+
+function openOperationalFundMenu() {
+  if (!canCreateOperationalFundRequest() && !isDojFundUser()) {
+    showToast("Operational Fund Request hanya untuk rank DIRECTOR.");
+    return;
+  }
+
+  openMoreSubview('operational-fund-workspace');
+  hydrateFinanceDefaults('ofr');
+  document.getElementById('ofr-form-panel').classList.toggle('access-hidden', !canCreateOperationalFundRequest());
+  loadOperationalFundFiles();
+}
+
+function getFinanceInitialStatus() {
+  return FINANCE_DEFAULT_STATUS;
+}
+
+function canChangeFinanceStatusTo(status) {
+  const normalized = String(status || "").trim().toUpperCase();
+  return canManageFinanceStatus() && ["PENDING", "SUCCESS"].includes(normalized);
+}
+
+function hydrateFinanceDefaults(prefix) {
+  const today = new Date().toISOString().slice(0, 10);
+  const nama = localStorage.getItem('agentNama') || "";
+  const division = localStorage.getItem('agentDivision') || "";
+  const dateInput = document.getElementById(prefix + '-date');
+  const requesterInput = document.getElementById(prefix + '-requester');
+  const divisionInput = document.getElementById(prefix + '-division');
+
+  if (dateInput && !dateInput.value) dateInput.value = today;
+  if (requesterInput && !requesterInput.value) requesterInput.value = nama;
+  if (divisionInput && !divisionInput.value) divisionInput.value = division;
+}
+
+function resetReimbursementForm() {
+  document.getElementById('rbs-date').value = "";
+  document.getElementById('rbs-requester').value = "";
+  document.getElementById('rbs-division').value = "";
+  document.getElementById('rbs-category').value = "Transport";
+  document.getElementById('rbs-amount').value = "";
+  document.getElementById('rbs-description').value = "";
+  document.getElementById('rbs-cdn-links').value = "";
+  hydrateFinanceDefaults('rbs');
+}
+
+function saveReimbursement() {
+  const date = document.getElementById('rbs-date').value;
+  const requester = document.getElementById('rbs-requester').value.trim();
+  const division = document.getElementById('rbs-division').value.trim();
+  const category = document.getElementById('rbs-category').value;
+  const amount = document.getElementById('rbs-amount').value.trim();
+  const description = document.getElementById('rbs-description').value.trim();
+  const receiptCdnLinks = getCdnLinksFromText(document.getElementById('rbs-cdn-links').value);
+  const createdBy = localStorage.getItem('agentNama') || "UNKNOWN";
+
+  if (!date || !requester || !division || !amount || !description || receiptCdnLinks.length === 0) {
+    showToast("Date, requester, division, amount, description, dan CDN wajib diisi.");
+    return;
+  }
+
+  const iframe = document.createElement('iframe');
+  iframe.style.display = "none";
+  iframe.src = buildMoreApiUrl({
+    module: "REIMBURSEMENT",
+    action: "create",
+    date,
+    requester,
+    division,
+    category,
+    amount,
+    description,
+    receiptCdnLinks: JSON.stringify(receiptCdnLinks),
+    status: getFinanceInitialStatus(),
+    createdBy,
+    approvedBy: ""
+  });
+  document.body.appendChild(iframe);
+
+  showToast("Reimbursement submitted. Status: " + getFinanceInitialStatus() + ".");
+  resetReimbursementForm();
+  setTimeout(loadReimbursementFiles, 1400);
+}
+
+function resetOperationalFundForm() {
+  document.getElementById('ofr-date').value = "";
+  document.getElementById('ofr-requester').value = "";
+  document.getElementById('ofr-division').value = "";
+  document.getElementById('ofr-purpose').value = "";
+  document.getElementById('ofr-amount').value = "";
+  document.getElementById('ofr-description').value = "";
+  document.getElementById('ofr-cdn-links').value = "";
+  hydrateFinanceDefaults('ofr');
+}
+
+function saveOperationalFundRequest() {
+  if (!canCreateOperationalFundRequest()) {
+    showToast("Operational Fund Request hanya untuk rank DIRECTOR.");
+    return;
+  }
+
+  const date = document.getElementById('ofr-date').value;
+  const requester = document.getElementById('ofr-requester').value.trim();
+  const division = document.getElementById('ofr-division').value.trim();
+  const purpose = document.getElementById('ofr-purpose').value.trim();
+  const amount = document.getElementById('ofr-amount').value.trim();
+  const description = document.getElementById('ofr-description').value.trim();
+  const cdnLinks = getCdnLinksFromText(document.getElementById('ofr-cdn-links').value);
+  const createdBy = localStorage.getItem('agentNama') || "UNKNOWN";
+
+  if (!date || !requester || !division || !purpose || !amount || !description || cdnLinks.length === 0) {
+    showToast("Date, requester, division, purpose, amount, description, dan CDN wajib diisi.");
+    return;
+  }
+
+  const iframe = document.createElement('iframe');
+  iframe.style.display = "none";
+  iframe.src = buildMoreApiUrl({
+    module: "OPERATIONAL_FUND_REQUEST",
+    action: "create",
+    date,
+    requester,
+    division,
+    purpose,
+    amount,
+    description,
+    cdnLinks: JSON.stringify(cdnLinks),
+    status: getFinanceInitialStatus(),
+    createdBy,
+    approvedBy: ""
+  });
+  document.body.appendChild(iframe);
+
+  showToast("Operational fund request submitted. Status: " + getFinanceInitialStatus() + ".");
+  resetOperationalFundForm();
+  setTimeout(loadOperationalFundFiles, 1400);
+}
+
+function buildMoreApiUrl(params) {
+  const query = new URLSearchParams(params);
+  return MORE_API_URL + "?" + query.toString();
+}
+
+function getCdnLinksFromText(value) {
+  return value
+    .split(/\r?\n|,/)
+    .map(link => link.trim())
+    .filter(Boolean);
+}
+
+function resetDojLetterForm() {
+  document.getElementById('doj-letter-title').value = "";
+  document.getElementById('doj-letter-number').value = "";
+  document.getElementById('doj-date-issued').value = "";
+  document.getElementById('doj-date-received').value = "";
+  document.getElementById('doj-from').value = "Department of Justice";
+  document.getElementById('doj-to').value = "BRO";
+  document.getElementById('doj-related-case').value = "";
+  document.getElementById('doj-classification').value = "Internal";
+  document.getElementById('doj-description').value = "";
+  document.getElementById('doj-cdn-links').value = "";
+}
+
+function saveDojLetter() {
+  const title = document.getElementById('doj-letter-title').value.trim();
+  const letterNumber = document.getElementById('doj-letter-number').value.trim();
+  const dateIssued = document.getElementById('doj-date-issued').value;
+  const dateReceived = document.getElementById('doj-date-received').value;
+  const from = document.getElementById('doj-from').value.trim();
+  const to = document.getElementById('doj-to').value.trim();
+  const relatedCaseId = document.getElementById('doj-related-case').value.trim();
+  const classification = document.getElementById('doj-classification').value;
+  const description = document.getElementById('doj-description').value.trim();
+  const cdnLinks = getCdnLinksFromText(document.getElementById('doj-cdn-links').value);
+  const uploadedBy = localStorage.getItem('agentNama') || "UNKNOWN";
+
+  if (!title || !letterNumber || !dateIssued || cdnLinks.length === 0) {
+    showToast("Title, Number, Date Issued, dan CDN wajib diisi.");
+    return;
+  }
+
+  const url = buildMoreApiUrl({
+    module: "LETTER",
+    action: "create",
+    category: "DOJ_TO_BRO",
+    title,
+    letterNumber,
+    dateIssued,
+    dateReceived,
+    from,
+    to,
+    relatedCaseId,
+    classification,
+    description,
+    cdnLinks: JSON.stringify(cdnLinks),
+    uploadedBy,
+    status: "ACTIVE"
+  });
+
+  const iframe = document.createElement('iframe');
+  iframe.style.display = "none";
+  iframe.src = url;
+  document.body.appendChild(iframe);
+
+  showToast("DOJ letter disimpan.");
+  resetDojLetterForm();
+  setTimeout(() => loadLetterFiles('DOJ_TO_BRO'), 1400);
+}
+
+async function loadLetterFiles(category) {
+  const list = document.getElementById('doj-letter-list');
+  list.innerHTML = "Loading...";
+
+  try {
+    const url = buildMoreApiUrl({
+      module: "LETTER",
+      action: "list",
+      category
+    });
+    const res = await fetch(url);
+    const json = await res.json();
+
+    if (!json.ok) {
+      throw new Error(json.error || "Gagal load letter");
+    }
+
+    renderDojLetterFiles(json.data || []);
+  } catch (err) {
+    console.error(err);
+    list.innerHTML = "Gagal load Letter Files. Pastikan Apps Script sudah deploy dan permission Web App benar.";
+  }
+}
+
+function parseCdnLinks(value) {
+  if (!value) return [];
+
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) return parsed;
+  } catch {
+    // Fallback untuk data lama yang bukan JSON.
+  }
+
+  return String(value)
+    .split(/\r?\n|,/)
+    .map(link => link.trim())
+    .filter(Boolean);
+}
+
+function renderDojLetterFiles(data) {
+  const list = document.getElementById('doj-letter-list');
+
+  if (!data.length) {
+    list.innerHTML = "Belum ada surat DOJ to BRO.";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  data.forEach(letter => {
+    const links = parseCdnLinks(letter.cdnLinks);
+    const card = document.createElement('div');
+    card.className = "letter-file-card";
+    card.setAttribute("data-search", JSON.stringify(letter).toLowerCase());
+
+    card.innerHTML = `
+      <div>
+        <h4>${escapeHTML(letter.title || "-")}</h4>
+        <p><strong>No:</strong> ${escapeHTML(letter.letterNumber || "-")}</p>
+        <p><strong>Date:</strong> ${escapeHTML(letter.dateIssued || "-")} / Received ${escapeHTML(letter.dateReceived || "-")}</p>
+        <p><strong>Class:</strong> ${escapeHTML(letter.classification || "-")} | <strong>Status:</strong> ${escapeHTML(letter.status || "-")}</p>
+        <p><strong>Case:</strong> ${escapeHTML(letter.relatedCaseId || "-")}</p>
+        <div class="letter-preview-strip">
+          ${links.slice(0, 4).map(link => `
+            <img src="${escapeHTML(link)}" onclick="openImageModal('${escapeHTML(link)}')" onerror="this.style.display='none'" />
+          `).join("")}
+        </div>
+      </div>
+      <div class="letter-file-buttons">
+        ${links[0] ? `<button class="btn-view" onclick="openImageModal('${escapeHTML(links[0])}')">View</button>` : ""}
+        <button class="btn-unlock" onclick="archiveLetter('${escapeHTML(letter.letterId || "")}', 'DOJ_TO_BRO')">Archive</button>
+      </div>
+    `;
+
+    list.appendChild(card);
+  });
+}
+
+function filterDojLetterFiles(q) {
+  const keyword = q.trim().toLowerCase();
+
+  document.querySelectorAll('#doj-letter-list .letter-file-card').forEach(card => {
+    const haystack = card.getAttribute('data-search') || "";
+    card.style.display = !keyword || haystack.includes(keyword) ? "flex" : "none";
+  });
+}
+
+function archiveLetter(letterId, category) {
+  if (!letterId) {
+    showToast("Letter ID tidak ditemukan.");
+    return;
+  }
+
+  if (!confirm("Archive letter ini?")) return;
+
+  const iframe = document.createElement('iframe');
+  iframe.style.display = "none";
+  iframe.src = buildMoreApiUrl({
+    module: "LETTER",
+    action: "archive",
+    id: letterId
+  });
+  document.body.appendChild(iframe);
+
+  showToast("Letter di-archive.");
+  setTimeout(() => {
+    if (category === "BRO_ISSUED") {
+      loadBroLetterFiles();
+    } else {
+      loadLetterFiles(category);
+    }
+  }, 1400);
+}
+
+function resetBroLetterForm() {
+  document.getElementById('bro-letter-title').value = "";
+  document.getElementById('bro-letter-type').value = "Surat Perintah";
+  document.getElementById('bro-letter-number').value = "";
+  document.getElementById('bro-date-issued').value = "";
+  document.getElementById('bro-from').value = "BRO";
+  document.getElementById('bro-to').value = "";
+  document.getElementById('bro-related-case').value = "";
+  document.getElementById('bro-classification').value = "Internal";
+  document.getElementById('bro-description').value = "";
+  document.getElementById('bro-cdn-links').value = "";
+}
+
+function saveBroLetter() {
+  const title = document.getElementById('bro-letter-title').value.trim();
+  const letterType = document.getElementById('bro-letter-type').value;
+  const letterNumber = document.getElementById('bro-letter-number').value.trim();
+  const dateIssued = document.getElementById('bro-date-issued').value;
+  const from = document.getElementById('bro-from').value.trim();
+  const to = document.getElementById('bro-to').value.trim();
+  const relatedCaseId = document.getElementById('bro-related-case').value.trim();
+  const classification = document.getElementById('bro-classification').value;
+  const description = document.getElementById('bro-description').value.trim();
+  const cdnLinks = getCdnLinksFromText(document.getElementById('bro-cdn-links').value);
+  const uploadedBy = localStorage.getItem('agentNama') || "UNKNOWN";
+
+  if (!title || !letterNumber || !dateIssued || !to || cdnLinks.length === 0) {
+    showToast("Title, Number, Date Issued, Recipient, dan CDN wajib diisi.");
+    return;
+  }
+
+  const url = buildMoreApiUrl({
+    module: "LETTER",
+    action: "create",
+    category: "BRO_ISSUED",
+    title,
+    letterNumber,
+    dateIssued,
+    dateReceived: "",
+    from,
+    to,
+    relatedCaseId,
+    classification,
+    description: `[${letterType}] ${description}`,
+    cdnLinks: JSON.stringify(cdnLinks),
+    uploadedBy,
+    status: "ACTIVE"
+  });
+
+  const iframe = document.createElement('iframe');
+  iframe.style.display = "none";
+  iframe.src = url;
+  document.body.appendChild(iframe);
+
+  showToast("BRO issued letter disimpan.");
+  resetBroLetterForm();
+  setTimeout(() => loadBroLetterFiles(), 1400);
+}
+
+function loadBroLetterFiles() {
+  loadLetterFilesForCategory('BRO_ISSUED', 'bro-letter-list', renderBroLetterFiles);
+}
+
+async function loadLetterFilesForCategory(category, listId, renderFn) {
+  const list = document.getElementById(listId);
+  list.innerHTML = "Loading...";
+
+  try {
+    const url = buildMoreApiUrl({
+      module: "LETTER",
+      action: "list",
+      category
+    });
+    const res = await fetch(url);
+    const json = await res.json();
+
+    if (!json.ok) {
+      throw new Error(json.error || "Gagal load letter");
+    }
+
+    renderFn(json.data || []);
+  } catch (err) {
+    console.error(err);
+    list.innerHTML = "Gagal load Letter Files. Pastikan Apps Script sudah deploy dan permission Web App benar.";
+  }
+}
+
+function renderBroLetterFiles(data) {
+  renderLetterFilesToList(data, 'bro-letter-list', 'BRO_ISSUED');
+}
+
+function renderLetterFilesToList(data, listId, category) {
+  const list = document.getElementById(listId);
+
+  if (!data.length) {
+    list.innerHTML = "Belum ada surat.";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  data.forEach(letter => {
+    const links = parseCdnLinks(letter.cdnLinks);
+    const card = document.createElement('div');
+    card.className = "letter-file-card";
+    card.setAttribute("data-search", JSON.stringify(letter).toLowerCase());
+
+    card.innerHTML = `
+      <div>
+        <h4>${escapeHTML(letter.title || "-")}</h4>
+        <p><strong>No:</strong> ${escapeHTML(letter.letterNumber || "-")}</p>
+        <p><strong>Date:</strong> ${escapeHTML(letter.dateIssued || "-")}</p>
+        <p><strong>From:</strong> ${escapeHTML(letter.from || "-")} | <strong>To:</strong> ${escapeHTML(letter.to || "-")}</p>
+        <p><strong>Class:</strong> ${escapeHTML(letter.classification || "-")} | <strong>Status:</strong> ${escapeHTML(letter.status || "-")}</p>
+        <p><strong>Case:</strong> ${escapeHTML(letter.relatedCaseId || "-")}</p>
+        <div class="letter-preview-strip">
+          ${links.slice(0, 4).map(link => `
+            <img src="${escapeHTML(link)}" onclick="openImageModal('${escapeHTML(link)}')" onerror="this.style.display='none'" />
+          `).join("")}
+        </div>
+      </div>
+      <div class="letter-file-buttons">
+        ${links[0] ? `<button class="btn-view" onclick="openImageModal('${escapeHTML(links[0])}')">View</button>` : ""}
+        <button class="btn-unlock" onclick="archiveLetter('${escapeHTML(letter.letterId || "")}', '${category}')">Archive</button>
+      </div>
+    `;
+
+    list.appendChild(card);
+  });
+}
+
+function filterBroLetterFiles(q) {
+  filterLetterFiles(q, '#bro-letter-list .letter-file-card');
+}
+
+function filterLetterFiles(q, selector) {
+  const keyword = q.trim().toLowerCase();
+
+  document.querySelectorAll(selector).forEach(card => {
+    const haystack = card.getAttribute('data-search') || "";
+    card.style.display = !keyword || haystack.includes(keyword) ? "flex" : "none";
+  });
+}
+
+async function loadFinanceFiles(module, listId, renderFn) {
+  const list = document.getElementById(listId);
+  list.innerHTML = "Loading...";
+
+  try {
+    const res = await fetch(buildMoreApiUrl({
+      module,
+      action: "list"
+    }));
+    const json = await res.json();
+
+    if (!json.ok) {
+      throw new Error(json.error || "Gagal load finance data");
+    }
+
+    renderFn(json.data || []);
+  } catch (err) {
+    console.error(err);
+    list.innerHTML = "Gagal load data. Pastikan Apps Script sudah deploy ulang dan permission Web App benar.";
+  }
+}
+
+function loadReimbursementFiles() {
+  loadFinanceFiles("REIMBURSEMENT", "rbs-list", renderReimbursementFiles);
+}
+
+function loadOperationalFundFiles() {
+  loadFinanceFiles("OPERATIONAL_FUND_REQUEST", "ofr-list", renderOperationalFundFiles);
+}
+
+function getStatusClass(status) {
+  const normalized = String(status || "").trim().toUpperCase();
+  if (normalized === "PENDING") return "pending";
+  if (normalized === "SUCCESS") return "success";
+  return "";
+}
+
+function formatAmount(value) {
+  const numeric = Number(value);
+  if (Number.isNaN(numeric)) return escapeHTML(String(value || "-"));
+  return numeric.toLocaleString("id-ID");
+}
+
+function renderFinanceStatusControl(module, id, currentStatus) {
+  if (!canManageFinanceStatus() || !id) return "";
+
+  return `
+    <div class="finance-status-control">
+      <select class="report-input" id="status-${escapeHTML(id)}">
+        ${FINANCE_STATUS_OPTIONS.map(status => `
+          <option value="${status}" ${String(currentStatus).toUpperCase() === status ? "selected" : ""}>${status}</option>
+        `).join("")}
+      </select>
+      <button class="btn-primary sm" onclick="updateFinanceStatus('${module}', '${escapeHTML(id)}', 'status-${escapeHTML(id)}')">Update</button>
+    </div>
+  `;
+}
+
+function renderFinanceCard(record, options) {
+  const links = parseCdnLinks(record[options.linksField]);
+  const id = record[options.idField] || "";
+  const status = record.status || FINANCE_DEFAULT_STATUS;
+  const card = document.createElement('div');
+  card.className = "letter-file-card";
+  card.setAttribute("data-search", JSON.stringify(record).toLowerCase());
+
+  card.innerHTML = `
+    <div>
+      <h4>${escapeHTML(options.title(record))}</h4>
+      <p><strong>Date:</strong> ${escapeHTML(record.date || "-")} | <strong>Amount:</strong> ${formatAmount(record.amount)}</p>
+      <p><strong>Requester:</strong> ${escapeHTML(record.requester || "-")} (${escapeHTML(record.division || "-")})</p>
+      <p><strong>Detail:</strong> ${escapeHTML(options.detail(record))}</p>
+      <p><span class="finance-status ${getStatusClass(status)}">${escapeHTML(status)}</span></p>
+      <div class="letter-preview-strip">
+        ${links.slice(0, 4).map(link => `
+          <img src="${escapeHTML(link)}" onclick="openImageModal('${escapeHTML(link)}')" onerror="this.style.display='none'" />
+        `).join("")}
+      </div>
+      ${renderFinanceStatusControl(options.module, id, status)}
+    </div>
+    <div class="letter-file-buttons">
+      ${links[0] ? `<button class="btn-view" onclick="openImageModal('${escapeHTML(links[0])}')">View</button>` : ""}
+    </div>
+  `;
+
+  return card;
+}
+
+function renderReimbursementFiles(data) {
+  const list = document.getElementById('rbs-list');
+
+  if (!data.length) {
+    list.innerHTML = "Belum ada reimbursement.";
+    return;
+  }
+
+  list.innerHTML = "";
+  data.forEach(record => {
+    list.appendChild(renderFinanceCard(record, {
+      module: "REIMBURSEMENT",
+      idField: "reimbursementId",
+      linksField: "receiptCdnLinks",
+      title: item => `${item.category || "Reimbursement"} / ${item.reimbursementId || "-"}`,
+      detail: item => item.description || "-"
+    }));
+  });
+}
+
+function renderOperationalFundFiles(data) {
+  const list = document.getElementById('ofr-list');
+
+  if (!data.length) {
+    list.innerHTML = "Belum ada operational fund request.";
+    return;
+  }
+
+  list.innerHTML = "";
+  data.forEach(record => {
+    list.appendChild(renderFinanceCard(record, {
+      module: "OPERATIONAL_FUND_REQUEST",
+      idField: "requestId",
+      linksField: "cdnLinks",
+      title: item => `${item.purpose || "Operational Fund"} / ${item.requestId || "-"}`,
+      detail: item => item.description || "-"
+    }));
+  });
+}
+
+function filterFinanceCards(q, selector) {
+  filterLetterFiles(q, selector);
+}
+
+function updateFinanceStatus(module, id, selectId) {
+  const status = document.getElementById(selectId).value;
+
+  if (!canChangeFinanceStatusTo(status) && status !== FINANCE_DEFAULT_STATUS) {
+    showToast("Hanya DIRECTOR atau DOJ-FUND yang bisa mengubah status finance.");
+    return;
+  }
+
+  const iframe = document.createElement('iframe');
+  iframe.style.display = "none";
+  iframe.src = buildMoreApiUrl({
+    module,
+    action: "update",
+    id,
+    status,
+    approvedBy: localStorage.getItem('agentNama') || "UNKNOWN"
+  });
+  document.body.appendChild(iframe);
+
+  showToast("Status updated to " + status + ".");
+  setTimeout(() => {
+    if (module === "REIMBURSEMENT") loadReimbursementFiles();
+    if (module === "OPERATIONAL_FUND_REQUEST") loadOperationalFundFiles();
+  }, 1400);
+}
+
+function openHandbookInNewTab() {
+  window.open(HANDBOOK_DOC_URL, "_blank");
+}
+
+function backToMoreMenu() {
+  const menu = document.querySelector('#view-more .more-menu-grid');
+
+  if (menu) menu.style.display = "flex";
+  document.querySelectorAll('#view-more .more-subview').forEach(view => {
+    view.style.display = "none";
+  });
+  clearHandbookSearch();
+}
+
+function handleHandbookSearchKey(e) {
+  if (e.key === "Enter") {
+    searchHandbook();
+  }
+}
+
+async function loadHandbookText() {
+  if (handbookTextCache) return handbookTextCache;
+
+  const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(HANDBOOK_TEXT_URL);
+  const res = await fetch(proxyUrl);
+
+  if (!res.ok) {
+    throw new Error("Gagal load text handbook");
+  }
+
+  handbookTextCache = await res.text();
+  return handbookTextCache;
+}
+
+function escapeHTML(text) {
+  return text.replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[char]));
+}
+
+function renderHandbookResults(keyword, matches) {
+  const results = document.getElementById('handbook-results');
+
+  if (matches.length === 0) {
+    results.style.display = "block";
+    results.innerHTML = `<h4>Hasil pencarian</h4><div class="handbook-result-item">Tidak ada hasil untuk "${escapeHTML(keyword)}".</div>`;
+    return;
+  }
+
+  const escapedKeyword = escapeHTML(keyword);
+  const keywordRegex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
+
+  results.style.display = "block";
+  results.innerHTML = `
+    <h4>${matches.length} hasil untuk "${escapedKeyword}"</h4>
+    ${matches.map(match => `
+      <div class="handbook-result-item">
+        ${escapeHTML(match).replace(keywordRegex, "<mark>$1</mark>")}
+      </div>
+    `).join("")}
+  `;
+}
+
+async function searchHandbook() {
+  const input = document.getElementById('handbook-search-input');
+  const keyword = input.value.trim();
+  const results = document.getElementById('handbook-results');
+
+  if (!keyword) {
+    clearHandbookSearch();
+    return;
+  }
+
+  results.style.display = "block";
+  results.innerHTML = `<div class="handbook-result-item">Mencari "${escapeHTML(keyword)}"...</div>`;
+
+  try {
+    const text = await loadHandbookText();
+    const lowerText = text.toLowerCase();
+    const lowerKeyword = keyword.toLowerCase();
+    const matches = [];
+    let index = lowerText.indexOf(lowerKeyword);
+
+    while (index !== -1 && matches.length < 20) {
+      const start = Math.max(0, index - 90);
+      const end = Math.min(text.length, index + keyword.length + 90);
+      matches.push(text.slice(start, end).replace(/\s+/g, " ").trim());
+      index = lowerText.indexOf(lowerKeyword, index + lowerKeyword.length);
+    }
+
+    renderHandbookResults(keyword, matches);
+  } catch (err) {
+    console.error(err);
+    results.style.display = "block";
+    results.innerHTML = `<div class="handbook-result-item">Pencarian belum bisa dimuat. Pastikan dokumen dapat diakses publik, lalu coba lagi.</div>`;
+  }
+}
+
+function clearHandbookSearch() {
+  const input = document.getElementById('handbook-search-input');
+  const results = document.getElementById('handbook-results');
+
+  if (input) input.value = "";
+  if (results) {
+    results.style.display = "none";
+    results.innerHTML = "";
+  }
 }
 
 window.addEventListener('load', () => {
@@ -476,7 +1724,8 @@ window.addEventListener('load', () => {
     document.getElementById('page-login').classList.remove('active');
     document.getElementById('page-app').classList.add('active');
 
-    navigate('dashboard');
+    applyAccessControl();
+    navigate(isDojFundUser() ? 'more' : 'dashboard');
   }
 });
 
@@ -673,7 +1922,8 @@ async function doLogin() {
     document.getElementById('page-login').classList.remove('active');
     document.getElementById('page-app').classList.add('active');
 
-    navigate('dashboard');
+    applyAccessControl();
+    navigate(isDojFundUser() ? 'more' : 'dashboard');
   } else {
     alert('Login Failed');
   }
