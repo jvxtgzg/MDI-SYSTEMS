@@ -180,6 +180,12 @@
   .finance-status.success { background:#dcf8e8; color:#0c6b35; }
   .finance-status-control { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-top:8px; }
   .finance-status-control .report-input { min-width:145px; padding:8px 10px; font-size:12px; }
+  .assignment-menu { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+  .assignment-status { display:inline-flex; align-items:center; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:900; letter-spacing:0.4px; text-transform:uppercase; background:#e8f1ff; color:#1a0080; }
+  .assignment-status.progress { background:#fff4d6; color:#8a5b00; }
+  .assignment-status.review { background:#efe1ff; color:#5c168d; }
+  .assignment-status.completed { background:#dcf8e8; color:#0c6b35; }
+  .assignment-status.cancelled { background:#ffe1e1; color:#8d1111; }
   .handbook-preview-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
   .handbook-preview-head h3 { font-family:'Rajdhani', sans-serif; font-size:18px; font-weight:800; color:var(--text-dark); letter-spacing:0.5px; }
   .handbook-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
@@ -413,6 +419,7 @@
         <div class="more-menu-grid">
           <button class="btn-primary sensitive-menu" onclick="openHandbook()">Handbook</button>
           <button class="btn-primary sensitive-menu" onclick="openLetterMenu()">Letter</button>
+          <button class="btn-primary sensitive-menu" onclick="openAssignmentsMenu()">Agent Assignments</button>
           <button class="btn-primary reimbursement-menu" onclick="openReimbursementMenu()">Reimbursement</button>
           <button class="btn-primary operational-fund-menu" onclick="openOperationalFundMenu()">Operational Fund Request</button>
         </div>
@@ -753,6 +760,88 @@
           </div>
         </div>
 
+        <div id="assignments-workspace" class="more-subview letter-workspace">
+          <div class="letter-toolbar">
+            <h3>Agent Assignments</h3>
+            <div class="letter-actions">
+              <button class="btn-teal" onclick="backToMoreMenu()">Kembali</button>
+              <button class="btn-primary sm" onclick="loadAssignments()">Refresh</button>
+            </div>
+          </div>
+
+          <div class="assignment-menu">
+            <button class="btn-primary sm assignment-create-only" onclick="showAssignmentForm()">New Assignment</button>
+            <button class="btn-teal" onclick="loadAssignments('mine')">My Assignments</button>
+            <button class="btn-teal assignment-create-only" onclick="loadAssignments('all')">All Assignments</button>
+          </div>
+
+          <div class="letter-grid">
+            <div id="assignment-form-panel" class="letter-panel">
+              <h4>New Assignment</h4>
+
+              <div class="letter-field">
+                <label>Title</label>
+                <input id="asn-title" class="report-input" type="text" placeholder="Judul tugas" />
+              </div>
+
+              <div class="letter-field">
+                <label>Description</label>
+                <textarea id="asn-description" class="report-input" placeholder="Detail tugas agent"></textarea>
+              </div>
+
+              <div class="report-row">
+                <div class="letter-field" style="flex:1;">
+                  <label>Assigned To</label>
+                  <input id="asn-assigned-to" class="report-input" type="text" placeholder="Nama/code agent" />
+                </div>
+                <div class="letter-field" style="flex:1;">
+                  <label>Assigned Division</label>
+                  <input id="asn-assigned-division" class="report-input" type="text" placeholder="Divisi agent" />
+                </div>
+              </div>
+
+              <div class="report-row">
+                <div class="letter-field" style="flex:1;">
+                  <label>Related Case ID</label>
+                  <input id="asn-related-case" class="report-input" type="text" placeholder="BRO-0001" />
+                </div>
+                <div class="letter-field" style="flex:1;">
+                  <label>Deadline</label>
+                  <input id="asn-deadline" class="report-input" type="date" />
+                </div>
+              </div>
+
+              <div class="letter-field">
+                <label>Priority</label>
+                <select id="asn-priority" class="report-input">
+                  <option value="NORMAL">NORMAL</option>
+                  <option value="LOW">LOW</option>
+                  <option value="HIGH">HIGH</option>
+                  <option value="URGENT">URGENT</option>
+                </select>
+              </div>
+
+              <div class="letter-field">
+                <label>CDN Links</label>
+                <textarea id="asn-cdn-links" class="report-input" placeholder="Opsional. Link evidence/briefing, pisahkan per baris."></textarea>
+              </div>
+
+              <div class="letter-actions">
+                <button class="btn-primary" onclick="saveAssignment()">Assign</button>
+                <button class="btn-teal" onclick="resetAssignmentForm()">Clear</button>
+              </div>
+            </div>
+
+            <div class="letter-panel">
+              <div class="letter-toolbar" style="margin-bottom:10px;">
+                <h4>Assignment Files</h4>
+                <input id="asn-search" class="report-input" type="text" placeholder="Search assignment" style="max-width:260px;" oninput="filterFinanceCards(this.value, '#assignment-list .letter-file-card')" />
+              </div>
+              <div id="assignment-list" class="letter-list">Klik Refresh untuk load data.</div>
+            </div>
+          </div>
+        </div>
+
         <div id="handbook-preview" class="more-subview">
           <div class="handbook-preview-head">
             <h3>BRO Handbook</h3>
@@ -846,6 +935,7 @@ const HANDBOOK_PREVIEW_URL="https://docs.google.com/document/d/14HKwvnSNPQjWFAF-
 const HANDBOOK_TEXT_URL="https://docs.google.com/document/d/14HKwvnSNPQjWFAF-IN2rmaethHXnGOI7/export?format=txt";
 const FINANCE_DEFAULT_STATUS = "IN PROCESS";
 const FINANCE_STATUS_OPTIONS = ["IN PROCESS", "PENDING", "SUCCESS"];
+const ASSIGNMENT_STATUS_OPTIONS = ["ASSIGNED", "IN PROGRESS", "NEED REVIEW", "COMPLETED", "CANCELLED"];
 
 let currentRank = "";
 let handbookTextCache = "";
@@ -872,6 +962,11 @@ function canManageFinanceStatus() {
 
 function canCreateOperationalFundRequest() {
   return isDirectorRank();
+}
+
+function canCreateAssignments() {
+  const rank = getAgentRank();
+  return rank.includes("DIRECTOR") || rank.includes("CHIEF");
 }
 
 function isSensitiveView(view) {
@@ -913,6 +1008,7 @@ function navigate(view) {
 
   if (view === 'report') {
     resetReportForm();
+    enableIntelInfoInput();
   }
 
   if (view === 'files') {
@@ -926,6 +1022,14 @@ function navigate(view) {
   if (view === 'more') {
     backToMoreMenu();
   }
+}
+
+function enableIntelInfoInput() {
+  const intel = document.getElementById('intel-info');
+  if (!intel) return;
+
+  intel.disabled = false;
+  intel.readOnly = false;
 }
 
 function openHandbook() {
@@ -987,6 +1091,18 @@ function openOperationalFundMenu() {
   hydrateFinanceDefaults('ofr');
   document.getElementById('ofr-form-panel').classList.toggle('access-hidden', !canCreateOperationalFundRequest());
   loadOperationalFundFiles();
+}
+
+function openAssignmentsMenu() {
+  openMoreSubview('assignments-workspace');
+
+  const canCreate = canCreateAssignments();
+  document.getElementById('assignment-form-panel').classList.toggle('access-hidden', !canCreate);
+  document.querySelectorAll('.assignment-create-only').forEach(el => {
+    el.classList.toggle('access-hidden', !canCreate);
+  });
+
+  loadAssignments(canCreate ? 'all' : 'mine');
 }
 
 function getFinanceInitialStatus() {
@@ -1125,6 +1241,41 @@ async function saveOperationalFundRequest() {
 function buildMoreApiUrl(params) {
   const query = new URLSearchParams(params);
   return MORE_API_URL + "?" + query.toString();
+}
+
+function buildReportApiUrl(params) {
+  const query = new URLSearchParams(params);
+  return `https://script.google.com/macros/s/${REPORT_API_ID}/exec?` + query.toString();
+}
+
+function loadReportApi(params) {
+  return new Promise((resolve, reject) => {
+    const callbackName = "mdiReportCallback_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+    const script = document.createElement("script");
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error("Request timeout"));
+    }, 20000);
+
+    function cleanup() {
+      clearTimeout(timeout);
+      delete window[callbackName];
+      script.remove();
+    }
+
+    window[callbackName] = data => {
+      cleanup();
+      resolve(data);
+    };
+
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Gagal load Report Apps Script"));
+    };
+
+    script.src = buildReportApiUrl(Object.assign({}, params, { callback: callbackName }));
+    document.body.appendChild(script);
+  });
 }
 
 function loadMoreApi(params) {
@@ -1643,6 +1794,198 @@ async function updateFinanceStatus(module, id, selectId) {
   }
 }
 
+function resetAssignmentForm() {
+  document.getElementById('asn-title').value = "";
+  document.getElementById('asn-description').value = "";
+  document.getElementById('asn-assigned-to').value = "";
+  document.getElementById('asn-assigned-division').value = "";
+  document.getElementById('asn-related-case').value = "";
+  document.getElementById('asn-deadline').value = "";
+  document.getElementById('asn-priority').value = "NORMAL";
+  document.getElementById('asn-cdn-links').value = "";
+}
+
+function showAssignmentForm() {
+  document.getElementById('assignment-form-panel').classList.remove('access-hidden');
+}
+
+async function saveAssignment() {
+  if (!canCreateAssignments()) {
+    showToast("Assignment hanya bisa dibuat oleh Director/Chief.");
+    return;
+  }
+
+  const title = document.getElementById('asn-title').value.trim();
+  const description = document.getElementById('asn-description').value.trim();
+  const assignedTo = document.getElementById('asn-assigned-to').value.trim();
+  const assignedDivision = document.getElementById('asn-assigned-division').value.trim();
+  const relatedCaseId = document.getElementById('asn-related-case').value.trim();
+  const priority = document.getElementById('asn-priority').value;
+  const deadline = document.getElementById('asn-deadline').value;
+  const cdnLinks = getCdnLinksFromText(document.getElementById('asn-cdn-links').value);
+  const createdBy = localStorage.getItem('agentNama') || "UNKNOWN";
+
+  if (!title || !description || !assignedTo || !deadline) {
+    showToast("Title, description, assigned agent, dan deadline wajib diisi.");
+    return;
+  }
+
+  try {
+    const json = await loadReportApi({
+      module: "AGENT_ASSIGNMENTS",
+      action: "create",
+      title,
+      description,
+      assignedTo,
+      assignedDivision,
+      relatedCaseId,
+      priority,
+      status: "ASSIGNED",
+      deadline,
+      progressNote: "",
+      cdnLinks: JSON.stringify(cdnLinks),
+      createdBy,
+      updatedBy: createdBy,
+      completedAt: ""
+    });
+
+    if (!json.ok) throw new Error(json.error || "Gagal simpan assignment");
+
+    showToast("Assignment berhasil dibuat.");
+    resetAssignmentForm();
+    loadAssignments('all');
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal simpan assignment: " + err.message);
+  }
+}
+
+async function loadAssignments(scope = "mine") {
+  const list = document.getElementById('assignment-list');
+  list.innerHTML = "Loading...";
+
+  const params = {
+    module: "AGENT_ASSIGNMENTS",
+    action: "list"
+  };
+
+  if (scope === "mine" && !canCreateAssignments()) {
+    params.assignedTo = localStorage.getItem('agentNama') || "";
+  }
+
+  try {
+    const json = await loadReportApi(params);
+
+    if (!json.ok) throw new Error(json.error || "Gagal load assignments");
+
+    renderAssignments(json.data || []);
+  } catch (err) {
+    console.error(err);
+    list.innerHTML = "Gagal load assignments. Pastikan Apps Script report sudah deploy ulang.";
+  }
+}
+
+function getAssignmentStatusClass(status) {
+  const normalized = String(status || "").toUpperCase();
+  if (normalized === "IN PROGRESS") return "progress";
+  if (normalized === "NEED REVIEW") return "review";
+  if (normalized === "COMPLETED") return "completed";
+  if (normalized === "CANCELLED") return "cancelled";
+  return "";
+}
+
+function renderAssignments(data) {
+  const list = document.getElementById('assignment-list');
+
+  if (!data.length) {
+    list.innerHTML = "Belum ada assignment.";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  data.forEach(item => {
+    const links = parseCdnLinks(item.cdnLinks);
+    const card = document.createElement('div');
+    card.className = "letter-file-card";
+    card.setAttribute("data-search", JSON.stringify(item).toLowerCase());
+
+    card.innerHTML = `
+      <div>
+        <h4>${escapeHTML(item.title || "-")} / ${escapeHTML(item.assignmentId || "-")}</h4>
+        <p><strong>Assigned:</strong> ${escapeHTML(item.assignedTo || "-")} (${escapeHTML(item.assignedDivision || "-")})</p>
+        <p><strong>Case:</strong> ${item.relatedCaseId ? `<button class="btn-view" onclick="openRelatedCase('${escapeHTML(item.relatedCaseId)}')">${escapeHTML(item.relatedCaseId)}</button>` : "-"}</p>
+        <p><strong>Priority:</strong> ${escapeHTML(item.priority || "-")} | <strong>Deadline:</strong> ${escapeHTML(item.deadline || "-")}</p>
+        <p><strong>Description:</strong> ${escapeHTML(item.description || "-")}</p>
+        <p><strong>Progress:</strong> ${escapeHTML(item.progressNote || "-")}</p>
+        <p><span class="assignment-status ${getAssignmentStatusClass(item.status)}">${escapeHTML(item.status || "ASSIGNED")}</span></p>
+        <div class="letter-preview-strip">
+          ${links.slice(0, 4).map(link => `
+            <img src="${escapeHTML(link)}" onclick="openImageModal('${escapeHTML(link)}')" onerror="this.style.display='none'" />
+          `).join("")}
+        </div>
+        ${renderAssignmentUpdateControl(item)}
+      </div>
+    `;
+
+    list.appendChild(card);
+  });
+}
+
+function renderAssignmentUpdateControl(item) {
+  const assignmentId = item.assignmentId || "";
+  if (!assignmentId) return "";
+
+  return `
+    <div class="finance-status-control">
+      <select class="report-input" id="asn-status-${escapeHTML(assignmentId)}">
+        ${ASSIGNMENT_STATUS_OPTIONS.map(status => `
+          <option value="${status}" ${String(item.status).toUpperCase() === status ? "selected" : ""}>${status}</option>
+        `).join("")}
+      </select>
+      <input class="report-input" id="asn-note-${escapeHTML(assignmentId)}" type="text" placeholder="Progress note" value="${escapeHTML(item.progressNote || "")}" />
+      <button class="btn-primary sm" onclick="updateAssignment('${escapeHTML(assignmentId)}')">Update</button>
+    </div>
+  `;
+}
+
+async function updateAssignment(assignmentId) {
+  const status = document.getElementById('asn-status-' + assignmentId).value;
+  const progressNote = document.getElementById('asn-note-' + assignmentId).value.trim();
+  const updatedBy = localStorage.getItem('agentNama') || "UNKNOWN";
+
+  try {
+    const json = await loadReportApi({
+      module: "AGENT_ASSIGNMENTS",
+      action: "update",
+      id: assignmentId,
+      status,
+      progressNote,
+      updatedBy,
+      completedAt: status === "COMPLETED" ? new Date().toISOString() : ""
+    });
+
+    if (!json.ok) throw new Error(json.error || "Gagal update assignment");
+
+    showToast("Assignment updated.");
+    loadAssignments(canCreateAssignments() ? 'all' : 'mine');
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal update assignment: " + err.message);
+  }
+}
+
+function openRelatedCase(caseId) {
+  navigate('files');
+  setTimeout(() => {
+    const search = document.querySelector('#view-files .search-bar');
+    if (search) {
+      search.value = caseId;
+      filterFiles(caseId);
+    }
+  }, 600);
+}
+
 function openHandbookInNewTab() {
   window.open(HANDBOOK_DOC_URL, "_blank");
 }
@@ -2118,26 +2461,19 @@ async function saveReport() {
     return;
   }
 
-  let url = `https://script.google.com/macros/s/${REPORT_API_ID}/exec`
-    + `?date=${encodeURIComponent(date)}`
-    + `&mission=${encodeURIComponent(mission)}`
-    + `&detail=${encodeURIComponent(detail)}`
-    + `&intel=${encodeURIComponent(intel)}`
-    + `&evidence=${encodeURIComponent(evidence)}`
-    + `&agents=${encodeURIComponent(agents)}`
-    + `&status=${encodeURIComponent(status)}`
-    + `&createdBy=${encodeURIComponent(createdBy)}`
-    + `&closedBy=${encodeURIComponent(closedBy)}`;
-
-  if (currentCaseId) {
-    url += `&caseId=${encodeURIComponent(currentCaseId)}`;
-  }
-
   try {
-    const iframe = document.createElement("iframe");
-    iframe.style.display = "none";
-    iframe.src = url;
-    document.body.appendChild(iframe);
+    submitReportRequest({
+      date,
+      mission,
+      detail,
+      intel,
+      evidence,
+      agents,
+      status,
+      createdBy,
+      closedBy,
+      caseId: currentCaseId || ""
+    });
 
     showToast(
       currentCaseId 
@@ -2151,6 +2487,38 @@ async function saveReport() {
     console.error(err);
     showToast("Gagal simpan laporan!");
   }
+}
+
+function submitReportRequest(payload) {
+  const iframeName = "report-submit-frame-" + Date.now();
+  const iframe = document.createElement("iframe");
+  iframe.name = iframeName;
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = `https://script.google.com/macros/s/${REPORT_API_ID}/exec`;
+  form.target = iframeName;
+  form.style.display = "none";
+
+  Object.keys(payload).forEach(key => {
+    if (key === "caseId" && !payload[key]) return;
+
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = key;
+    input.value = payload[key];
+    form.appendChild(input);
+  });
+
+  document.body.appendChild(form);
+  form.submit();
+
+  setTimeout(() => {
+    form.remove();
+    iframe.remove();
+  }, 10000);
 }
 
 function isPrivilegedRank() {
@@ -2213,6 +2581,8 @@ async function loadFiles() {
 }
 
 function resetReportForm() {
+  enableIntelInfoInput();
+
   document.querySelectorAll('.report-input')[0].value = "";
   document.getElementById('mission-status').value = "";
   document.querySelector('input[type="date"]').value = "";
@@ -2240,6 +2610,7 @@ function resetReportForm() {
 
 function viewReport(row) {
   navigate('report');
+  enableIntelInfoInput();
 
   const caseId = row?.[0]?.v || "";
   const rawDate = row?.[1]?.f || row?.[1]?.v || "";
@@ -2325,6 +2696,7 @@ let currentCaseId = null;
 
 function editReport(row) {
   navigate('report');
+  enableIntelInfoInput();
 
   const caseId = row?.[0]?.v || "";
   const rawDate = row?.[1]?.f || row?.[1]?.v || "";
