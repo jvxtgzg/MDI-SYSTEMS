@@ -913,6 +913,7 @@ function navigate(view) {
 
   if (view === 'report') {
     resetReportForm();
+    enableIntelInfoInput();
   }
 
   if (view === 'files') {
@@ -926,6 +927,14 @@ function navigate(view) {
   if (view === 'more') {
     backToMoreMenu();
   }
+}
+
+function enableIntelInfoInput() {
+  const intel = document.getElementById('intel-info');
+  if (!intel) return;
+
+  intel.disabled = false;
+  intel.readOnly = false;
 }
 
 function openHandbook() {
@@ -2118,26 +2127,19 @@ async function saveReport() {
     return;
   }
 
-  let url = `https://script.google.com/macros/s/${REPORT_API_ID}/exec`
-    + `?date=${encodeURIComponent(date)}`
-    + `&mission=${encodeURIComponent(mission)}`
-    + `&detail=${encodeURIComponent(detail)}`
-    + `&intel=${encodeURIComponent(intel)}`
-    + `&evidence=${encodeURIComponent(evidence)}`
-    + `&agents=${encodeURIComponent(agents)}`
-    + `&status=${encodeURIComponent(status)}`
-    + `&createdBy=${encodeURIComponent(createdBy)}`
-    + `&closedBy=${encodeURIComponent(closedBy)}`;
-
-  if (currentCaseId) {
-    url += `&caseId=${encodeURIComponent(currentCaseId)}`;
-  }
-
   try {
-    const iframe = document.createElement("iframe");
-    iframe.style.display = "none";
-    iframe.src = url;
-    document.body.appendChild(iframe);
+    submitReportRequest({
+      date,
+      mission,
+      detail,
+      intel,
+      evidence,
+      agents,
+      status,
+      createdBy,
+      closedBy,
+      caseId: currentCaseId || ""
+    });
 
     showToast(
       currentCaseId 
@@ -2151,6 +2153,38 @@ async function saveReport() {
     console.error(err);
     showToast("Gagal simpan laporan!");
   }
+}
+
+function submitReportRequest(payload) {
+  const iframeName = "report-submit-frame-" + Date.now();
+  const iframe = document.createElement("iframe");
+  iframe.name = iframeName;
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = `https://script.google.com/macros/s/${REPORT_API_ID}/exec`;
+  form.target = iframeName;
+  form.style.display = "none";
+
+  Object.keys(payload).forEach(key => {
+    if (key === "caseId" && !payload[key]) return;
+
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = key;
+    input.value = payload[key];
+    form.appendChild(input);
+  });
+
+  document.body.appendChild(form);
+  form.submit();
+
+  setTimeout(() => {
+    form.remove();
+    iframe.remove();
+  }, 10000);
 }
 
 function isPrivilegedRank() {
@@ -2213,6 +2247,8 @@ async function loadFiles() {
 }
 
 function resetReportForm() {
+  enableIntelInfoInput();
+
   document.querySelectorAll('.report-input')[0].value = "";
   document.getElementById('mission-status').value = "";
   document.querySelector('input[type="date"]').value = "";
@@ -2240,6 +2276,7 @@ function resetReportForm() {
 
 function viewReport(row) {
   navigate('report');
+  enableIntelInfoInput();
 
   const caseId = row?.[0]?.v || "";
   const rawDate = row?.[1]?.f || row?.[1]?.v || "";
@@ -2325,6 +2362,7 @@ let currentCaseId = null;
 
 function editReport(row) {
   navigate('report');
+  enableIntelInfoInput();
 
   const caseId = row?.[0]?.v || "";
   const rawDate = row?.[1]?.f || row?.[1]?.v || "";
