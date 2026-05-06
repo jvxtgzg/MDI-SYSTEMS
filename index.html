@@ -792,7 +792,8 @@
               <div class="report-row">
                 <div class="letter-field" style="flex:1;">
                   <label>Assigned To</label>
-                  <input id="asn-assigned-to" class="report-input" type="text" placeholder="Nama/code agent" />
+                  <input id="asn-assigned-to" class="report-input" type="text" list="assignment-agent-options" placeholder="Nama/code agent" onfocus="loadAssignmentAgents().then(() => openDatalistPicker(this))" onclick="loadAssignmentAgents().then(() => openDatalistPicker(this))" oninput="handleAssignedToInput()" />
+                  <datalist id="assignment-agent-options"></datalist>
                 </div>
                 <div class="letter-field" style="flex:1;">
                   <label>Assigned Division</label>
@@ -803,7 +804,8 @@
               <div class="report-row">
                 <div class="letter-field" style="flex:1;">
                   <label>Related Case ID</label>
-                  <input id="asn-related-case" class="report-input" type="text" placeholder="BRO-0001" />
+                  <input id="asn-related-case" class="report-input" type="text" list="assignment-case-options" placeholder="BRO-0001" onfocus="loadAssignmentCases().then(() => openDatalistPicker(this))" onclick="loadAssignmentCases().then(() => openDatalistPicker(this))" />
+                  <datalist id="assignment-case-options"></datalist>
                 </div>
                 <div class="letter-field" style="flex:1;">
                   <label>Deadline</label>
@@ -939,6 +941,8 @@ const ASSIGNMENT_STATUS_OPTIONS = ["ASSIGNED", "IN PROGRESS", "NEED REVIEW", "CO
 
 let currentRank = "";
 let handbookTextCache = "";
+let assignmentAgentCache = [];
+let assignmentCaseCache = [];
 
 function getAgentDivision() {
   return (localStorage.getItem('agentDivision') || "").trim().toUpperCase();
@@ -1102,6 +1106,8 @@ function openAssignmentsMenu() {
     el.classList.toggle('access-hidden', !canCreate);
   });
 
+  loadAssignmentAgents();
+  loadAssignmentCases();
   loadAssignments(canCreate ? 'all' : 'mine');
 }
 
@@ -1807,6 +1813,119 @@ function resetAssignmentForm() {
 
 function showAssignmentForm() {
   document.getElementById('assignment-form-panel').classList.remove('access-hidden');
+  loadAssignmentAgents();
+  loadAssignmentCases();
+}
+
+function openDatalistPicker(input) {
+  if (!input || typeof input.showPicker !== "function") return;
+
+  try {
+    input.showPicker();
+  } catch (err) {
+    // Browser hanya mengizinkan picker saat dipicu langsung oleh klik/fokus user.
+  }
+}
+
+async function loadAssignmentAgents(force = false) {
+  const datalist = document.getElementById('assignment-agent-options');
+  if (!datalist) return;
+
+  if (assignmentAgentCache.length && !force) return;
+
+  datalist.innerHTML = `<option value="Loading agent data..."></option>`;
+
+  try {
+    const res = await fetch(`https://docs.google.com/spreadsheets/d/${MEMBER_SHEET_ID}/gviz/tq?tqx=out:json`);
+    const text = await res.text();
+    const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+
+    assignmentAgentCache = (json.table.rows || [])
+      .map(row => ({
+        name: (row.c?.[0]?.v || "").toString().trim(),
+        code: (row.c?.[1]?.v || "").toString().trim(),
+        division: (row.c?.[3]?.v || "").toString().trim(),
+        rank: (row.c?.[4]?.v || "").toString().trim()
+      }))
+      .filter(agent => agent.name || agent.code);
+
+    renderAssignmentAgentOptions();
+  } catch (err) {
+    console.error(err);
+    datalist.innerHTML = "";
+    showToast("Gagal load list agent.");
+  }
+}
+
+function renderAssignmentAgentOptions() {
+  const datalist = document.getElementById('assignment-agent-options');
+  if (!datalist) return;
+
+  datalist.innerHTML = assignmentAgentCache.map(agent => {
+    const labelParts = [agent.name, agent.division, agent.rank].filter(Boolean).join(" / ");
+    const label = labelParts ? labelParts : "Agent BRO";
+    return `<option value="${escapeHTML(agent.code || agent.name)}" label="${escapeHTML(label)}"></option>`;
+  }).join("");
+}
+
+function getSelectedAssignmentAgent() {
+  const value = document.getElementById('asn-assigned-to').value.trim().toLowerCase();
+  if (!value) return null;
+
+  return assignmentAgentCache.find(agent => {
+    return String(agent.name || "").toLowerCase() === value ||
+      String(agent.code || "").toLowerCase() === value;
+  }) || null;
+}
+
+function handleAssignedToInput() {
+  const selected = getSelectedAssignmentAgent();
+  const divisionInput = document.getElementById('asn-assigned-division');
+
+  if (selected && divisionInput) {
+    if (selected.code) document.getElementById('asn-assigned-to').value = selected.code;
+    divisionInput.value = selected.division || divisionInput.value;
+  }
+}
+
+async function loadAssignmentCases(force = false) {
+  const datalist = document.getElementById('assignment-case-options');
+  if (!datalist) return;
+
+  if (assignmentCaseCache.length && !force) return;
+
+  datalist.innerHTML = `<option value="Loading case data..."></option>`;
+
+  try {
+    const res = await fetch(`https://docs.google.com/spreadsheets/d/${REPORT_SHEET_ID}/gviz/tq?tqx=out:json`);
+    const text = await res.text();
+    const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+
+    assignmentCaseCache = (json.table.rows || [])
+      .map(row => ({
+        caseId: (row.c?.[0]?.v || "").toString().trim(),
+        date: (row.c?.[1]?.f || row.c?.[1]?.v || "").toString().trim(),
+        mission: (row.c?.[2]?.v || "").toString().trim(),
+        status: (row.c?.[7]?.v || "").toString().trim()
+      }))
+      .filter(item => item.caseId);
+
+    renderAssignmentCaseOptions();
+  } catch (err) {
+    console.error(err);
+    datalist.innerHTML = "";
+    showToast("Gagal load list case.");
+  }
+}
+
+function renderAssignmentCaseOptions() {
+  const datalist = document.getElementById('assignment-case-options');
+  if (!datalist) return;
+
+  datalist.innerHTML = assignmentCaseCache.map(item => {
+    const label = [item.mission, item.status, item.date].filter(Boolean).join(" / ");
+    return `<option value="${escapeHTML(item.caseId)}" label="${escapeHTML(label || "Case File")}"></option>`;
+  }).join("");
 }
 
 async function saveAssignment() {
@@ -1817,8 +1936,10 @@ async function saveAssignment() {
 
   const title = document.getElementById('asn-title').value.trim();
   const description = document.getElementById('asn-description').value.trim();
-  const assignedTo = document.getElementById('asn-assigned-to').value.trim();
-  const assignedDivision = document.getElementById('asn-assigned-division').value.trim();
+  handleAssignedToInput();
+  const selectedAgent = getSelectedAssignmentAgent();
+  const assignedTo = selectedAgent?.code || document.getElementById('asn-assigned-to').value.trim();
+  const assignedDivision = selectedAgent?.division || document.getElementById('asn-assigned-division').value.trim();
   const relatedCaseId = document.getElementById('asn-related-case').value.trim();
   const priority = document.getElementById('asn-priority').value;
   const deadline = document.getElementById('asn-deadline').value;
@@ -2021,7 +2142,7 @@ async function loadHandbookText() {
 }
 
 function escapeHTML(text) {
-  return text.replace(/[&<>"']/g, char => ({
+  return String(text).replace(/[&<>"']/g, char => ({
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
