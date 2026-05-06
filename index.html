@@ -125,6 +125,15 @@
   .cdn-row .report-input { flex: 1; }
   .evidence-preview { flex: 1; background: var(--teal); border-radius: 7px;display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--white); min-height: 70px; padding: 10px; text-align: center; }
   .status-evidence-row { display: flex; gap: 8px; align-items: stretch; }
+  .agent-picker-panel { display:none; margin-top:6px; max-height:220px; overflow:auto; border:1px solid #b0c8e8; border-radius:8px; background:#fff; box-shadow:0 10px 24px rgba(15,23,42,0.12); padding:6px; scrollbar-gutter:stable; }
+  .agent-picker-panel::-webkit-scrollbar { width:10px; }
+  .agent-picker-panel::-webkit-scrollbar-track { background:#e6f2ff; border-radius:999px; }
+  .agent-picker-panel::-webkit-scrollbar-thumb { background:#101a3a; border-radius:999px; border:3px solid #e6f2ff; }
+  .agent-picker-option { width:100%; border:none; border-radius:7px; background:transparent; padding:9px 10px; display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; text-align:left; font-family:'Exo 2', sans-serif; color:#162033; }
+  .agent-picker-option:hover { background:#f0f8ff; }
+  .agent-picker-code { font-weight:900; letter-spacing:0.45px; color:#101a3a; }
+  .agent-picker-meta { color:#64748b; font-size:12px; font-weight:700; text-transform:uppercase; }
+  .agent-picker-empty { padding:10px; color:#64748b; font-size:12px; font-weight:700; }
   .mission-detail-box { width: 100%; padding: 12px 16px; border-radius: 7px; border: 1.5px solid #b0c8e8; font-size: 14px; font-family: 'Exo 2', sans-serif; outline: none; background: var(--white); color: #333; cursor: pointer; min-height: 120px; max-height: 120px; overflow: auto; }
   .mission-detail-box:focus { border-color: var(--navy); }
   .mission-detail-placeholder { color: #6d7f9a; }
@@ -293,6 +302,17 @@
   .agents-bro-dark .agents-code-badge {
     background: rgba(8,168,199,0.16);
     color: #67e8f9;
+  }
+  #view-dashboard.agents-mode .content-title {
+    display: none;
+  }
+  #view-dashboard.agents-mode #agents-bro-panel {
+    margin-top: 0;
+    min-height: calc(100vh - 132px);
+    max-height: calc(100vh - 132px);
+  }
+  #view-dashboard.agents-mode .agents-bro-dark .agents-table-wrap {
+    max-height: calc(100vh - 330px);
   }
 
   /* 2026 PREMIUM UI REFRESH */
@@ -685,6 +705,12 @@
 
   /* TOAST */
   .toast { position: fixed; bottom: 30px; right: 30px; background: var(--navy); color: #fff; padding: 12px 26px; border-radius: 8px; font-size: 14px; font-weight: 600; display: none; z-index: 9999; box-shadow: var(--shadow-panel); font-family: 'Exo 2', sans-serif; border-left: 4px solid var(--teal); animation: slideIn 0.3s ease; }
+  .loading-overlay { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(8,17,36,0.58); backdrop-filter:blur(5px); z-index:12000; padding:20px; }
+  .loading-card { min-width:260px; max-width:360px; background:linear-gradient(135deg, #081124, #101a3a); border:1px solid rgba(94,231,255,0.28); border-radius:10px; box-shadow:0 24px 60px rgba(0,0,0,0.38); padding:22px; text-align:center; color:#fff; font-family:'Exo 2', sans-serif; }
+  .loading-spinner { width:42px; height:42px; border-radius:50%; border:4px solid rgba(94,231,255,0.16); border-top-color:#5ee7ff; margin:0 auto 14px; animation:spin 0.8s linear infinite; }
+  .loading-title { font-size:15px; font-weight:900; letter-spacing:0.5px; }
+  .loading-sub { margin-top:6px; font-size:12px; color:rgba(226,232,240,0.72); }
+  @keyframes spin { to { transform:rotate(360deg); } }
   @keyframes slideIn {
     from { opacity: 0; transform: translateX(30px); }
     to { opacity: 1; transform: translateX(0); }
@@ -728,6 +754,8 @@
     .embedded-web-frame { height:68vh; min-height:420px; }
     .agents-bro-dark { max-height:calc(100vh - 250px); }
     .agents-bro-dark .agents-table-wrap { max-height:calc(100vh - 470px); }
+    #view-dashboard.agents-mode #agents-bro-panel { min-height:calc(100vh - 250px); max-height:calc(100vh - 250px); }
+    #view-dashboard.agents-mode .agents-bro-dark .agents-table-wrap { max-height:calc(100vh - 470px); }
     .scrollable-file-list { max-height:58vh; }
     .more-cyber-grid { grid-template-columns:1fr; }
     .more-cyber-tile { min-height:82px; padding:13px; }
@@ -858,7 +886,7 @@
             <div class="dash-card-right">
               <input type="password" class="pin-input" id="pin-display" value="******" readonly />
               <div style="display:flex; gap:8px; align-items:center;">
-                <button class="btn-primary sm" onclick="togglePin()">View PIN</button>
+                <button class="btn-primary sm" type="button" onclick="togglePin()">View PIN</button>
                 <button class="icon-action-btn" type="button" onclick="copySecurityPin()" title="Copy PIN" aria-label="Copy PIN">
                   <span class="material-symbols-rounded">content_copy</span>
                 </button>
@@ -908,7 +936,10 @@
 
           <div class="report-bottom-right">
 
-            <input type="text" id="input-agents" class="report-input" placeholder="Agents Terlibat (contoh : REX, ADRIEN, DAGU, JACK)" />
+            <div style="position:relative;">
+              <input type="text" id="input-agents" class="report-input" placeholder="Agents Terlibat (contoh : REX, ADRIEN, DAGU, JACK)" onfocus="showInvolvedAgentPicker()" oninput="filterInvolvedAgentPicker()" />
+              <div id="involved-agent-picker" class="agent-picker-panel"></div>
+            </div>
 
             <div id="evidence-container"></div>
 
@@ -1422,6 +1453,13 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-card">
+    <div class="loading-spinner"></div>
+    <div class="loading-title" id="loading-title">Processing</div>
+    <div class="loading-sub" id="loading-sub">Please wait...</div>
+  </div>
+</div>
 
 <div id="mission-detail-modal" class="mission-modal">
   <div class="mission-modal-card">
@@ -1496,6 +1534,26 @@ let assignmentAgentCache = [];
 let assignmentCaseCache = [];
 let agentsBroUnlocked = false;
 let agentsBroDataCache = [];
+let involvedAgentCache = [];
+let loadingTimer = null;
+
+function showLoading(title = "Processing", sub = "Please wait...") {
+  const overlay = document.getElementById('loading-overlay');
+  const titleEl = document.getElementById('loading-title');
+  const subEl = document.getElementById('loading-sub');
+
+  if (titleEl) titleEl.textContent = title;
+  if (subEl) subEl.textContent = sub;
+  if (overlay) overlay.style.display = "flex";
+}
+
+function hideLoading(delay = 0) {
+  clearTimeout(loadingTimer);
+  loadingTimer = setTimeout(() => {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) overlay.style.display = "none";
+  }, delay);
+}
 
 function getAgentDivision() {
   return (localStorage.getItem('agentDivision') || "").trim().toUpperCase();
@@ -1713,6 +1771,7 @@ async function saveReimbursement() {
   }
 
   try {
+    showLoading("Submitting Reimbursement", "Mengirim data ke spreadsheet...");
     const json = await loadMoreApi({
       module: "REIMBURSEMENT",
       action: "create",
@@ -1736,6 +1795,8 @@ async function saveReimbursement() {
   } catch (err) {
     console.error(err);
     showToast("Gagal simpan reimbursement: " + err.message);
+  } finally {
+    hideLoading();
   }
 }
 
@@ -1771,6 +1832,7 @@ async function saveOperationalFundRequest() {
   }
 
   try {
+    showLoading("Submitting Fund Request", "Mengirim data ke spreadsheet...");
     const json = await loadMoreApi({
       module: "OPERATIONAL_FUND_REQUEST",
       action: "create",
@@ -1794,6 +1856,8 @@ async function saveOperationalFundRequest() {
   } catch (err) {
     console.error(err);
     showToast("Gagal simpan fund request: " + err.message);
+  } finally {
+    hideLoading();
   }
 }
 
@@ -1906,6 +1970,7 @@ async function saveDojLetter() {
   }
 
   try {
+    showLoading("Saving Letter", "Menyimpan DOJ to BRO letter...");
     const json = await loadMoreApi({
       module: "LETTER",
       action: "create",
@@ -1932,6 +1997,8 @@ async function saveDojLetter() {
   } catch (err) {
     console.error(err);
     showToast("Gagal simpan letter: " + err.message);
+  } finally {
+    hideLoading();
   }
 }
 
@@ -1940,6 +2007,7 @@ async function loadLetterFiles(category) {
   list.innerHTML = "Loading...";
 
   try {
+    showLoading("Loading Letter Files", "Mengambil data letter...");
     const json = await loadMoreApi({
       module: "LETTER",
       action: "list",
@@ -1954,6 +2022,8 @@ async function loadLetterFiles(category) {
   } catch (err) {
     console.error(err);
     list.innerHTML = "Gagal load Letter Files. Pastikan Apps Script sudah deploy dan permission Web App benar.";
+  } finally {
+    hideLoading();
   }
 }
 
@@ -2030,6 +2100,7 @@ async function archiveLetter(letterId, category) {
   if (!confirm("Archive letter ini?")) return;
 
   try {
+    showLoading("Archiving Letter", "Memproses archive letter...");
     const json = await loadMoreApi({
       module: "LETTER",
       action: "archive",
@@ -2047,6 +2118,8 @@ async function archiveLetter(letterId, category) {
   } catch (err) {
     console.error(err);
     showToast("Gagal archive letter: " + err.message);
+  } finally {
+    hideLoading();
   }
 }
 
@@ -2082,6 +2155,7 @@ async function saveBroLetter() {
   }
 
   try {
+    showLoading("Saving Letter", "Menyimpan BRO issued letter...");
     const json = await loadMoreApi({
       module: "LETTER",
       action: "create",
@@ -2108,6 +2182,8 @@ async function saveBroLetter() {
   } catch (err) {
     console.error(err);
     showToast("Gagal simpan letter: " + err.message);
+  } finally {
+    hideLoading();
   }
 }
 
@@ -2120,6 +2196,7 @@ async function loadLetterFilesForCategory(category, listId, renderFn) {
   list.innerHTML = "Loading...";
 
   try {
+    showLoading("Loading Letter Files", "Mengambil data letter...");
     const json = await loadMoreApi({
       module: "LETTER",
       action: "list",
@@ -2134,6 +2211,8 @@ async function loadLetterFilesForCategory(category, listId, renderFn) {
   } catch (err) {
     console.error(err);
     list.innerHTML = "Gagal load Letter Files. Pastikan Apps Script sudah deploy dan permission Web App benar.";
+  } finally {
+    hideLoading();
   }
 }
 
@@ -2199,6 +2278,7 @@ async function loadFinanceFiles(module, listId, renderFn) {
   list.innerHTML = "Loading...";
 
   try {
+    showLoading("Loading Data", "Mengambil data finance...");
     const json = await loadMoreApi({
       module,
       action: "list"
@@ -2212,6 +2292,8 @@ async function loadFinanceFiles(module, listId, renderFn) {
   } catch (err) {
     console.error(err);
     list.innerHTML = "Gagal load data. Pastikan Apps Script sudah deploy ulang dan permission Web App benar.";
+  } finally {
+    hideLoading();
   }
 }
 
@@ -2334,6 +2416,7 @@ async function updateFinanceStatus(module, id, selectId) {
   }
 
   try {
+    showLoading("Updating Status", "Menyimpan perubahan status...");
     const json = await loadMoreApi({
       module,
       action: "update",
@@ -2350,6 +2433,8 @@ async function updateFinanceStatus(module, id, selectId) {
   } catch (err) {
     console.error(err);
     showToast("Gagal update status: " + err.message);
+  } finally {
+    hideLoading();
   }
 }
 
@@ -2505,6 +2590,7 @@ async function saveAssignment() {
   }
 
   try {
+    showLoading("Creating Assignment", "Menyimpan tugas agent...");
     const json = await loadReportApi({
       module: "AGENT_ASSIGNMENTS",
       action: "create",
@@ -2531,6 +2617,8 @@ async function saveAssignment() {
   } catch (err) {
     console.error(err);
     showToast("Gagal simpan assignment: " + err.message);
+  } finally {
+    hideLoading();
   }
 }
 
@@ -2548,6 +2636,7 @@ async function loadAssignments(scope = "mine") {
   }
 
   try {
+    showLoading("Loading Assignments", "Mengambil data assignment...");
     const json = await loadReportApi(params);
 
     if (!json.ok) throw new Error(json.error || "Gagal load assignments");
@@ -2556,6 +2645,8 @@ async function loadAssignments(scope = "mine") {
   } catch (err) {
     console.error(err);
     list.innerHTML = "Gagal load assignments. Pastikan Apps Script report sudah deploy ulang.";
+  } finally {
+    hideLoading();
   }
 }
 
@@ -2629,6 +2720,7 @@ async function updateAssignment(assignmentId) {
   const updatedBy = localStorage.getItem('agentNama') || "UNKNOWN";
 
   try {
+    showLoading("Updating Assignment", "Menyimpan perkembangan tugas...");
     const json = await loadReportApi({
       module: "AGENT_ASSIGNMENTS",
       action: "update",
@@ -2646,6 +2738,8 @@ async function updateAssignment(assignmentId) {
   } catch (err) {
     console.error(err);
     showToast("Gagal update assignment: " + err.message);
+  } finally {
+    hideLoading();
   }
 }
 
@@ -3003,11 +3097,12 @@ function doLogout() {
 
 function doAgentsBRO() {
   const panel = document.getElementById('agents-bro-panel');
+  const dashboard = document.getElementById('view-dashboard');
 
   document.querySelectorAll('#view-dashboard .dashboard-home-card').forEach(card => {
     card.style.display = "none";
   });
-  document.querySelector('#view-dashboard .content-title').textContent = "Agents Data BRO";
+  if (dashboard) dashboard.classList.add('agents-mode');
   panel.style.display = "flex";
   panel.scrollIntoView({ behavior: "smooth", block: "start" });
   document.getElementById('agents-bro-pin').focus();
@@ -3016,11 +3111,12 @@ function doAgentsBRO() {
 
 function closeAgentsBRO() {
   const panel = document.getElementById('agents-bro-panel');
+  const dashboard = document.getElementById('view-dashboard');
   if (panel) panel.style.display = "none";
   document.querySelectorAll('#view-dashboard .dashboard-home-card').forEach(card => {
     card.style.display = "";
   });
-  document.querySelector('#view-dashboard .content-title').textContent = "Dashboard";
+  if (dashboard) dashboard.classList.remove('agents-mode');
 }
 
 function handleAgentsBroPinKey(e) {
@@ -3030,9 +3126,7 @@ function handleAgentsBroPinKey(e) {
 }
 
 async function fetchSecurityPin() {
-  const res = await fetch(`https://docs.google.com/spreadsheets/d/${PIN_SHEET_ID}/gviz/tq?tqx=out:json`);
-  const text = await res.text();
-  const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+  const json = await loadGoogleSheetJsonp(PIN_SHEET_ID);
 
   return String(json.table.rows[0].c[4]?.v || "").trim();
 }
@@ -3047,6 +3141,7 @@ async function verifyAgentsBROPin() {
   }
 
   try {
+    showLoading("Verifying PIN", "Mengecek Security PIN...");
     const realPinValue = await fetchSecurityPin();
 
     if (pin !== realPinValue) {
@@ -3065,6 +3160,8 @@ async function verifyAgentsBROPin() {
   } catch (err) {
     console.error(err);
     showToast("Gagal verifikasi PIN.");
+  } finally {
+    hideLoading();
   }
 }
 
@@ -3093,9 +3190,8 @@ async function loadAgentsBROData(force = false) {
   empty.style.display = "block";
 
   try {
-    const res = await fetch(`https://docs.google.com/spreadsheets/d/${MEMBER_SHEET_ID}/gviz/tq?tqx=out:json`);
-    const text = await res.text();
-    const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+    showLoading("Loading Agents Data", "Mengambil data anggota...");
+    const json = await loadGoogleSheetJsonp(MEMBER_SHEET_ID);
 
     agentsBroDataCache = (json.table.rows || [])
       .map(row => ({
@@ -3111,6 +3207,8 @@ async function loadAgentsBROData(force = false) {
     console.error(err);
     empty.textContent = "Gagal load data anggota.";
     empty.style.display = "block";
+  } finally {
+    hideLoading();
   }
 }
 
@@ -3186,12 +3284,15 @@ async function togglePin(){
     input.type = 'text';
 
     try{
+      showLoading("Loading PIN", "Mengambil Security PIN...");
       const pin = await fetchSecurityPin();
       input.value = pin || "NO PIN";
 
     } catch(e){
       console.error(e);
       input.value = "ERROR LOAD PIN";
+    } finally {
+      hideLoading();
     }
 
   } else {
@@ -3204,6 +3305,7 @@ async function copySecurityPin() {
   const input = document.getElementById('pin-display');
 
   try {
+    showLoading("Copying PIN", "Menyiapkan Security PIN...");
     const pin = input.type === 'text' && input.value !== 'ERROR LOAD PIN'
       ? input.value
       : await fetchSecurityPin();
@@ -3213,11 +3315,40 @@ async function copySecurityPin() {
       return;
     }
 
-    await navigator.clipboard.writeText(pin);
+    await writeTextToClipboard(pin);
     showToast("PIN copied.");
+    hideLoading();
   } catch (err) {
     console.error(err);
-    showToast("Gagal copy PIN.");
+    const fallbackPin = await fetchSecurityPin().catch(() => input.value);
+    input.type = 'text';
+    input.value = fallbackPin;
+    input.focus();
+    input.select();
+    showToast("Copy diblokir browser. PIN sudah diseleksi, tekan Ctrl+C.");
+    hideLoading();
+  }
+}
+
+async function writeTextToClipboard(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.left = '-9999px';
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  const copied = document.execCommand('copy');
+  textarea.remove();
+
+  if (!copied) {
+    throw new Error("Clipboard fallback failed");
   }
 }
 
@@ -3230,6 +3361,7 @@ function updatePin() {
   }
 
   const url = `https://script.google.com/macros/s/${PIN_API_ID}/exec?pin=${encodeURIComponent(v)}`;
+  showLoading("Updating PIN", "Mengirim PIN baru...");
   
   const iframe = document.createElement('iframe');
   iframe.style.display = 'none';
@@ -3239,6 +3371,7 @@ function updatePin() {
   document.getElementById('pin-display').value = '*****';
   document.getElementById('pin-new').value = '';
   showToast('PIN berhasil diperbarui!');
+  hideLoading(1200);
 }
 
 function addEvidence(value = "") {
@@ -3275,6 +3408,135 @@ function previewSingle(btn) {
   `;
 }
 
+function loadGoogleSheetJsonp(sheetId) {
+  return new Promise((resolve, reject) => {
+    const callbackName = "mdiSheetCallback_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+    const script = document.createElement("script");
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error("Sheet request timeout"));
+    }, 20000);
+
+    function cleanup() {
+      clearTimeout(timeout);
+      delete window[callbackName];
+      script.remove();
+    }
+
+    window[callbackName] = data => {
+      cleanup();
+      resolve(data);
+    };
+
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Gagal load Google Sheet"));
+    };
+
+    script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json;responseHandler:${callbackName}`;
+    document.body.appendChild(script);
+  });
+}
+
+async function loadInvolvedAgents(force = false) {
+  if (involvedAgentCache.length && !force) return involvedAgentCache;
+
+  const json = await loadGoogleSheetJsonp(MEMBER_SHEET_ID);
+
+  involvedAgentCache = (json.table.rows || [])
+    .map(row => ({
+      code: (row.c?.[1]?.v || "").toString().trim(),
+      callsign: (row.c?.[2]?.v || "").toString().trim(),
+      division: (row.c?.[3]?.v || "").toString().trim()
+    }))
+    .filter(agent => agent.code || agent.callsign || agent.division)
+    .filter(agent => String(agent.code || "").toUpperCase() !== "CODE NAME");
+
+  return involvedAgentCache;
+}
+
+async function showInvolvedAgentPicker() {
+  const picker = document.getElementById('involved-agent-picker');
+  picker.style.display = "block";
+  picker.innerHTML = `<div class="agent-picker-empty">Loading agent list...</div>`;
+
+  try {
+    await loadInvolvedAgents();
+    renderInvolvedAgentPicker();
+  } catch (err) {
+    console.error(err);
+    picker.innerHTML = `<div class="agent-picker-empty">Gagal load agent list.</div>`;
+  }
+}
+
+function getInvolvedAgentKeyword() {
+  const value = document.getElementById('input-agents').value;
+  const parts = value.split(",");
+  return parts[parts.length - 1].trim().toLowerCase();
+}
+
+function renderInvolvedAgentPicker() {
+  const picker = document.getElementById('involved-agent-picker');
+  const keyword = getInvolvedAgentKeyword();
+  const selectedCodes = document.getElementById('input-agents').value
+    .split(",")
+    .map(item => item.trim().toUpperCase())
+    .filter(Boolean);
+
+  const data = involvedAgentCache
+    .filter(agent => {
+      const haystack = `${agent.code} ${agent.callsign} ${agent.division}`.toLowerCase();
+      return !keyword || haystack.includes(keyword);
+    })
+    .filter(agent => !selectedCodes.includes(String(agent.code || "").toUpperCase()));
+
+  if (!data.length) {
+    picker.innerHTML = `<div class="agent-picker-empty">Tidak ada agent yang cocok.</div>`;
+    return;
+  }
+
+  picker.innerHTML = data.map(agent => `
+    <button class="agent-picker-option" type="button" onmousedown="event.preventDefault()" onclick="event.stopPropagation(); addInvolvedAgent(${JSON.stringify(agent.code || "").replace(/"/g, '&quot;')})">
+      <span class="agent-picker-code">${escapeHTML(agent.code || "-")}</span>
+      <span class="agent-picker-meta">${escapeHTML(agent.callsign || "-")} / ${escapeHTML(agent.division || "-")}</span>
+    </button>
+  `).join("");
+}
+
+function filterInvolvedAgentPicker() {
+  const picker = document.getElementById('involved-agent-picker');
+  if (picker.style.display !== "block") return;
+  renderInvolvedAgentPicker();
+}
+
+function addInvolvedAgent(code) {
+  if (!code) return;
+
+  const input = document.getElementById('input-agents');
+  const current = input.value
+    .split(",")
+    .map(item => item.trim())
+    .filter(Boolean);
+  const existing = current.map(item => item.toUpperCase());
+
+  if (!existing.includes(code.toUpperCase())) {
+    current.push(code);
+  }
+
+  input.value = current.join(", ") + ", ";
+  input.focus();
+  document.getElementById('involved-agent-picker').style.display = "block";
+  renderInvolvedAgentPicker();
+}
+
+function normalizeAgentsInputValue(value) {
+  return value
+    .split(",")
+    .map(agent => agent.trim())
+    .filter(Boolean)
+    .join(", ");
+}
+
 async function saveReport() {
   const evidenceInputs = document.querySelectorAll(".evidence-input");
 
@@ -3290,7 +3552,7 @@ async function saveReport() {
   const date = document.querySelector('input[type="date"]').value;
   const detail = document.getElementById('mission-detail').value;
   const intel = document.getElementById('intel-info').value;
-  const agents = document.getElementById('input-agents').value;
+  const agents = normalizeAgentsInputValue(document.getElementById('input-agents').value);
 
   const createdBy = localStorage.getItem('agentNama') || "UNKNOWN"; 
   const closedBy = status === "CLOSED" ? createdBy : "";
@@ -3301,6 +3563,10 @@ async function saveReport() {
   }
 
   try {
+    showLoading(
+      currentCaseId ? "Updating Report" : "Saving New Report",
+      "Mengirim data report ke spreadsheet..."
+    );
     submitReportRequest({
       date,
       mission,
@@ -3321,10 +3587,12 @@ async function saveReport() {
     );
 
     resetReportForm();
+    hideLoading(1600);
 
   } catch (err) {
     console.error(err);
     showToast("Gagal simpan laporan!");
+    hideLoading();
   }
 }
 
@@ -3370,6 +3638,7 @@ async function loadFiles() {
   list.innerHTML = "Loading...";
 
   try {
+    showLoading("Loading Files", "Mengambil daftar report...");
     const res = await fetch(`https://docs.google.com/spreadsheets/d/${REPORT_SHEET_ID}/gviz/tq?tqx=out:json`);
     const text = await res.text();
     const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
@@ -3418,6 +3687,8 @@ async function loadFiles() {
   } catch (err) {
     console.error(err);
     list.innerHTML = "Gagal load data";
+  } finally {
+    hideLoading();
   }
 }
 
@@ -3621,6 +3892,7 @@ async function loadContribution() {
   container.innerHTML = "Loading...";
 
   try {
+    showLoading("Loading Contribution", "Menghitung kontribusi agent...");
     const res = await fetch(`https://docs.google.com/spreadsheets/d/${REPORT_SHEET_ID}/gviz/tq?tqx=out:json`);
     const text = await res.text();
     const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
@@ -3666,6 +3938,8 @@ async function loadContribution() {
   } catch (err) {
     console.error(err);
     container.innerHTML = "Gagal load contribution";
+  } finally {
+    hideLoading();
   }
 }
 
@@ -3693,6 +3967,16 @@ function showToast(msg) {
   t.textContent = msg; t.style.display = 'block';
   setTimeout(() => t.style.display = 'none', 2500);
 }
+
+document.addEventListener('click', e => {
+  const picker = document.getElementById('involved-agent-picker');
+  const input = document.getElementById('input-agents');
+
+  if (!picker || !input) return;
+  if (picker.contains(e.target) || input.contains(e.target)) return;
+
+  picker.style.display = "none";
+});
   
 document.addEventListener('keydown', e => {
   const missionModal = document.getElementById('mission-detail-modal');
