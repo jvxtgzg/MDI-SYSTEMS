@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BRO - Bureau of Response Operative</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
 
@@ -153,6 +154,18 @@
   .mission-modal-actions .btn-teal,
   .mission-modal-actions .btn-primary { padding:9px 18px; font-size:13px; border-radius:6px; }
   .more-menu-grid { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:14px; }
+  .more-cyber-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:14px; max-width:1120px; }
+  .more-cyber-tile { min-height:96px; border:1px solid rgba(94,231,255,0.22); border-radius:8px; background:linear-gradient(135deg, rgba(8,17,36,0.98), rgba(16,26,58,0.96)); color:#fff; padding:16px; display:flex; align-items:center; gap:14px; cursor:pointer; box-shadow:0 16px 34px rgba(8,17,36,0.18), inset 0 1px 0 rgba(255,255,255,0.08); position:relative; overflow:hidden; font-family:'Exo 2', sans-serif; text-align:left; transition:transform 0.15s, border-color 0.15s, box-shadow 0.15s, background 0.15s; }
+  .more-cyber-tile::before { content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent, rgba(94,231,255,0.12), transparent); transform:translateX(-120%); transition:transform 0.45s; }
+  .more-cyber-tile::after { content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:linear-gradient(90deg, #08a8c7, transparent); opacity:0.9; }
+  .more-cyber-tile:hover { transform:translateY(-2px); border-color:rgba(94,231,255,0.56); box-shadow:0 22px 44px rgba(8,17,36,0.26), 0 0 24px rgba(8,168,199,0.16); background:linear-gradient(135deg, #0b1530, #172657); }
+  .more-cyber-tile:hover::before { transform:translateX(120%); }
+  .more-cyber-icon { width:44px; height:44px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; background:rgba(8,168,199,0.16); border:1px solid rgba(94,231,255,0.25); color:#67e8f9; box-shadow:inset 0 0 18px rgba(8,168,199,0.12); }
+  .more-cyber-icon .material-symbols-rounded { font-size:26px; line-height:1; font-variation-settings:'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+  .more-cyber-copy { position:relative; z-index:1; min-width:0; }
+  .more-cyber-copy strong { display:block; color:#ffffff; font-size:14px; font-weight:900; letter-spacing:0.45px; line-height:1.2; }
+  .more-cyber-copy span { display:block; margin-top:5px; color:rgba(226,232,240,0.68); font-size:11px; font-weight:700; letter-spacing:0.35px; text-transform:uppercase; line-height:1.25; }
+  .more-cyber-tile:focus { outline:3px solid rgba(94,231,255,0.28); outline-offset:2px; }
   .more-subview { display:none; background:var(--card-bg); border:1.5px solid rgba(255,255,255,0.3); border-radius:8px; padding:14px; box-shadow:0 4px 16px rgba(0,0,0,0.15); }
   .letter-menu-grid { display:flex; flex-wrap:wrap; gap:12px; margin-top:12px; }
   .letter-category-card { background:#fff; border:1.5px solid #b0c8e8; border-radius:8px; padding:16px; width:260px; color:#111; }
@@ -169,6 +182,10 @@
   .letter-field textarea.report-input { min-height:90px; resize:vertical; }
   .letter-actions { display:flex; gap:8px; flex-wrap:wrap; }
   .letter-list { display:flex; flex-direction:column; gap:10px; }
+  .scrollable-file-list { max-height:62vh; overflow-y:auto; overflow-x:hidden; padding-right:6px; scrollbar-gutter:stable; }
+  .scrollable-file-list::-webkit-scrollbar { width:11px; }
+  .scrollable-file-list::-webkit-scrollbar-track { background:#e6f2ff; border-radius:999px; }
+  .scrollable-file-list::-webkit-scrollbar-thumb { background:#101a3a; border-radius:999px; border:3px solid #e6f2ff; }
   .letter-file-card { border:1.5px solid #d3e5f8; border-radius:8px; padding:12px; background:#f7fbff; display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
   .letter-file-card h4 { font-size:15px; margin-bottom:3px; color:#111; }
   .letter-file-card p { font-size:12px; color:var(--text-muted); margin-bottom:2px; }
@@ -197,9 +214,477 @@
   .handbook-result-item:first-of-type { border-top:none; }
   .handbook-result-item mark { background:#ffeb3b; color:#111; font-weight:800; padding:0 2px; }
   .handbook-frame { width:100%; height:72vh; min-height:520px; border:1.5px solid #b0c8e8; border-radius:8px; background:#fff; }
+  .embedded-web-panel { display:none; background:#fff; border:1.5px solid #b0c8e8; border-radius:8px; padding:14px; margin-top:16px; box-shadow:0 4px 16px rgba(0,0,0,0.15); }
+  .embedded-web-head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+  .embedded-web-head h3 { font-family:'Rajdhani', sans-serif; font-size:18px; font-weight:800; color:var(--text-dark); letter-spacing:0.5px; }
+  .embedded-web-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .embedded-web-frame { width:100%; height:74vh; min-height:520px; border:1px solid #b0c8e8; border-radius:8px; background:#fff; }
+  .agents-pin-gate { display:flex; align-items:flex-end; gap:10px; flex-wrap:wrap; padding:14px; background:#f7fbff; border:1px solid #d8e8f8; border-radius:8px; margin-bottom:12px; }
+  .agents-pin-gate .letter-field { margin-bottom:0; min-width:220px; }
+  .agents-data-tools { display:none; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:12px; }
+  .agents-data-tools .search-bar { margin-bottom:0; max-width:320px; }
+  .agents-table-wrap { display:none; overflow:auto; border:1px solid #d8e8f8; border-radius:8px; background:#fff; }
+  .agents-data-table { width:100%; border-collapse:collapse; min-width:720px; font-family:'Exo 2', sans-serif; }
+  .agents-data-table th { background:#101a3a; color:#fff; text-align:left; font-size:12px; letter-spacing:0.6px; text-transform:uppercase; padding:11px 12px; position:sticky; top:0; z-index:1; }
+  .agents-data-table td { padding:11px 12px; border-top:1px solid #e1ebf5; font-size:13px; color:#162033; vertical-align:top; }
+  .agents-data-table tr:hover td { background:#f6fbff; }
+  .agents-code-badge { display:inline-flex; align-items:center; border-radius:6px; background:#e8f4ff; color:#0f4f8a; padding:4px 8px; font-weight:900; letter-spacing:0.4px; }
+  .agents-empty { padding:14px; color:var(--text-muted); font-size:13px; }
+  .agents-bro-dark {
+    background: linear-gradient(180deg, #0b1530 0%, #081124 100%);
+    border-color: rgba(94,231,255,0.24);
+    color: #e5f4ff;
+    box-shadow: 0 22px 54px rgba(8,17,36,0.22);
+    max-height: calc(100vh - 150px);
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+  }
+  .agents-bro-dark .embedded-web-head {
+    border-bottom: 1px solid rgba(226,232,240,0.12);
+    padding-bottom: 12px;
+  }
+  .agents-bro-dark .embedded-web-head h3 {
+    color: #ffffff;
+  }
+  .agents-bro-dark .dash-card-info p,
+  .agents-bro-dark .agents-empty {
+    color: rgba(226,232,240,0.72);
+  }
+  .agents-bro-dark .agents-pin-gate {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(94,231,255,0.18);
+  }
+  .agents-bro-dark .letter-field label {
+    color: rgba(226,232,240,0.7);
+  }
+  .agents-bro-dark .report-input,
+  .agents-bro-dark .search-bar {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(148,163,184,0.24);
+    color: #ffffff;
+  }
+  .agents-bro-dark .report-input::placeholder,
+  .agents-bro-dark .search-bar::placeholder {
+    color: rgba(226,232,240,0.54);
+  }
+  .agents-bro-dark .agents-table-wrap {
+    border-color: rgba(94,231,255,0.16);
+    background: rgba(255,255,255,0.04);
+    flex: 1;
+    max-height: calc(100vh - 330px);
+    overflow: auto;
+    scrollbar-gutter: stable;
+  }
+  .agents-bro-dark .agents-table-wrap::-webkit-scrollbar { width:12px; height:12px; }
+  .agents-bro-dark .agents-table-wrap::-webkit-scrollbar-track { background:rgba(255,255,255,0.06); border-radius:999px; }
+  .agents-bro-dark .agents-table-wrap::-webkit-scrollbar-thumb { background:#08a8c7; border-radius:999px; border:3px solid #0b1530; }
+  .agents-bro-dark .agents-data-table th {
+    background: #111f46;
+    color: #bff5ff;
+  }
+  .agents-bro-dark .agents-data-table td {
+    border-top-color: rgba(226,232,240,0.1);
+    color: #e5f4ff;
+  }
+  .agents-bro-dark .agents-data-table tr:hover td {
+    background: rgba(8,168,199,0.1);
+  }
+  .agents-bro-dark .agents-code-badge {
+    background: rgba(8,168,199,0.16);
+    color: #67e8f9;
+  }
+
+  /* 2026 PREMIUM UI REFRESH */
+  :root {
+    --navy: #101a3a;
+    --navy-dark: #081124;
+    --navy-hover: #172657;
+    --blue-mid: #eef4fb;
+    --blue-bg: #e7eef8;
+    --teal: #08a8c7;
+    --teal-dark: #0789a3;
+    --card-bg: #f8fbff;
+    --card-bg2: #edf5ff;
+    --gold: #d6a933;
+    --white: #ffffff;
+    --text-dark: #101828;
+    --text-muted: #64748b;
+    --surface: #ffffff;
+    --surface-soft: #f5f8fc;
+    --border-soft: #d8e3f0;
+    --border-strong: #b9c9dc;
+    --shadow-soft: 0 10px 28px rgba(15, 23, 42, 0.08);
+    --shadow-panel: 0 18px 48px rgba(8, 17, 36, 0.16);
+  }
+
+  body {
+    background: linear-gradient(135deg, #eaf1f9 0%, #f8fbff 48%, #e9f2fb 100%);
+    color: var(--text-dark);
+  }
+
+  .header {
+    background: linear-gradient(135deg, #081124 0%, #101a3a 54%, #172657 100%);
+    min-height: 76px;
+    padding: 12px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 16px 38px rgba(8,17,36,0.26);
+  }
+
+  .header-logo {
+    width: 58px;
+    height: 58px;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(214,169,51,0.78);
+    box-shadow: 0 0 0 4px rgba(214,169,51,0.08), 0 10px 24px rgba(0,0,0,0.24);
+  }
+
+  .header-brand .brand-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 30px;
+    letter-spacing: 1.6px;
+  }
+
+  .header-brand .brand-sub,
+  .header-right p {
+    color: rgba(226,232,240,0.78);
+  }
+
+  .header-right h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 25px;
+    letter-spacing: 1.2px;
+  }
+
+  .main-layout {
+    min-height: calc(100vh - 76px);
+  }
+
+  .sidebar {
+    width: 238px;
+    min-width: 238px;
+    background: linear-gradient(180deg, #0b1530 0%, #101a3a 56%, #081124 100%);
+    padding: 18px 12px;
+    gap: 7px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 14px 0 34px rgba(8,17,36,0.18);
+  }
+
+  .sidebar-agent {
+    text-align: left;
+    padding: 12px 12px 16px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(226,232,240,0.12);
+  }
+
+  .agent-name {
+    color: #5ee7ff;
+    font-size: 14px;
+    letter-spacing: 0.8px;
+  }
+
+  .agent-rank {
+    color: rgba(255,255,255,0.86);
+    font-size: 11.5px;
+    letter-spacing: 1.2px;
+  }
+
+  .sidebar-btn {
+    border-radius: 7px;
+    padding: 11px 12px;
+    text-align: left;
+    font-size: 13px;
+    letter-spacing: 0.25px;
+  }
+
+  .sidebar-btn.teal {
+    background: transparent;
+    color: rgba(226,232,240,0.86);
+    border: 1px solid transparent;
+  }
+
+  .sidebar-btn.teal:hover,
+  .sidebar-btn.teal.active {
+    background: rgba(8,168,199,0.13);
+    color: #ffffff;
+    border-color: rgba(94,231,255,0.28);
+    box-shadow: inset 3px 0 0 #08a8c7, 0 8px 22px rgba(0,0,0,0.18);
+  }
+
+  .sidebar-btn.dark {
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.86);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .sidebar-btn.dark:hover {
+    background: rgba(255,255,255,0.12);
+  }
+
+  .content {
+    background: transparent;
+    padding: 30px 34px;
+  }
+
+  .content-title {
+    color: #0f172a;
+    font-size: 24px;
+    letter-spacing: 1.4px;
+    margin-bottom: 18px;
+  }
+
+  .dash-card,
+  .more-subview,
+  .letter-panel,
+  .file-card {
+    background: rgba(255,255,255,0.92);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .dash-card {
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+
+  .dash-card-info h3,
+  .letter-toolbar h3,
+  .handbook-preview-head h3,
+  .letter-panel h4,
+  .letter-category-card h4 {
+    color: var(--text-dark);
+    letter-spacing: 0.35px;
+  }
+
+  .dash-card-info p,
+  .file-card-info p,
+  .letter-file-card p,
+  .letter-category-card p {
+    color: var(--text-muted);
+  }
+
+  .btn-primary,
+  .btn-teal,
+  .btn-edit,
+  .btn-view,
+  .btn-unlock,
+  .btn-login {
+    border-radius: 7px;
+    box-shadow: 0 9px 20px rgba(15,23,42,0.12);
+  }
+
+  .btn-primary,
+  .btn-edit {
+    background: #101a3a;
+    color: #ffffff;
+  }
+
+  .btn-primary:hover,
+  .btn-edit:hover {
+    background: #172657;
+  }
+
+  .btn-teal,
+  .btn-view {
+    background: #08a8c7;
+    color: #ffffff;
+  }
+
+  .btn-teal:hover,
+  .btn-view:hover {
+    background: #0789a3;
+  }
+
+  .btn-unlock {
+    background: #d6a933;
+    color: #0f172a;
+  }
+
+  .btn-primary.sm,
+  .btn-edit,
+  .btn-view,
+  .btn-unlock {
+    padding: 8px 14px;
+    font-size: 12.5px;
+  }
+
+  .icon-action-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 7px;
+    background: #101a3a;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 9px 20px rgba(15,23,42,0.12);
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .icon-action-btn:hover {
+    background: #172657;
+    transform: translateY(-1px);
+  }
+
+  .icon-action-btn .material-symbols-rounded {
+    font-size: 20px;
+    font-variation-settings:'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+  }
+
+  .report-input,
+  .search-bar,
+  textarea.report-area,
+  .pin-input,
+  .mission-detail-box {
+    background: #ffffff;
+    border: 1px solid var(--border-soft);
+    border-radius: 7px;
+    color: #162033;
+    box-shadow: inset 0 1px 0 rgba(15,23,42,0.03);
+  }
+
+  .report-input:focus,
+  .search-bar:focus,
+  textarea.report-area:focus,
+  .pin-input:focus,
+  .mission-detail-box:focus {
+    border-color: #08a8c7;
+    outline: 3px solid rgba(8,168,199,0.16);
+  }
+
+  .letter-field label {
+    color: #52637a;
+    font-size: 11px;
+    letter-spacing: 0.65px;
+  }
+
+  .more-menu-grid {
+    gap: 10px;
+  }
+
+  .more-menu-grid .btn-primary {
+    min-height: 42px;
+    padding: 11px 18px;
+  }
+
+  .letter-category-card,
+  .letter-file-card,
+  .contrib-card {
+    background: #ffffff;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    box-shadow: 0 7px 18px rgba(15,23,42,0.06);
+  }
+
+  .letter-file-card {
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+
+  .letter-file-card:hover,
+  .file-card:hover,
+  .dash-card:hover {
+    border-color: var(--border-strong);
+    box-shadow: 0 14px 32px rgba(15,23,42,0.11);
+  }
+
+  .letter-preview-strip img {
+    border-radius: 7px;
+    border-color: var(--border-soft);
+  }
+
+  .finance-status,
+  .assignment-status {
+    border-radius: 6px;
+    background: #e8f4ff;
+    color: #0f4f8a;
+  }
+
+  .finance-status.pending,
+  .assignment-status.progress {
+    background: #fff3d7;
+    color: #865b05;
+  }
+
+  .finance-status.success,
+  .assignment-status.completed {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .assignment-status.review {
+    background: #ece7ff;
+    color: #5b21b6;
+  }
+
+  .assignment-status.cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .mission-modal {
+    background: rgba(8,17,36,0.78);
+    backdrop-filter: blur(6px);
+  }
+
+  .mission-modal-card {
+    background: #f8fbff;
+    border: 1px solid rgba(255,255,255,0.55);
+    box-shadow: var(--shadow-panel);
+  }
+
+  .mission-toolbar {
+    background: #ffffff;
+    border-color: var(--border-soft);
+  }
+
+  .mission-tool-btn,
+  .mission-tool-select,
+  .mission-color-palette {
+    border-color: var(--border-soft);
+    background: #f5f8fc;
+  }
+
+  .mission-tool-btn.active,
+  .mission-tool-select.active {
+    background: #101a3a;
+    border-color: #101a3a;
+  }
+
+  #mission-detail-editor {
+    border-color: var(--border-soft);
+    box-shadow: inset 0 1px 0 rgba(15,23,42,0.04);
+  }
+
+  .login-card {
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 12px;
+    box-shadow: var(--shadow-panel);
+  }
+
+  #page-login.active {
+    background: linear-gradient(135deg, #e9f2fb 0%, #f8fbff 100%);
+  }
+
+  .toast {
+    background: #101a3a;
+    border-left-color: #08a8c7;
+    box-shadow: var(--shadow-panel);
+  }
+
+  .embedded-web-panel,
+  .embedded-web-frame {
+    border-color: var(--border-soft);
+  }
+
+  .embedded-web-panel {
+    box-shadow: var(--shadow-soft);
+  }
 
   /* TOAST */
-  .toast { position: fixed; bottom: 30px; right: 30px; background: var(--navy); color: #fff; padding: 12px 26px; border-radius: 8px; font-size: 14px; font-weight: 600; display: none; z-index: 9999; box-shadow: 0 4px 18px rgba(0,0,0,0.35); font-family: 'Exo 2', sans-serif; border-left: 4px solid var(--gold); animation: slideIn 0.3s ease; }
+  .toast { position: fixed; bottom: 30px; right: 30px; background: var(--navy); color: #fff; padding: 12px 26px; border-radius: 8px; font-size: 14px; font-weight: 600; display: none; z-index: 9999; box-shadow: var(--shadow-panel); font-family: 'Exo 2', sans-serif; border-left: 4px solid var(--teal); animation: slideIn 0.3s ease; }
   @keyframes slideIn {
     from { opacity: 0; transform: translateX(30px); }
     to { opacity: 1; transform: translateX(0); }
@@ -240,6 +725,14 @@
     .mission-modal-card { padding:14px; max-height:94vh; }
     #mission-detail-editor { min-height:58vh; max-height:calc(94vh - 200px); }
     .handbook-frame { height:68vh; min-height:420px; }
+    .embedded-web-frame { height:68vh; min-height:420px; }
+    .agents-bro-dark { max-height:calc(100vh - 250px); }
+    .agents-bro-dark .agents-table-wrap { max-height:calc(100vh - 470px); }
+    .scrollable-file-list { max-height:58vh; }
+    .more-cyber-grid { grid-template-columns:1fr; }
+    .more-cyber-tile { min-height:82px; padding:13px; }
+    .more-cyber-icon { width:38px; height:38px; }
+    .more-cyber-copy strong { font-size:13px; }
     .letter-grid { grid-template-columns:1fr; }
 
     /* FILE CARD */
@@ -310,7 +803,7 @@
       <div id="view-dashboard">
         <div class="content-title">Dashboard</div>
 
-        <div class="dash-card">
+        <div class="dash-card dashboard-home-card">
           <div class="dash-card-info">
             <h3>Agents Data BRO</h3>
             <p>Periksa Dasta Diri Rahasia Anda Sebagai Agents BRO</p>
@@ -318,7 +811,45 @@
           <button class="btn-primary" onclick="doAgentsBRO()">OPEN</button>
         </div>
 
-        <div class="dash-card" style="flex-direction: column; align-items: stretch;">
+        <div id="agents-bro-panel" class="embedded-web-panel agents-bro-dark">
+          <div class="embedded-web-head">
+            <h3>Agents Data BRO</h3>
+            <div class="embedded-web-actions">
+              <button class="btn-teal" onclick="closeAgentsBRO()">Kembali</button>
+              <button class="btn-primary sm" onclick="refreshAgentsBROData()">Refresh Data</button>
+            </div>
+          </div>
+          <div id="agents-pin-gate" class="agents-pin-gate">
+            <div class="letter-field">
+              <label>Security PIN</label>
+              <input id="agents-bro-pin" class="report-input" type="password" placeholder="Masukkan Security PIN" onkeydown="handleAgentsBroPinKey(event)" />
+            </div>
+            <button class="btn-primary" onclick="verifyAgentsBROPin()">Unlock Data</button>
+          </div>
+          <div id="agents-data-tools" class="agents-data-tools">
+            <input id="agents-data-search" class="search-bar" type="text" placeholder="Search name / code / division / rank" oninput="filterAgentsBROData(this.value)" />
+            <div class="dash-card-info">
+              <p id="agents-data-count">Data terkunci.</p>
+            </div>
+          </div>
+          <div id="agents-table-wrap" class="agents-table-wrap">
+            <table class="agents-data-table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Name</th>
+                  <th>Code Name</th>
+                  <th>Division</th>
+                  <th>Rank</th>
+                </tr>
+              </thead>
+              <tbody id="agents-data-body"></tbody>
+            </table>
+          </div>
+          <div id="agents-data-empty" class="agents-empty">Masukkan Security PIN untuk membuka data anggota.</div>
+        </div>
+
+        <div class="dash-card dashboard-home-card" style="flex-direction: column; align-items: stretch;">
           <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;">
             <div class="dash-card-info">
               <h3>Security PIN</h3>
@@ -326,7 +857,12 @@
             </div>
             <div class="dash-card-right">
               <input type="password" class="pin-input" id="pin-display" value="******" readonly />
-              <button class="btn-primary sm" onclick="togglePin()">View PIN</button>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <button class="btn-primary sm" onclick="togglePin()">View PIN</button>
+                <button class="icon-action-btn" type="button" onclick="copySecurityPin()" title="Copy PIN" aria-label="Copy PIN">
+                  <span class="material-symbols-rounded">content_copy</span>
+                </button>
+              </div>
             </div>
           </div>
           <div class="pin-row">
@@ -416,12 +952,27 @@
       <div id="view-more" style="display:none;">
         <div class="content-title">More</div>
 
-        <div class="more-menu-grid">
-          <button class="btn-primary sensitive-menu" onclick="openHandbook()">Handbook</button>
-          <button class="btn-primary sensitive-menu" onclick="openLetterMenu()">Letter</button>
-          <button class="btn-primary sensitive-menu" onclick="openAssignmentsMenu()">Agent Assignments</button>
-          <button class="btn-primary reimbursement-menu" onclick="openReimbursementMenu()">Reimbursement</button>
-          <button class="btn-primary operational-fund-menu" onclick="openOperationalFundMenu()">Operational Fund Request</button>
+        <div class="more-menu-grid more-cyber-grid">
+          <button class="more-cyber-tile sensitive-menu" onclick="openHandbook()">
+            <span class="more-cyber-icon"><span class="material-symbols-rounded">menu_book</span></span>
+            <span class="more-cyber-copy"><strong>Handbook</strong><span>Doctrine library</span></span>
+          </button>
+          <button class="more-cyber-tile sensitive-menu" onclick="openLetterMenu()">
+            <span class="more-cyber-icon"><span class="material-symbols-rounded">mail</span></span>
+            <span class="more-cyber-copy"><strong>Letter</strong><span>Official archive</span></span>
+          </button>
+          <button class="more-cyber-tile sensitive-menu" onclick="openAssignmentsMenu()">
+            <span class="more-cyber-icon"><span class="material-symbols-rounded">assignment_ind</span></span>
+            <span class="more-cyber-copy"><strong>Agent Assignments</strong><span>Task command</span></span>
+          </button>
+          <button class="more-cyber-tile reimbursement-menu" onclick="openReimbursementMenu()">
+            <span class="more-cyber-icon"><span class="material-symbols-rounded">payments</span></span>
+            <span class="more-cyber-copy"><strong>Reimbursement</strong><span>Claim request</span></span>
+          </button>
+          <button class="more-cyber-tile operational-fund-menu" onclick="openOperationalFundMenu()">
+            <span class="more-cyber-icon"><span class="material-symbols-rounded">request_quote</span></span>
+            <span class="more-cyber-copy"><strong>Operational Fund Request</strong><span>Funding protocol</span></span>
+          </button>
         </div>
 
         <div id="letter-menu" class="more-subview">
@@ -525,7 +1076,7 @@
                 <h4>Letter Files</h4>
                 <input id="doj-letter-search" class="report-input" type="text" placeholder="Search DOJ letter" style="max-width:260px;" oninput="filterDojLetterFiles(this.value)" />
               </div>
-              <div id="doj-letter-list" class="letter-list">Klik Refresh untuk load data.</div>
+              <div id="doj-letter-list" class="letter-list scrollable-file-list">Klik Refresh untuk load data.</div>
             </div>
           </div>
         </div>
@@ -617,7 +1168,7 @@
                 <h4>Letter Files</h4>
                 <input id="bro-letter-search" class="report-input" type="text" placeholder="Search BRO letter" style="max-width:260px;" oninput="filterBroLetterFiles(this.value)" />
               </div>
-              <div id="bro-letter-list" class="letter-list">Klik Refresh untuk load data.</div>
+              <div id="bro-letter-list" class="letter-list scrollable-file-list">Klik Refresh untuk load data.</div>
             </div>
           </div>
         </div>
@@ -839,7 +1390,7 @@
                 <h4>Assignment Files</h4>
                 <input id="asn-search" class="report-input" type="text" placeholder="Search assignment" style="max-width:260px;" oninput="filterFinanceCards(this.value, '#assignment-list .letter-file-card')" />
               </div>
-              <div id="assignment-list" class="letter-list">Klik Refresh untuk load data.</div>
+              <div id="assignment-list" class="letter-list scrollable-file-list">Klik Refresh untuk load data.</div>
             </div>
           </div>
         </div>
@@ -943,6 +1494,8 @@ let currentRank = "";
 let handbookTextCache = "";
 let assignmentAgentCache = [];
 let assignmentCaseCache = [];
+let agentsBroUnlocked = false;
+let agentsBroDataCache = [];
 
 function getAgentDivision() {
   return (localStorage.getItem('agentDivision') || "").trim().toUpperCase();
@@ -2449,8 +3002,160 @@ function doLogout() {
 }
 
 function doAgentsBRO() {
-	showToast('Agents Data BRO dibuka!');
-	window.open('http://bro-membedata-imerp.my.id/', '_blank');
+  const panel = document.getElementById('agents-bro-panel');
+
+  document.querySelectorAll('#view-dashboard .dashboard-home-card').forEach(card => {
+    card.style.display = "none";
+  });
+  document.querySelector('#view-dashboard .content-title').textContent = "Agents Data BRO";
+  panel.style.display = "flex";
+  panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  document.getElementById('agents-bro-pin').focus();
+  showToast('Masukkan Security PIN untuk membuka data.');
+}
+
+function closeAgentsBRO() {
+  const panel = document.getElementById('agents-bro-panel');
+  if (panel) panel.style.display = "none";
+  document.querySelectorAll('#view-dashboard .dashboard-home-card').forEach(card => {
+    card.style.display = "";
+  });
+  document.querySelector('#view-dashboard .content-title').textContent = "Dashboard";
+}
+
+function handleAgentsBroPinKey(e) {
+  if (e.key === "Enter") {
+    verifyAgentsBROPin();
+  }
+}
+
+async function fetchSecurityPin() {
+  const res = await fetch(`https://docs.google.com/spreadsheets/d/${PIN_SHEET_ID}/gviz/tq?tqx=out:json`);
+  const text = await res.text();
+  const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+
+  return String(json.table.rows[0].c[4]?.v || "").trim();
+}
+
+async function verifyAgentsBROPin() {
+  const input = document.getElementById('agents-bro-pin');
+  const pin = input.value.trim();
+
+  if (!pin) {
+    showToast("Masukkan Security PIN.");
+    return;
+  }
+
+  try {
+    const realPinValue = await fetchSecurityPin();
+
+    if (pin !== realPinValue) {
+      agentsBroUnlocked = false;
+      showToast("Security PIN salah.");
+      return;
+    }
+
+    agentsBroUnlocked = true;
+    input.value = "";
+    document.getElementById('agents-pin-gate').style.display = "none";
+    document.getElementById('agents-data-tools').style.display = "flex";
+    document.getElementById('agents-table-wrap').style.display = "block";
+    await loadAgentsBROData();
+    showToast("Agents Data BRO terbuka.");
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal verifikasi PIN.");
+  }
+}
+
+async function refreshAgentsBROData() {
+  if (!agentsBroUnlocked) {
+    showToast("Masukkan Security PIN terlebih dahulu.");
+    document.getElementById('agents-bro-pin').focus();
+    return;
+  }
+
+  await loadAgentsBROData(true);
+  showToast("Agents Data BRO refreshed.");
+}
+
+async function loadAgentsBROData(force = false) {
+  if (!agentsBroUnlocked) return;
+  if (agentsBroDataCache.length && !force) {
+    renderAgentsBROData(agentsBroDataCache);
+    return;
+  }
+
+  const body = document.getElementById('agents-data-body');
+  const empty = document.getElementById('agents-data-empty');
+  body.innerHTML = "";
+  empty.textContent = "Loading data anggota...";
+  empty.style.display = "block";
+
+  try {
+    const res = await fetch(`https://docs.google.com/spreadsheets/d/${MEMBER_SHEET_ID}/gviz/tq?tqx=out:json`);
+    const text = await res.text();
+    const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+
+    agentsBroDataCache = (json.table.rows || [])
+      .map(row => ({
+        name: (row.c?.[0]?.v || "").toString().trim(),
+        codeName: (row.c?.[1]?.v || "").toString().trim(),
+        division: (row.c?.[3]?.v || "").toString().trim(),
+        rank: (row.c?.[4]?.v || "").toString().trim()
+      }))
+      .filter(agent => agent.name || agent.codeName || agent.division || agent.rank);
+
+    renderAgentsBROData(agentsBroDataCache);
+  } catch (err) {
+    console.error(err);
+    empty.textContent = "Gagal load data anggota.";
+    empty.style.display = "block";
+  }
+}
+
+function renderAgentsBROData(data) {
+  const body = document.getElementById('agents-data-body');
+  const empty = document.getElementById('agents-data-empty');
+  const count = document.getElementById('agents-data-count');
+
+  body.innerHTML = "";
+  count.textContent = `${data.length} member ditampilkan.`;
+
+  if (!data.length) {
+    empty.textContent = "Tidak ada data anggota.";
+    empty.style.display = "block";
+    return;
+  }
+
+  empty.style.display = "none";
+
+  data.forEach((agent, index) => {
+    const tr = document.createElement('tr');
+    tr.setAttribute("data-search", JSON.stringify(agent).toLowerCase());
+    tr.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${escapeHTML(agent.name || "-")}</td>
+      <td><span class="agents-code-badge">${escapeHTML(agent.codeName || "-")}</span></td>
+      <td>${escapeHTML(agent.division || "-")}</td>
+      <td>${escapeHTML(agent.rank || "-")}</td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function filterAgentsBROData(q) {
+  const keyword = q.trim().toLowerCase();
+  let visible = 0;
+
+  document.querySelectorAll('#agents-data-body tr').forEach(row => {
+    const haystack = row.getAttribute('data-search') || "";
+    const match = !keyword || haystack.includes(keyword);
+    row.style.display = match ? "" : "none";
+    if (match) visible++;
+  });
+
+  document.getElementById('agents-data-count').textContent = `${visible} member ditampilkan.`;
 }
 
 function openCommandPanel() {
@@ -2481,15 +3186,7 @@ async function togglePin(){
     input.type = 'text';
 
     try{
-      const res = await fetch(`https://docs.google.com/spreadsheets/d/${PIN_SHEET_ID}/gviz/tq?tqx=out:json`);
-      let text = await res.text();
-
-      // bersihin wrapper aneh dari Google
-      const json = JSON.parse(text.substring(47).slice(0, -2));
-
-      // ambil row pertama kolom E (index 4)
-      const pin = json.table.rows[0].c[4]?.v;
-
+      const pin = await fetchSecurityPin();
       input.value = pin || "NO PIN";
 
     } catch(e){
@@ -2500,6 +3197,27 @@ async function togglePin(){
   } else {
     input.type = 'password';
     input.value = '******';
+  }
+}
+
+async function copySecurityPin() {
+  const input = document.getElementById('pin-display');
+
+  try {
+    const pin = input.type === 'text' && input.value !== 'ERROR LOAD PIN'
+      ? input.value
+      : await fetchSecurityPin();
+
+    if (!pin || pin === "NO PIN") {
+      showToast("PIN tidak tersedia.");
+      return;
+    }
+
+    await navigator.clipboard.writeText(pin);
+    showToast("PIN copied.");
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal copy PIN.");
   }
 }
 
@@ -2681,6 +3399,8 @@ async function loadFiles() {
 
       const div = document.createElement("div");
       div.className = "file-card";
+      div.setAttribute("data-case", String(caseId).toLowerCase());
+      div.setAttribute("data-mission", String(mission).toLowerCase());
 
       div.innerHTML = `
         <div class="file-card-info">
