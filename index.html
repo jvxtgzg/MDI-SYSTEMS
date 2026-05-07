@@ -221,6 +221,27 @@
   .assignment-progress-preview ul, .assignment-progress-preview ol { padding-left:22px; margin:5px 0; }
   #assignment-note-modal .mission-save-icon { background:#16a34a !important; border-color:#16a34a !important; color:#ffffff !important; box-shadow:0 6px 16px rgba(22,163,74,0.28); }
   #assignment-note-modal .mission-save-icon:hover { background:#15803d !important; border-color:#15803d !important; }
+  .tracker-panel { background:radial-gradient(circle at 14% 0%, rgba(94,231,255,0.12), transparent 34%), linear-gradient(180deg, #081124 0%, #0c1732 100%) !important; border-color:rgba(94,231,255,0.22) !important; color:#eaf7ff; }
+  .tracker-panel .letter-toolbar { border-bottom:1px solid rgba(226,232,240,0.12); padding-bottom:12px; }
+  .tracker-panel .letter-toolbar h3 { color:#ffffff; }
+  .tracker-brand { display:flex; align-items:center; gap:12px; }
+  .tracker-logo { width:54px; height:54px; border-radius:50%; object-fit:cover; border:2px solid rgba(94,231,255,0.42); background:#071024; box-shadow:0 0 24px rgba(94,231,255,0.16); }
+  .tracker-brand-copy h3 { margin:0; color:#ffffff !important; font-family:'Rajdhani', sans-serif; font-size:24px; font-weight:900; letter-spacing:1px; text-transform:uppercase; }
+  .tracker-brand-copy p { margin-top:3px; color:#8eeaff; font-size:11px; font-weight:900; letter-spacing:1.4px; text-transform:uppercase; }
+  .tracker-summary { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px; margin-bottom:14px; }
+  .tracker-stat { border:1px solid rgba(94,231,255,0.2); border-radius:8px; background:rgba(7,16,36,0.86); padding:12px 14px; box-shadow:inset 0 1px 0 rgba(255,255,255,0.04); }
+  .tracker-stat span { display:block; color:#8eeaff !important; font-size:11px; font-weight:900; letter-spacing:0.8px; text-transform:uppercase; }
+  .tracker-stat strong { display:block; margin-top:5px; color:#ffffff !important; font-family:'Rajdhani', sans-serif; font-size:24px; font-weight:900; }
+  .tracker-controls { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+  .tracker-controls .report-input { flex:1; min-width:260px; background:#101b38; border-color:rgba(94,231,255,0.28); color:#fff; }
+  .tracker-table-wrap { max-height:58vh; overflow:auto; border:1px solid rgba(94,231,255,0.2); border-radius:8px; background:#071024; }
+  .tracker-table { width:100%; min-width:760px; border-collapse:collapse; color:#ffffff; font-family:'Exo 2', sans-serif; font-size:13px; }
+  .tracker-table th { position:sticky; top:0; z-index:1; background:#10224d; color:#8eeaff; text-align:left; padding:12px 14px; border-bottom:1px solid rgba(94,231,255,0.26); font-weight:900; letter-spacing:0.4px; text-transform:uppercase; }
+  .tracker-table td { padding:12px 14px; border-top:1px solid rgba(148,163,184,0.16); vertical-align:top; }
+  .tracker-table tr:nth-child(even) td { background:rgba(255,255,255,0.035); }
+  .tracker-online-badge { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:5px 9px; background:rgba(34,197,94,0.14); color:#86efac; font-size:11px; font-weight:900; text-transform:uppercase; }
+  .tracker-online-badge::before { content:""; width:7px; height:7px; border-radius:50%; background:#22c55e; box-shadow:0 0 12px rgba(34,197,94,0.8); }
+  .tracker-muted { color:rgba(226,232,240,0.62); }
   .handbook-preview-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
   .handbook-preview-head h3 { font-family:'Rajdhani', sans-serif; font-size:18px; font-weight:800; color:var(--text-dark); letter-spacing:0.5px; }
   .handbook-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
@@ -1122,6 +1143,10 @@
             <span class="more-cyber-icon"><span class="material-symbols-rounded">assignment_ind</span></span>
             <span class="more-cyber-copy"><strong>Agent Assignments</strong><span>Task command</span></span>
           </button>
+          <button class="more-cyber-tile sensitive-menu" onclick="openTrackerMenu()">
+            <span class="more-cyber-icon"><span class="material-symbols-rounded">radar</span></span>
+            <span class="more-cyber-copy"><strong>Tracker</strong><span>Online players</span></span>
+          </button>
           <button class="more-cyber-tile sensitive-menu" onclick="openAiAssistant()">
             <span class="more-cyber-icon"><span class="material-symbols-rounded">psychology</span></span>
             <span class="more-cyber-copy"><strong>AI Assistant</strong><span>Summary protocol</span></span>
@@ -1599,6 +1624,59 @@
           </div>
         </div>
 
+        <div id="tracker-workspace" class="more-subview letter-workspace tracker-panel">
+          <div class="letter-toolbar">
+            <div class="tracker-brand">
+              <img class="tracker-logo" src="https://raw.githubusercontent.com/jvxtgzg/MDI-SYSTEMS/main/IME%20RP%20LOGO.jpg" alt="IME RP Logo" />
+              <div class="tracker-brand-copy">
+                <h3>Tracker</h3>
+                <p>IME RP Online Players</p>
+              </div>
+            </div>
+            <div class="letter-actions">
+              <button class="btn-teal" onclick="backToMoreMenu()">Kembali</button>
+              <button class="btn-primary sm" onclick="loadTrackerPlayers(true)">Refresh Players</button>
+            </div>
+          </div>
+
+          <div class="tracker-summary">
+            <div class="tracker-stat">
+              <span>Online Players</span>
+              <strong id="tracker-online-count">-</strong>
+            </div>
+            <div class="tracker-stat">
+              <span>Server</span>
+              <strong style="font-size:16px;">main.imeroleplay.com</strong>
+            </div>
+            <div class="tracker-stat">
+              <span>Last Sync</span>
+              <strong id="tracker-last-sync" style="font-size:16px;">-</strong>
+            </div>
+          </div>
+
+          <div class="tracker-controls">
+            <input id="tracker-search" class="report-input" type="text" placeholder="Search player name / server ID" oninput="filterTrackerPlayers(this.value)" />
+            <button class="btn-teal" onclick="clearTrackerSearch()">Clear</button>
+          </div>
+
+          <div class="tracker-table-wrap">
+            <table class="tracker-table">
+              <thead>
+                <tr>
+                  <th>Server ID</th>
+                  <th>FiveM / Steam Name</th>
+                  <th>Ping</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="tracker-player-list">
+                <tr><td colspan="4" class="tracker-muted">Klik Refresh Players untuk load data.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="tracker-muted" style="margin-top:10px;">Data berasal dari endpoint publik FiveM. CitizenID, coords, dan offline player tidak tersedia dari endpoint ini.</p>
+        </div>
+
         <div id="handbook-preview" class="more-subview handbook-dark-reader">
           <div class="handbook-preview-head">
             <div class="handbook-brand">
@@ -1742,6 +1820,7 @@ const PIN_API_ID="AKfycbwNVQYSaIE-b_tiM5U0OW79iuEYfaYYcvghKgs4tzrFoDirw7FswDQUG_
 const REPORT_API_ID="AKfycbzawEWTzjx5sOdpsVOqa-qv-jBE4rxSfror-pz7jNPRi2D1hfdIR4OWDHNdYxUjvt73XA";
 const MORE_API_URL="https://script.google.com/macros/s/AKfycbw0D_yNMdMMLCNhZGC1x_1PaOpPyofkcXUM6QGuEt4ZModwUAki3Z3Ci7xd9a_gV3zB/exec";
 const AI_API_URL="https://script.google.com/macros/s/AKfycbwDL2xu4Fi1iiOudn6uO2pfb67rfTldjkrjRLfAj1mg96Gh_LtRpwqXyiEpw9aStjgVmA/exec";
+const TRACKER_PLAYERS_URL="http://main.imeroleplay.com:30120/players.json";
 const HANDBOOK_DOC_URL="https://docs.google.com/document/d/14HKwvnSNPQjWFAF-IN2rmaethHXnGOI7/edit?usp=sharing&ouid=106847982978182926598&rtpof=true&sd=true";
 const HANDBOOK_PREVIEW_URL="https://docs.google.com/document/d/14HKwvnSNPQjWFAF-IN2rmaethHXnGOI7/preview";
 const HANDBOOK_TEXT_URL="https://docs.google.com/document/d/14HKwvnSNPQjWFAF-IN2rmaethHXnGOI7/export?format=txt";
@@ -1753,6 +1832,7 @@ let currentRank = "";
 let handbookTextCache = "";
 let assignmentAgentCache = [];
 let assignmentCaseCache = [];
+let trackerPlayerCache = [];
 let agentsBroUnlocked = false;
 let agentsBroDataCache = [];
 let involvedAgentCache = [];
@@ -1945,6 +2025,109 @@ function openAssignmentsMenu() {
 
 function openAiAssistant() {
   openMoreSubview('ai-assistant-workspace');
+}
+
+function openTrackerMenu() {
+  openMoreSubview('tracker-workspace');
+  loadTrackerPlayers();
+}
+
+function getTrackerFetchUrls() {
+  return [
+    "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(TRACKER_PLAYERS_URL),
+    "https://api.allorigins.win/raw?url=" + encodeURIComponent(TRACKER_PLAYERS_URL),
+    TRACKER_PLAYERS_URL
+  ];
+}
+
+async function fetchTrackerPlayers() {
+  let lastError = null;
+
+  for (const url of getTrackerFetchUrls()) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("HTTP " + res.status);
+
+      const data = await res.json();
+      if (Array.isArray(data)) return data;
+    } catch (err) {
+      lastError = err;
+      console.warn("Tracker endpoint gagal:", url, err);
+    }
+  }
+
+  throw lastError || new Error("Gagal load tracker players");
+}
+
+async function loadTrackerPlayers(force = false) {
+  const list = document.getElementById('tracker-player-list');
+  const count = document.getElementById('tracker-online-count');
+  const sync = document.getElementById('tracker-last-sync');
+
+  if (!list) return;
+
+  if (trackerPlayerCache.length && !force) {
+    renderTrackerPlayers(trackerPlayerCache);
+    return;
+  }
+
+  list.innerHTML = `<tr><td colspan="4" class="tracker-muted">Loading online players...</td></tr>`;
+
+  try {
+    showLoading("Loading Tracker", "Mengambil online players dari endpoint FiveM...");
+    const players = await fetchTrackerPlayers();
+    trackerPlayerCache = players
+      .map(player => ({
+        id: player.id,
+        name: player.name || "-",
+        ping: player.ping ?? "-",
+        status: "online"
+      }))
+      .sort((a, b) => Number(a.id) - Number(b.id));
+
+    if (count) count.textContent = trackerPlayerCache.length;
+    if (sync) sync.textContent = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    renderTrackerPlayers(trackerPlayerCache);
+  } catch (err) {
+    console.error(err);
+    list.innerHTML = `<tr><td colspan="4" class="tracker-muted">Gagal load players. Endpoint mungkin sedang tidak bisa diakses.</td></tr>`;
+    showToast("Gagal load Tracker players.");
+  } finally {
+    hideLoading();
+  }
+}
+
+function renderTrackerPlayers(players) {
+  const list = document.getElementById('tracker-player-list');
+  if (!list) return;
+
+  if (!players.length) {
+    list.innerHTML = `<tr><td colspan="4" class="tracker-muted">Tidak ada player online.</td></tr>`;
+    return;
+  }
+
+  list.innerHTML = players.map(player => `
+    <tr data-search="${escapeHTML((player.id + " " + player.name).toLowerCase())}">
+      <td>${escapeHTML(player.id)}</td>
+      <td>${escapeHTML(player.name)}</td>
+      <td>${escapeHTML(player.ping)}</td>
+      <td><span class="tracker-online-badge">${escapeHTML(player.status)}</span></td>
+    </tr>
+  `).join("");
+}
+
+function filterTrackerPlayers(q) {
+  const keyword = String(q || "").trim().toLowerCase();
+  document.querySelectorAll('#tracker-player-list tr[data-search]').forEach(row => {
+    const haystack = row.getAttribute('data-search') || "";
+    row.style.display = !keyword || haystack.includes(keyword) ? "" : "none";
+  });
+}
+
+function clearTrackerSearch() {
+  const input = document.getElementById('tracker-search');
+  if (input) input.value = "";
+  filterTrackerPlayers("");
 }
 
 function getFinanceInitialStatus() {
