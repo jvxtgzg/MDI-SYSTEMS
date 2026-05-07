@@ -148,6 +148,34 @@ body{
   text-transform:uppercase;
 }
 
+/* MUSIC BUTTON */
+.music-btn{
+  margin-top:30px;
+
+  background:rgba(0,191,255,0.12);
+
+  border:1px solid rgba(255,255,255,0.18);
+
+  color:white;
+
+  padding:12px 24px;
+
+  border-radius:10px;
+
+  font-size:15px;
+  font-weight:700;
+  letter-spacing:1px;
+
+  cursor:pointer;
+
+  transition:0.3s;
+}
+
+.music-btn:hover{
+  background:rgba(0,191,255,0.28);
+  transform:scale(1.04);
+}
+
 /* EFFECT */
 @keyframes pulse{
 
@@ -217,6 +245,11 @@ body{
 
 <body>
 
+<!-- BACKSOUND -->
+<audio id="bgMusic" autoplay loop>
+  <source src="https://raw.githubusercontent.com/jvxtgzg/MDI-SYSTEMS/main/DJ%20THAT%20SHOULD%20BE%20ME%20MENGKANE%20VIRAL%20TIKTOK%20ZURARMX.mp3" type="audio/mpeg">
+</audio>
+
 <div class="overlay"></div>
 
 <div class="container">
@@ -250,7 +283,35 @@ body{
     SYSTEM TEMPORARILY UNAVAILABLE
   </div>
 
+  <!-- MUSIC BUTTON -->
+  <button class="music-btn" onclick="toggleMusic()">
+    🔊 PLAY / PAUSE MUSIC
+  </button>
+
 </div>
+
+<script>
+
+const music = document.getElementById("bgMusic");
+
+music.volume = 0.4;
+
+function toggleMusic(){
+
+  if(music.paused){
+    music.play();
+  }else{
+    music.pause();
+  }
+
+}
+
+/* AUTO PLAY FIX */
+window.addEventListener("click", () => {
+  music.play();
+}, { once:true });
+
+</script>
 
 </body>
 </html>
