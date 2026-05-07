@@ -156,13 +156,13 @@
   .mission-color-palette { display:flex; gap:5px; align-items:center; padding:3px 5px; border:1px solid #9eb9da; border-radius:5px; background:#eef7ff; }
   .mission-color-btn { width:22px; height:22px; border:2px solid #fff; border-radius:50%; box-shadow:0 0 0 1px #9eb9da; cursor:pointer; }
   .mission-color-btn.active { box-shadow:0 0 0 3px var(--navy); }
-  #mission-detail-editor { width:100%; flex:1; min-height:440px; max-height:calc(92vh - 180px); padding:18px 20px; border-radius:8px; border:1.5px solid #b0c8e8; font-family:'Exo 2', sans-serif; font-size:15px; line-height:1.62; outline:none; color:#222; background:#fff; overflow-y:auto; overflow-x:hidden; scrollbar-gutter:stable; word-break:break-word; overflow-wrap:anywhere; }
-  #mission-detail-editor::-webkit-scrollbar { width:12px; }
-  #mission-detail-editor::-webkit-scrollbar-track { background:#e6f2ff; border-radius:999px; }
-  #mission-detail-editor::-webkit-scrollbar-thumb { background:var(--navy); border-radius:999px; border:3px solid #e6f2ff; }
-  #mission-detail-editor:focus { border-color:var(--navy); }
-  #mission-detail-editor ul, #mission-detail-editor ol, #mission-detail-preview ul, #mission-detail-preview ol { padding-left:24px; margin:6px 0; }
-  #mission-detail-editor li, #mission-detail-preview li { margin:4px 0; }
+  #mission-detail-editor, #assignment-note-editor { width:100%; flex:1; min-height:440px; max-height:calc(92vh - 180px); padding:18px 20px; border-radius:8px; border:1.5px solid #b0c8e8; font-family:'Exo 2', sans-serif; font-size:15px; line-height:1.62; outline:none; color:#222; background:#fff; overflow-y:auto; overflow-x:hidden; scrollbar-gutter:stable; word-break:break-word; overflow-wrap:anywhere; }
+  #mission-detail-editor::-webkit-scrollbar, #assignment-note-editor::-webkit-scrollbar { width:12px; }
+  #mission-detail-editor::-webkit-scrollbar-track, #assignment-note-editor::-webkit-scrollbar-track { background:#e6f2ff; border-radius:999px; }
+  #mission-detail-editor::-webkit-scrollbar-thumb, #assignment-note-editor::-webkit-scrollbar-thumb { background:var(--navy); border-radius:999px; border:3px solid #e6f2ff; }
+  #mission-detail-editor:focus, #assignment-note-editor:focus { border-color:var(--navy); }
+  #mission-detail-editor ul, #mission-detail-editor ol, #mission-detail-preview ul, #mission-detail-preview ol, #assignment-note-editor ul, #assignment-note-editor ol, .assignment-progress-preview ul, .assignment-progress-preview ol { padding-left:24px; margin:6px 0; }
+  #mission-detail-editor li, #mission-detail-preview li, #assignment-note-editor li, .assignment-progress-preview li { margin:4px 0; }
   .mission-modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:10px; padding-top:10px; border-top:1px solid #b0c8e8; background:var(--card-bg); flex-shrink:0; }
   .mission-modal-actions .btn-teal,
   .mission-modal-actions .btn-primary { padding:8px 14px; font-size:12px; border-radius:6px; }
@@ -216,6 +216,11 @@
   .assignment-status.review { background:#efe1ff; color:#5c168d; }
   .assignment-status.completed { background:#dcf8e8; color:#0c6b35; }
   .assignment-status.cancelled { background:#ffe1e1; color:#8d1111; }
+  .assignment-progress-preview { width:100%; min-height:44px; max-height:120px; overflow:auto; padding:10px 12px; border:1.5px solid #b0c8e8; border-radius:8px; background:#fff; color:#111; font-family:'Exo 2', sans-serif; font-size:13px; line-height:1.45; cursor:pointer; }
+  .assignment-progress-preview.placeholder { color:#6d7f9a; }
+  .assignment-progress-preview ul, .assignment-progress-preview ol { padding-left:22px; margin:5px 0; }
+  #assignment-note-modal .mission-save-icon { background:#16a34a !important; border-color:#16a34a !important; color:#ffffff !important; box-shadow:0 6px 16px rgba(22,163,74,0.28); }
+  #assignment-note-modal .mission-save-icon:hover { background:#15803d !important; border-color:#15803d !important; }
   .handbook-preview-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
   .handbook-preview-head h3 { font-family:'Rajdhani', sans-serif; font-size:18px; font-weight:800; color:var(--text-dark); letter-spacing:0.5px; }
   .handbook-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
@@ -781,7 +786,7 @@
     border-color:#15803d !important;
   }
 
-  #mission-detail-editor {
+  #mission-detail-editor, #assignment-note-editor {
     border-color: var(--border-soft);
     box-shadow: inset 0 1px 0 rgba(15,23,42,0.04);
   }
@@ -857,7 +862,7 @@
     .status-evidence-row { flex-direction: column; }
     .mission-modal { align-items:center; padding:10px; }
     .mission-modal-card { padding:14px; max-height:94vh; }
-    #mission-detail-editor { min-height:58vh; max-height:calc(94vh - 200px); }
+    #mission-detail-editor, #assignment-note-editor { min-height:58vh; max-height:calc(94vh - 200px); }
     .handbook-dark-reader .handbook-preview-head { align-items:flex-start; padding:14px; }
     .handbook-actions { width:100%; }
     .handbook-actions .btn-teal,
@@ -1673,6 +1678,43 @@
     <div id="mission-detail-editor" contenteditable="true" onkeyup="updateMissionToolbarState()" onmouseup="updateMissionToolbarState()" oninput="updateMissionToolbarState()" onfocus="updateMissionToolbarState()"></div>
     <div class="mission-modal-actions">
       <button class="btn-teal" type="button" onclick="closeMissionDetailModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="assignment-note-modal" class="mission-modal">
+  <div class="mission-modal-card">
+    <div class="mission-modal-head">
+      <div class="mission-modal-title">Assignment Progress Note</div>
+      <button class="mission-modal-close" type="button" onclick="closeAssignmentNoteModal()">X</button>
+    </div>
+    <div class="mission-toolbar">
+      <button id="asn-tool-bold" class="mission-tool-btn" type="button" onclick="formatAssignmentNote('bold')" title="Tebal">B</button>
+      <button id="asn-tool-italic" class="mission-tool-btn" type="button" onclick="formatAssignmentNote('italic')" title="Miring"><em>I</em></button>
+      <select id="asn-tool-font-size" class="mission-tool-select" onchange="formatAssignmentNote('fontSize', this.value)" title="Ukuran font">
+        <option value="">Ukuran</option>
+        <option value="2">Kecil</option>
+        <option value="3">Normal</option>
+        <option value="5">Besar</option>
+        <option value="7">Sangat Besar</option>
+      </select>
+      <div class="mission-color-palette" title="Warna font">
+        <button class="mission-color-btn asn-color-btn" type="button" style="background:#111111;" onclick="setAssignmentNoteColor('#111111')" title="Hitam"></button>
+        <button class="mission-color-btn asn-color-btn" type="button" style="background:#d32f2f;" onclick="setAssignmentNoteColor('#d32f2f')" title="Merah"></button>
+        <button class="mission-color-btn asn-color-btn" type="button" style="background:#1565c0;" onclick="setAssignmentNoteColor('#1565c0')" title="Biru"></button>
+        <button class="mission-color-btn asn-color-btn" type="button" style="background:#2e7d32;" onclick="setAssignmentNoteColor('#2e7d32')" title="Hijau"></button>
+        <button class="mission-color-btn asn-color-btn" type="button" style="background:#f9a825;" onclick="setAssignmentNoteColor('#f9a825')" title="Kuning"></button>
+      </div>
+      <button id="asn-tool-left" class="mission-tool-btn mission-tool-icon" type="button" onclick="formatAssignmentNote('justifyLeft')" title="Rata kiri" aria-label="Rata kiri"><span class="material-symbols-rounded">format_align_left</span></button>
+      <button id="asn-tool-center" class="mission-tool-btn mission-tool-icon" type="button" onclick="formatAssignmentNote('justifyCenter')" title="Rata tengah" aria-label="Rata tengah"><span class="material-symbols-rounded">format_align_center</span></button>
+      <button id="asn-tool-right" class="mission-tool-btn mission-tool-icon" type="button" onclick="formatAssignmentNote('justifyRight')" title="Rata kanan" aria-label="Rata kanan"><span class="material-symbols-rounded">format_align_right</span></button>
+      <button id="asn-tool-ordered" class="mission-tool-btn mission-tool-icon" type="button" onclick="formatAssignmentNote('insertOrderedList')" title="Nomor 1, 2, 3" aria-label="Nomor 1, 2, 3"><span class="material-symbols-rounded">format_list_numbered</span></button>
+      <button id="asn-tool-unordered" class="mission-tool-btn mission-tool-icon" type="button" onclick="formatAssignmentNote('insertUnorderedList')" title="Bullet bulat" aria-label="Bullet bulat"><span class="material-symbols-rounded">format_list_bulleted</span></button>
+      <button class="mission-tool-btn mission-tool-icon mission-save-icon" type="button" onclick="saveAssignmentNoteModal()" title="Save Progress Note" aria-label="Save Progress Note"><span class="material-symbols-rounded">save</span></button>
+    </div>
+    <div id="assignment-note-editor" contenteditable="true" onkeyup="updateAssignmentNoteToolbarState()" onmouseup="updateAssignmentNoteToolbarState()" oninput="updateAssignmentNoteToolbarState()" onfocus="updateAssignmentNoteToolbarState()"></div>
+    <div class="mission-modal-actions">
+      <button class="btn-teal" type="button" onclick="closeAssignmentNoteModal()">Cancel</button>
     </div>
   </div>
 </div>
@@ -2980,7 +3022,10 @@ function renderAssignments(data) {
         <p><strong>Case:</strong> ${item.relatedCaseId ? `<button class="btn-view" onclick="openRelatedCase('${escapeHTML(item.relatedCaseId)}')">${escapeHTML(item.relatedCaseId)}</button>` : "-"}</p>
         <p><strong>Priority:</strong> ${escapeHTML(item.priority || "-")} | <strong>Deadline:</strong> ${escapeHTML(item.deadline || "-")}</p>
         <p><strong>Description:</strong> ${escapeHTML(item.description || "-")}</p>
-        <p><strong>Progress:</strong> ${escapeHTML(item.progressNote || "-")}</p>
+        <p><strong>Progress:</strong></p>
+        <div class="assignment-progress-preview ${item.progressNote ? "" : "placeholder"}" data-assignment-note-preview="${escapeHTML(item.assignmentId || "")}" onclick="openAssignmentNoteModal('${escapeHTML(item.assignmentId || "")}')">
+          ${item.progressNote || "Klik untuk menulis progress note"}
+        </div>
         <p><span class="assignment-status ${getAssignmentStatusClass(item.status)}">${escapeHTML(item.status || "ASSIGNED")}</span></p>
         <div class="letter-preview-strip">
           ${links.slice(0, 4).map(link => `
@@ -3006,10 +3051,111 @@ function renderAssignmentUpdateControl(item) {
           <option value="${status}" ${String(item.status).toUpperCase() === status ? "selected" : ""}>${status}</option>
         `).join("")}
       </select>
-      <input class="report-input" id="asn-note-${escapeHTML(assignmentId)}" type="text" placeholder="Progress note" value="${escapeHTML(item.progressNote || "")}" />
+      <textarea id="asn-note-${escapeHTML(assignmentId)}" style="display:none;">${escapeHTML(item.progressNote || "")}</textarea>
+      <button class="btn-teal" onclick="openAssignmentNoteModal('${escapeHTML(assignmentId)}')">Edit Note</button>
       <button class="btn-primary sm" onclick="updateAssignment('${escapeHTML(assignmentId)}')">Update</button>
     </div>
   `;
+}
+
+let currentAssignmentNoteId = "";
+
+function openAssignmentNoteModal(assignmentId) {
+  if (!assignmentId) {
+    showToast("Assignment ID tidak ditemukan.");
+    return;
+  }
+
+  const note = document.getElementById('asn-note-' + assignmentId);
+  const modal = document.getElementById('assignment-note-modal');
+  const editor = document.getElementById('assignment-note-editor');
+
+  currentAssignmentNoteId = assignmentId;
+  editor.innerHTML = note ? note.value : "";
+  modal.style.display = "flex";
+
+  setTimeout(() => {
+    editor.focus();
+    updateAssignmentNoteToolbarState();
+  }, 0);
+}
+
+function closeAssignmentNoteModal() {
+  document.getElementById('assignment-note-modal').style.display = "none";
+  currentAssignmentNoteId = "";
+}
+
+function saveAssignmentNoteModal() {
+  if (!currentAssignmentNoteId) {
+    closeAssignmentNoteModal();
+    return;
+  }
+
+  const note = document.getElementById('asn-note-' + currentAssignmentNoteId);
+  const editor = document.getElementById('assignment-note-editor');
+
+  if (note) {
+    note.value = editor.innerHTML.trim();
+    renderAssignmentNotePreview(currentAssignmentNoteId);
+  }
+
+  closeAssignmentNoteModal();
+}
+
+function renderAssignmentNotePreview(assignmentId) {
+  const note = document.getElementById('asn-note-' + assignmentId);
+  const preview = document.querySelector(`[data-assignment-note-preview="${CSS.escape(assignmentId)}"]`);
+
+  if (!note || !preview) return;
+
+  if (!note.value.trim()) {
+    preview.classList.add('placeholder');
+    preview.innerHTML = "Klik untuk menulis progress note";
+    return;
+  }
+
+  preview.classList.remove('placeholder');
+  preview.innerHTML = note.value;
+}
+
+document.getElementById('assignment-note-modal').addEventListener('click', function (e) {
+  if (e.target === this) closeAssignmentNoteModal();
+});
+
+function formatAssignmentNote(command, value = null) {
+  const editor = document.getElementById('assignment-note-editor');
+  editor.focus();
+  document.execCommand(command, false, value);
+  updateAssignmentNoteToolbarState();
+}
+
+function setAssignmentNoteColor(color) {
+  formatAssignmentNote('foreColor', color);
+  document.querySelectorAll('#assignment-note-modal .asn-color-btn').forEach(btn => {
+    btn.classList.toggle('active', normalizeColor(btn.style.backgroundColor) === normalizeColor(color));
+  });
+}
+
+function updateAssignmentNoteToolbarState() {
+  setToolActive('asn-tool-bold', document.queryCommandState('bold'));
+  setToolActive('asn-tool-italic', document.queryCommandState('italic'));
+  setToolActive('asn-tool-left', document.queryCommandState('justifyLeft'));
+  setToolActive('asn-tool-center', document.queryCommandState('justifyCenter'));
+  setToolActive('asn-tool-right', document.queryCommandState('justifyRight'));
+  setToolActive('asn-tool-ordered', document.queryCommandState('insertOrderedList'));
+  setToolActive('asn-tool-unordered', document.queryCommandState('insertUnorderedList'));
+
+  const fontSize = document.queryCommandValue('fontSize');
+  const fontSizeSelect = document.getElementById('asn-tool-font-size');
+  if (fontSizeSelect) {
+    fontSizeSelect.value = ["2", "3", "5", "7"].includes(fontSize) ? fontSize : "";
+    fontSizeSelect.classList.toggle('active', !!fontSizeSelect.value);
+  }
+
+  const activeColor = normalizeColor(document.queryCommandValue('foreColor') || '#111111');
+  document.querySelectorAll('#assignment-note-modal .asn-color-btn').forEach(btn => {
+    btn.classList.toggle('active', normalizeColor(btn.style.backgroundColor) === activeColor);
+  });
 }
 
 async function updateAssignment(assignmentId) {
@@ -4582,13 +4728,22 @@ document.addEventListener('click', e => {
   
 document.addEventListener('keydown', e => {
   const missionModal = document.getElementById('mission-detail-modal');
+  const assignmentModal = document.getElementById('assignment-note-modal');
 
   if (e.key === 'Escape' && missionModal.style.display === 'flex') {
     closeMissionDetailModal();
   }
 
+  if (e.key === 'Escape' && assignmentModal.style.display === 'flex') {
+    closeAssignmentNoteModal();
+  }
+
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && missionModal.style.display === 'flex') {
     saveMissionDetailModal();
+  }
+
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && assignmentModal.style.display === 'flex') {
+    saveAssignmentNoteModal();
   }
 
   if (e.key === 'Enter' && document.getElementById('page-login').classList.contains('active')) doLogin();
