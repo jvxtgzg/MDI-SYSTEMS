@@ -145,6 +145,10 @@
   .mission-modal-close:hover { background:var(--navy-hover); }
   .mission-toolbar { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:8px; padding:8px; background:#fff; border:1.5px solid #b0c8e8; border-radius:8px; }
   .mission-tool-btn { min-width:30px; height:30px; padding:0 8px; border:1px solid #9eb9da; border-radius:5px; background:#eef7ff; color:#111; font-family:'Exo 2', sans-serif; font-size:12px; font-weight:800; cursor:pointer; }
+  .mission-tool-icon { width:32px; min-width:32px; padding:0; }
+  .mission-tool-icon .material-symbols-rounded { font-size:20px; line-height:1; font-variation-settings:'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 20; }
+  .mission-save-icon { background:#16a34a; border-color:#16a34a; color:#fff; margin-left:2px; box-shadow:0 6px 16px rgba(22,163,74,0.24); }
+  .mission-save-icon:hover { background:#15803d; border-color:#15803d; }
   .mission-tool-btn:hover { background:#d9edff; }
   .mission-tool-btn.active { background:var(--navy); border-color:var(--navy); color:#fff; box-shadow:0 2px 8px rgba(26,0,128,0.28); }
   .mission-tool-select { height:30px; border:1px solid #9eb9da; border-radius:5px; padding:0 7px; background:#fff; color:#111; font-family:'Exo 2', sans-serif; font-size:12px; }
@@ -161,7 +165,7 @@
   #mission-detail-editor li, #mission-detail-preview li { margin:4px 0; }
   .mission-modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:10px; padding-top:10px; border-top:1px solid #b0c8e8; background:var(--card-bg); flex-shrink:0; }
   .mission-modal-actions .btn-teal,
-  .mission-modal-actions .btn-primary { padding:9px 18px; font-size:13px; border-radius:6px; }
+  .mission-modal-actions .btn-primary { padding:8px 14px; font-size:12px; border-radius:6px; }
   .more-menu-grid { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:14px; }
   .more-cyber-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:14px; max-width:1120px; }
   .more-cyber-tile { min-height:96px; border:1px solid rgba(94,231,255,0.22); border-radius:8px; background:linear-gradient(135deg, rgba(8,17,36,0.98), rgba(16,26,58,0.96)); color:#fff; padding:16px; display:flex; align-items:center; gap:14px; cursor:pointer; box-shadow:0 16px 34px rgba(8,17,36,0.18), inset 0 1px 0 rgba(255,255,255,0.08); position:relative; overflow:hidden; font-family:'Exo 2', sans-serif; text-align:left; transition:transform 0.15s, border-color 0.15s, box-shadow 0.15s, background 0.15s; }
@@ -223,6 +227,62 @@
   .handbook-result-item:first-of-type { border-top:none; }
   .handbook-result-item mark { background:#ffeb3b; color:#111; font-weight:800; padding:0 2px; }
   .handbook-frame { width:100%; height:72vh; min-height:520px; border:1.5px solid #b0c8e8; border-radius:8px; background:#fff; }
+  .ai-workspace-grid { display:grid; grid-template-columns:minmax(280px, 420px) 1fr; gap:14px; align-items:start; }
+  .ai-output-box { min-height:360px; max-height:62vh; overflow:auto; white-space:pre-wrap; line-height:1.55; color:#162033; background:#fff; border:1px solid #d8e3f0; border-radius:8px; padding:14px; font-family:'Exo 2', sans-serif; font-size:14px; }
+  .ai-dark-workspace { background:linear-gradient(180deg, #0b1530 0%, #081124 100%); border-color:rgba(94,231,255,0.2); color:#e5f4ff; box-shadow:0 22px 54px rgba(8,17,36,0.22); }
+  .ai-dark-workspace .letter-toolbar { border-bottom:1px solid rgba(226,232,240,0.12); padding-bottom:12px; }
+  .ai-dark-workspace .letter-toolbar h3 { color:#ffffff; }
+  .ai-dark-workspace .letter-panel { background:rgba(255,255,255,0.055); border-color:rgba(94,231,255,0.18); color:#e5f4ff; box-shadow:none; }
+  .ai-dark-workspace .letter-panel h4 { color:#ffffff; }
+  .ai-dark-workspace .letter-field label { color:rgba(226,232,240,0.72); }
+  .ai-dark-workspace .report-input { background:#121d3d; border-color:rgba(148,163,184,0.24); color:#f8fbff; }
+  .ai-dark-workspace select.report-input,
+  .ai-dark-workspace select.report-input option {
+    background:#ffffff;
+    color:#101828;
+  }
+  .ai-dark-workspace textarea.report-input {
+    background:#ffffff;
+    color:#101828;
+  }
+  .ai-dark-workspace .report-input::placeholder { color:rgba(226,232,240,0.46); }
+  .ai-dark-workspace textarea.report-input::placeholder { color:#64748b; }
+  .ai-dark-workspace .report-input:focus { border-color:#5ee7ff; outline:3px solid rgba(94,231,255,0.14); }
+  .ai-dark-workspace .ai-output-box { background:#0f172f; border-color:rgba(94,231,255,0.18); color:#e5f4ff; box-shadow:inset 0 1px 0 rgba(255,255,255,0.05); }
+  .ai-dark-workspace .ai-output-box::-webkit-scrollbar { width:11px; }
+  .ai-dark-workspace .ai-output-box::-webkit-scrollbar-track { background:rgba(255,255,255,0.06); border-radius:999px; }
+  .ai-dark-workspace .ai-output-box::-webkit-scrollbar-thumb { background:#08a8c7; border-radius:999px; border:3px solid #0f172f; }
+  #ai-assistant-workspace.ai-dark-workspace {
+    background:linear-gradient(180deg, #0b1530 0%, #081124 100%) !important;
+    border-color:rgba(94,231,255,0.2) !important;
+    color:#e5f4ff !important;
+  }
+  #ai-assistant-workspace.ai-dark-workspace .letter-toolbar h3,
+  #ai-assistant-workspace.ai-dark-workspace .letter-panel h4 {
+    color:#ffffff !important;
+  }
+  #ai-assistant-workspace.ai-dark-workspace .letter-panel {
+    background:rgba(255,255,255,0.055) !important;
+    border-color:rgba(94,231,255,0.18) !important;
+    color:#e5f4ff !important;
+  }
+  #ai-assistant-workspace.ai-dark-workspace .letter-field label {
+    color:#b8c7dc !important;
+  }
+  #ai-assistant-workspace.ai-dark-workspace select.report-input,
+  #ai-assistant-workspace.ai-dark-workspace textarea.report-input,
+  #ai-assistant-workspace.ai-dark-workspace .ai-output-box {
+    background:#0f172f !important;
+    border-color:rgba(94,231,255,0.22) !important;
+    color:#e5f4ff !important;
+  }
+  #ai-assistant-workspace.ai-dark-workspace select.report-input option {
+    background:#0f172f;
+    color:#e5f4ff;
+  }
+  #ai-assistant-workspace.ai-dark-workspace textarea.report-input::placeholder {
+    color:rgba(226,232,240,0.52) !important;
+  }
   .embedded-web-panel { display:none; background:#fff; border:1.5px solid #b0c8e8; border-radius:8px; padding:14px; margin-top:16px; box-shadow:0 4px 16px rgba(0,0,0,0.15); }
   .embedded-web-head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
   .embedded-web-head h3 { font-family:'Rajdhani', sans-serif; font-size:18px; font-weight:800; color:var(--text-dark); letter-spacing:0.5px; }
@@ -517,8 +577,13 @@
   }
 
   .btn-unlock {
-    background: #d6a933;
-    color: #0f172a;
+    background: #101a3a;
+    color: #ffffff;
+  }
+
+  .btn-unlock:hover {
+    background: #172657;
+    color: #ffffff;
   }
 
   .btn-primary.sm,
@@ -673,6 +738,18 @@
     border-color: #101a3a;
   }
 
+  #mission-detail-modal .mission-save-icon {
+    background:#16a34a !important;
+    border-color:#16a34a !important;
+    color:#ffffff !important;
+    box-shadow:0 6px 16px rgba(22,163,74,0.28);
+  }
+
+  #mission-detail-modal .mission-save-icon:hover {
+    background:#15803d !important;
+    border-color:#15803d !important;
+  }
+
   #mission-detail-editor {
     border-color: var(--border-soft);
     box-shadow: inset 0 1px 0 rgba(15,23,42,0.04);
@@ -751,6 +828,8 @@
     .mission-modal-card { padding:14px; max-height:94vh; }
     #mission-detail-editor { min-height:58vh; max-height:calc(94vh - 200px); }
     .handbook-frame { height:68vh; min-height:420px; }
+    .ai-workspace-grid { grid-template-columns:1fr; }
+    .ai-output-box { max-height:48vh; }
     .embedded-web-frame { height:68vh; min-height:420px; }
     .agents-bro-dark { max-height:calc(100vh - 250px); }
     .agents-bro-dark .agents-table-wrap { max-height:calc(100vh - 470px); }
@@ -995,6 +1074,10 @@
           <button class="more-cyber-tile sensitive-menu" onclick="openAssignmentsMenu()">
             <span class="more-cyber-icon"><span class="material-symbols-rounded">assignment_ind</span></span>
             <span class="more-cyber-copy"><strong>Agent Assignments</strong><span>Task command</span></span>
+          </button>
+          <button class="more-cyber-tile sensitive-menu" onclick="openAiAssistant()">
+            <span class="more-cyber-icon"><span class="material-symbols-rounded">psychology</span></span>
+            <span class="more-cyber-copy"><strong>AI Assistant</strong><span>Summary protocol</span></span>
           </button>
           <button class="more-cyber-tile reimbursement-menu" onclick="openReimbursementMenu()">
             <span class="more-cyber-icon"><span class="material-symbols-rounded">payments</span></span>
@@ -1426,6 +1509,49 @@
           </div>
         </div>
 
+        <div id="ai-assistant-workspace" class="more-subview letter-workspace ai-dark-workspace">
+          <div class="letter-toolbar">
+            <h3>AI Assistant</h3>
+            <div class="letter-actions">
+              <button class="btn-teal" onclick="backToMoreMenu()">Kembali</button>
+              <button class="btn-primary sm" onclick="clearAiAssistant()">Clear</button>
+            </div>
+          </div>
+
+          <div class="ai-workspace-grid">
+            <div class="letter-panel">
+              <h4>AI Task</h4>
+
+              <div class="letter-field">
+                <label>Mode</label>
+                <select id="ai-mode" class="report-input">
+                  <option value="summary">Summarize Text</option>
+                  <option value="formal">Make Formal Statement</option>
+                  <option value="case">Generate Case Description</option>
+                  <option value="rewrite">Rewrite Mission Detail</option>
+                  <option value="translate_en">Translate to English</option>
+                  <option value="translate_id">Translate to Indonesian</option>
+                </select>
+              </div>
+
+              <div class="letter-field">
+                <label>Input Text</label>
+                <textarea id="ai-input" class="report-input" style="min-height:240px;" placeholder="Paste text yang ingin dibantu AI. Jangan masukkan password, callsign, PIN, atau data sensitif yang tidak perlu."></textarea>
+              </div>
+
+              <div class="letter-actions">
+                <button class="btn-primary" onclick="runAiAssistant()">Run AI</button>
+                <button class="btn-teal" onclick="copyAiOutput()">Copy Result</button>
+              </div>
+            </div>
+
+            <div class="letter-panel">
+              <h4>AI Result</h4>
+              <div id="ai-output" class="ai-output-box">AI result akan muncul di sini.</div>
+            </div>
+          </div>
+        </div>
+
         <div id="handbook-preview" class="more-subview">
           <div class="handbook-preview-head">
             <h3>BRO Handbook</h3>
@@ -1485,16 +1611,16 @@
         <button class="mission-color-btn" type="button" style="background:#f9a825;" onclick="setMissionColor('#f9a825')" title="Kuning"></button>
         <button class="mission-color-btn" type="button" style="background:#ffffff;" onclick="setMissionColor('#ffffff')" title="Putih"></button>
       </div>
-      <button id="tool-left" class="mission-tool-btn" type="button" onclick="formatMissionDetail('justifyLeft')" title="Rata kiri">Kiri</button>
-      <button id="tool-center" class="mission-tool-btn" type="button" onclick="formatMissionDetail('justifyCenter')" title="Rata tengah">Tengah</button>
-      <button id="tool-right" class="mission-tool-btn" type="button" onclick="formatMissionDetail('justifyRight')" title="Rata kanan">Kanan</button>
-      <button id="tool-ordered" class="mission-tool-btn" type="button" onclick="formatMissionDetail('insertOrderedList')" title="Nomor 1, 2, 3">1 2 3</button>
-      <button id="tool-unordered" class="mission-tool-btn" type="button" onclick="formatMissionDetail('insertUnorderedList')" title="Bullet bulat">&bull; List</button>
+      <button id="tool-left" class="mission-tool-btn mission-tool-icon" type="button" onclick="formatMissionDetail('justifyLeft')" title="Rata kiri" aria-label="Rata kiri"><span class="material-symbols-rounded">format_align_left</span></button>
+      <button id="tool-center" class="mission-tool-btn mission-tool-icon" type="button" onclick="formatMissionDetail('justifyCenter')" title="Rata tengah" aria-label="Rata tengah"><span class="material-symbols-rounded">format_align_center</span></button>
+      <button id="tool-right" class="mission-tool-btn mission-tool-icon" type="button" onclick="formatMissionDetail('justifyRight')" title="Rata kanan" aria-label="Rata kanan"><span class="material-symbols-rounded">format_align_right</span></button>
+      <button id="tool-ordered" class="mission-tool-btn mission-tool-icon" type="button" onclick="formatMissionDetail('insertOrderedList')" title="Nomor 1, 2, 3" aria-label="Nomor 1, 2, 3"><span class="material-symbols-rounded">format_list_numbered</span></button>
+      <button id="tool-unordered" class="mission-tool-btn mission-tool-icon" type="button" onclick="formatMissionDetail('insertUnorderedList')" title="Bullet bulat" aria-label="Bullet bulat"><span class="material-symbols-rounded">format_list_bulleted</span></button>
+      <button class="mission-tool-btn mission-tool-icon mission-save-icon" type="button" onclick="saveMissionDetailModal()" title="Save Detail" aria-label="Save Detail"><span class="material-symbols-rounded">save</span></button>
     </div>
     <div id="mission-detail-editor" contenteditable="true" onkeyup="updateMissionToolbarState()" onmouseup="updateMissionToolbarState()" oninput="updateMissionToolbarState()" onfocus="updateMissionToolbarState()"></div>
     <div class="mission-modal-actions">
       <button class="btn-teal" type="button" onclick="closeMissionDetailModal()">Cancel</button>
-      <button class="btn-primary" type="button" onclick="saveMissionDetailModal()">Save Detail</button>
     </div>
   </div>
 </div>
@@ -1521,6 +1647,7 @@ const REPORT_SHEET_ID="1QgVdZ2Xtj2zskCG_lXPs9joVnNNZ9F19mxVVHbygtt8";
 const PIN_API_ID="AKfycbwNVQYSaIE-b_tiM5U0OW79iuEYfaYYcvghKgs4tzrFoDirw7FswDQUG_629WUgDlD2";
 const REPORT_API_ID="AKfycbzawEWTzjx5sOdpsVOqa-qv-jBE4rxSfror-pz7jNPRi2D1hfdIR4OWDHNdYxUjvt73XA";
 const MORE_API_URL="https://script.google.com/macros/s/AKfycbw0D_yNMdMMLCNhZGC1x_1PaOpPyofkcXUM6QGuEt4ZModwUAki3Z3Ci7xd9a_gV3zB/exec";
+const AI_API_URL="https://script.google.com/macros/s/AKfycbwDL2xu4Fi1iiOudn6uO2pfb67rfTldjkrjRLfAj1mg96Gh_LtRpwqXyiEpw9aStjgVmA/exec";
 const HANDBOOK_DOC_URL="https://docs.google.com/document/d/14HKwvnSNPQjWFAF-IN2rmaethHXnGOI7/edit?usp=sharing&ouid=106847982978182926598&rtpof=true&sd=true";
 const HANDBOOK_PREVIEW_URL="https://docs.google.com/document/d/14HKwvnSNPQjWFAF-IN2rmaethHXnGOI7/preview";
 const HANDBOOK_TEXT_URL="https://docs.google.com/document/d/14HKwvnSNPQjWFAF-IN2rmaethHXnGOI7/export?format=txt";
@@ -1720,6 +1847,10 @@ function openAssignmentsMenu() {
   loadAssignmentAgents();
   loadAssignmentCases();
   loadAssignments(canCreate ? 'all' : 'mine');
+}
+
+function openAiAssistant() {
+  openMoreSubview('ai-assistant-workspace');
 }
 
 function getFinanceInitialStatus() {
@@ -1929,6 +2060,103 @@ function loadMoreApi(params) {
     script.src = buildMoreApiUrl(Object.assign({}, params, { callback: callbackName }));
     document.body.appendChild(script);
   });
+}
+
+function buildAiPrompt(mode, input) {
+  const instructionMap = {
+    summary: "Buat ringkasan singkat, jelas, dan profesional dari teks berikut. Gunakan bahasa Indonesia.",
+    formal: "Ubah teks berikut menjadi keterangan formal/profesional untuk sistem internal BRO. Gunakan bahasa Indonesia.",
+    case: "Buat case description yang rapi, objektif, dan mudah dibaca dari informasi berikut. Gunakan bahasa Indonesia.",
+    rewrite: "Rapikan dan tulis ulang mission detail berikut agar lebih jelas, profesional, dan terstruktur. Gunakan bahasa Indonesia.",
+    translate_en: "Translate the following text into clear professional English.",
+    translate_id: "Terjemahkan teks berikut ke bahasa Indonesia yang jelas dan profesional."
+  };
+
+  return `${instructionMap[mode] || instructionMap.summary}\n\nTEKS:\n${input}`;
+}
+
+function loadAiApi(params) {
+  return new Promise((resolve, reject) => {
+    const callbackName = "mdiAiCallback_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+    const script = document.createElement("script");
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error("AI request timeout"));
+    }, 40000);
+
+    function cleanup() {
+      clearTimeout(timeout);
+      delete window[callbackName];
+      script.remove();
+    }
+
+    window[callbackName] = data => {
+      cleanup();
+      resolve(data);
+    };
+
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Gagal load AI proxy"));
+    };
+
+    const query = new URLSearchParams(Object.assign({}, params, { callback: callbackName }));
+    script.src = AI_API_URL + "?" + query.toString();
+    document.body.appendChild(script);
+  });
+}
+
+async function runAiAssistant() {
+  const mode = document.getElementById('ai-mode').value;
+  const input = document.getElementById('ai-input').value.trim();
+  const output = document.getElementById('ai-output');
+
+  if (!input) {
+    showToast("Input text masih kosong.");
+    return;
+  }
+
+  try {
+    showLoading("Running AI Assistant", "Gemini sedang memproses teks...");
+    output.textContent = "Processing...";
+
+    const json = await loadAiApi({
+      prompt: buildAiPrompt(mode, input)
+    });
+
+    if (!json.ok) throw new Error(json.error || "AI request failed");
+
+    output.textContent = json.text || "AI tidak mengembalikan teks.";
+    showToast("AI result ready.");
+  } catch (err) {
+    console.error(err);
+    output.textContent = "Gagal menjalankan AI. Pastikan Apps Script proxy sudah support callback/JSONP dan sudah deploy ulang.";
+    showToast("Gagal menjalankan AI.");
+  } finally {
+    hideLoading();
+  }
+}
+
+function clearAiAssistant() {
+  document.getElementById('ai-input').value = "";
+  document.getElementById('ai-output').textContent = "AI result akan muncul di sini.";
+}
+
+async function copyAiOutput() {
+  const text = document.getElementById('ai-output').textContent.trim();
+
+  if (!text || text === "AI result akan muncul di sini.") {
+    showToast("Belum ada result AI.");
+    return;
+  }
+
+  try {
+    await writeTextToClipboard(text);
+    showToast("AI result copied.");
+  } catch (err) {
+    console.error(err);
+    showToast("Copy diblokir browser. Seleksi manual result AI.");
+  }
 }
 
 function getCdnLinksFromText(value) {
