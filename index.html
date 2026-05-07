@@ -2995,6 +2995,7 @@ async function loadAssignmentAgents(force = false) {
       .map(row => ({
         name: (row.c?.[0]?.v || "").toString().trim(),
         code: (row.c?.[1]?.v || "").toString().trim(),
+        callsign: (row.c?.[2]?.v || "").toString().trim(),
         division: (row.c?.[3]?.v || "").toString().trim(),
         rank: (row.c?.[4]?.v || "").toString().trim()
       }))
@@ -3059,6 +3060,44 @@ async function resolveLoggedAssignmentCodeName() {
   }
 
   return (localStorage.getItem('agentNama') || "").trim();
+}
+
+async function getLoggedAssignmentIdentifiers() {
+  const storedCode = getAgentCodeName();
+  const name = (localStorage.getItem('agentNama') || "").trim();
+  const division = (localStorage.getItem('agentDivision') || "").trim().toLowerCase();
+  const identifiers = [];
+
+  const addIdentifier = value => {
+    const normalized = String(value || "").trim();
+    if (!normalized) return;
+
+    const exists = identifiers.some(item => item.toLowerCase() === normalized.toLowerCase());
+    if (!exists) identifiers.push(normalized);
+  };
+
+  try {
+    await loadAssignmentAgents();
+  } catch (err) {
+    console.warn("Gagal resolve member sheet untuk My Assignments", err);
+  }
+
+  const matchedAgent = assignmentAgentCache.find(agent => {
+    const sameCode = storedCode && String(agent.code || "").trim().toUpperCase() === storedCode;
+    const sameName = name && String(agent.name || "").trim().toLowerCase() === name.toLowerCase();
+    const sameDivision = !division || String(agent.division || "").trim().toLowerCase() === division;
+    return sameCode || (sameName && sameDivision);
+  });
+
+  if (matchedAgent?.code) {
+    localStorage.setItem('agentCodeName', matchedAgent.code.toUpperCase());
+  }
+
+  addIdentifier(matchedAgent?.code || storedCode);
+  addIdentifier(name);
+  addIdentifier(matchedAgent?.callsign);
+
+  return identifiers;
 }
 
 async function loadAssignmentCases(force = false) {
@@ -3164,13 +3203,37 @@ async function loadAssignments(scope = "mine") {
     action: "list"
   };
 
-  if (scope === "mine" && !canCreateAssignments()) {
-    params.assignedTo = await resolveLoggedAssignmentCodeName();
-  }
-
   try {
     showLoading("Loading Assignments", "Mengambil data assignment...");
-    const json = await loadReportApi(params);
+    let json;
+
+    if (scope === "mine") {
+      const identifiers = await getLoggedAssignmentIdentifiers();
+      const merged = [];
+      const seenIds = new Set();
+
+      for (const assignedTo of identifiers) {
+        const response = await loadReportApi(Object.assign({}, params, { assignedTo }));
+        if (!response.ok) throw new Error(response.error || "Gagal load assignments");
+
+        (response.data || []).forEach(item => {
+          const stableId = item.assignmentId || JSON.stringify(item);
+          if (seenIds.has(stableId)) return;
+          seenIds.add(stableId);
+          merged.push(item);
+        });
+      }
+
+      json = {
+        ok: true,
+        action: "list",
+        module: "AGENT_ASSIGNMENTS",
+        count: merged.length,
+        data: merged
+      };
+    } else {
+      json = await loadReportApi(params);
+    }
 
     if (!json.ok) throw new Error(json.error || "Gagal load assignments");
 
@@ -3932,8 +3995,9 @@ function renderMissionDetailPreview() {
 }
 
 function previewFromLink() {
-  const url = document.getElementById('evidence-link').value.trim();
+  const input = document.querySelector('.evidence-input');
   const preview = document.getElementById('evidence-preview');
+  const url = input ? input.value.trim() : "";
 
   if (!url) {
     preview.innerHTML = "Masukkan link gambar!";
@@ -3952,6 +4016,29 @@ function previewFromLink() {
         onerror="this.parentElement.innerHTML='Gagal load gambar'"
     />
   `;
+}
+
+function normalizeReportDateValue(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  const isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoMatch) return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+
+  const dateFnMatch = raw.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})\)$/);
+  if (dateFnMatch) {
+    const year = dateFnMatch[1];
+    const month = String(Number(dateFnMatch[2]) + 1).padStart(2, "0");
+    const day = String(Number(dateFnMatch[3])).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  const parsed = new Date(raw);
+  if (!Number.isNaN(parsed.getTime())) {
+    return parsed.toISOString().slice(0, 10);
+  }
+
+  return "";
 }
 
 function doRefresh() {
@@ -4680,7 +4767,7 @@ function viewReport(row) {
 
   document.getElementById('mission-name').value = mission;
   document.getElementById('mission-status').value = status;
-  document.getElementById('mission-date').value = rawDate;
+  document.getElementById('mission-date').value = normalizeReportDateValue(rawDate);
 
   document.getElementById('mission-detail').value = detail;
   renderMissionDetailPreview();
@@ -4766,7 +4853,7 @@ function editReport(row) {
 
   document.getElementById('mission-name').value = mission;
   document.getElementById('mission-status').value = status;
-  document.getElementById('mission-date').value = rawDate;
+  document.getElementById('mission-date').value = normalizeReportDateValue(rawDate);
 
   document.getElementById('mission-detail').value = detail;
   renderMissionDetailPreview();
